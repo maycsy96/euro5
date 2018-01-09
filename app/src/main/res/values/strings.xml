@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">PetrolNav</string>
+    <string name="title_activity_login">PetrolNav</string>
+    <string name="openDrawer">Open Drawer</string>
+    <string name="closeDrawer">Close Drawer</string>
+</resources>
