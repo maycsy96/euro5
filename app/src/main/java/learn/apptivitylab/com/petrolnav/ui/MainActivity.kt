@@ -13,6 +13,19 @@ import android.view.View
 import android.view.ViewGroup
 import learn.apptivitylab.com.petrolnav.R
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import android.location.Location;
 /**
  * Created by apptivitylab on 09/01/2018.
  */
@@ -67,11 +80,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun changeFragment(id: Int) {
-        val displayFragment: Fragment? = null
+        var displayFragment: Fragment? = null
         when (id) {
             R.id.nav_recent -> Log.d(TAG, "Show Recent History")
             R.id.nav_petrol_price -> Log.d(TAG, "Show Petrol Price")
-            R.id.nav_preference -> Log.d(TAG, "Show Preference")
+            R.id.nav_preference -> {
+                Log.d(TAG, "Show Preference")
+                displayFragment = PreferencesFragment();
+            }
             R.id.nav_log_out -> Log.d(TAG, "Show Log Out")
         }//displayFragment = new RedFragment();
         //displayFragment = new RedFragment();

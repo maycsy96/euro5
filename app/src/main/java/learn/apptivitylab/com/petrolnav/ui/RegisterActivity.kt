@@ -43,7 +43,6 @@ class RegisterActivity : AppCompatActivity() {
             //finish this registration screen and return to login activity
             finish()
         }
-
     }
 
     fun register() {

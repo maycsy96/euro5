@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_preferences_vg_container"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Please select your preferred petrol station brand and petrol type:"
+            android:background="@android:color/holo_green_dark"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:padding="12dp"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            />
+        <TextView
+            android:id="@+id/fragment_preferences_tv_petrol_station_brands"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Petrol Station Brands:"
+            android:background="@android:color/holo_green_light"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:padding="12dp"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            />
+
+        <CheckBox
+            android:id="@+id/fragment_preferences_cb_shell"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Shell"
+            />
+
+        <CheckBox
+            android:id="@+id/fragment_preferences_cb_petronas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Petronas" />
+
+        <CheckBox
+            android:id="@+id/fragment_preferences_cb_bhp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="BHPetrol" />
+
+        <CheckBox
+            android:id="@+id/fragment_preferences_cb_caltex"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Caltex" />
+
+        <TextView
+            android:id="@+id/fragment_preferences_tv_petrol_types"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Petrol Type:"
+            android:background="@android:color/holo_green_light"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:padding="12dp"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            />
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="4dp"
+            android:paddingTop="4dp">
+            <RadioButton
+                android:id="@+id/fragment_preferences_rb_95"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="RON 95" />
+
+            <RadioButton
+                android:id="@+id/fragment_preferences_rb_97"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ron 97" />
+
+            <RadioButton
+                android:id="@+id/fragment_preferences_rb_diesel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Diesel" />
+
+            <RadioButton
+                android:id="@+id/fragment_preferences_rb_euro5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Diesel EURO5" />
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="15dp">
+
+        <Button
+            android:id="@+id/fragment_preferences_btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/holo_green_light"
+            android:text="SAVE" />
+    </LinearLayout>
+
+</LinearLayout>
