@@ -85,6 +85,8 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
     }
 
     private fun startLocationUpdates() {
+        //why not connected
+        ActivityCompat.requestPermissions(activity!!, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),100)
         if(mGoogleApiClient!!.isConnected){
             if(ActivityCompat.checkSelfPermission(context!!,android.Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
                 ActivityCompat.requestPermissions(activity!!, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),100)
@@ -123,6 +125,7 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
     }
 
     //region GoogleApiClient.ConnectionCallbacks
+    //This callback will have a public function onConnected() which will be called whenever device is connected and disconnected.
     override fun onConnected(bundle: Bundle?) {
 
     }
@@ -134,11 +137,13 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
 
 
     //region GoogleApiClient.OnConnectionFailedListener
+    //Provides callbacks for scenarios that result in a failed attempt to connect the client to the service. Whenever connection is failed onConnectionFailed() will be called.
     override fun onConnectionFailed(connectionResult: ConnectionResult) {
 
     }
     //endregion
 
+    //LocationListener: This callback will be called whenever there is change in location of device. Function onLocationChanged() will be called.
     override fun onLocationChanged(location: Location) {
         Snackbar.make(view!!, "Location update received!", Snackbar.LENGTH_SHORT).show()
         val latitudeString = "Latitude: " + location.latitude.toString()
