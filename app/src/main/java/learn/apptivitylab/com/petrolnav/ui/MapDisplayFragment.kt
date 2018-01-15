@@ -2,6 +2,7 @@ package learn.apptivitylab.com.petrolnav.ui
 
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
@@ -29,12 +30,12 @@ import learn.apptivitylab.com.petrolnav.R
 
 class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    private var mGoogleApiClient: GoogleApiClient?=null
-    private var mMapFragment : SupportMapFragment?=null
-    private var mGoogleMap : GoogleMap?=null
+    private var mGoogleApiClient: GoogleApiClient? = null
+    private var mMapFragment: SupportMapFragment? = null
+    private var mGoogleMap: GoogleMap? = null
 
-    private var mLocationMarker: Marker?=null
-    private var mLocationCircle: Circle?=null
+    private var mLocationMarker: Marker? = null
+    private var mLocationCircle: Circle? = null
     //private var mSearchDestination: android.support.v7.SearchView?= null
 
 
@@ -42,70 +43,98 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
         var view = inflater.inflate(R.layout.fragment_map_display, container, false)
 
 
-        if(savedInstanceState==null){
+        if (savedInstanceState == null) {
             setupGoogleMapsFragment();
-        }else{
+        } else {
             //get supportmapfragment and request notification when the map is ready to use
             mMapFragment = activity!!.supportFragmentManager.findFragmentById(R.id.fragment_map_display_vg_container) as SupportMapFragment
         }
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        //Create an instance of GoogleAPIClient
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = GoogleApiClient.Builder(context!!, this, this)
+                    .addApi(LocationServices.API)
+                    .build()
+
+//            mGoogleApiClient?.connect()
+        }
+    }
+
+    //putting the google map into the map fragment
     private fun setupGoogleMapsFragment() {
         mMapFragment = SupportMapFragment.newInstance()
 
         activity!!.supportFragmentManager
                 .beginTransaction()
-                .add(R.id.fragment_map_display_vg_container,mMapFragment)
+                .add(R.id.fragment_map_display_vg_container, mMapFragment)
                 .commit()
 
         mMapFragment!!.getMapAsync { googleMap ->
             mGoogleMap = googleMap
 
-            val officeLatLng = LatLng(4.2105,101.9758)
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(officeLatLng,6f)
+            //location of Malaysia
+            val officeLatLng = LatLng(4.2105, 101.9758)
+            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(officeLatLng, 6f)
 
             mGoogleMap!!.moveCamera(cameraUpdate)
         }
 
     }
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        //Create an instance of GoogleAPIClient
-        if(mGoogleApiClient==null){
-            mGoogleApiClient= GoogleApiClient.Builder(context!!,this,this)
-                    .addApi(LocationServices.API)
-                    .build()
-        }
-        startLocationUpdates()
+    override fun onStart() {
+        super.onStart()
+        mGoogleApiClient?.connect()
 
     }
 
+    override fun onStop() {
+        super.onStop()
+        mGoogleApiClient?.disconnect()
+    }
+
+    override fun onPause(){
+        super.onPause()
+        stopLocationUpdates()
+    }
+
+    override fun onResume() {
+        super.onResume()
+//        if(mRequestingLocationUpdates){
+//            startLocationUpdates()
+//        }
+    }
     private fun startLocationUpdates() {
-        //why not connected
-        ActivityCompat.requestPermissions(activity!!, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),100)
-        if(mGoogleApiClient!!.isConnected){
-            if(ActivityCompat.checkSelfPermission(context!!,android.Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(activity!!, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),100)
-                return
+        if (mGoogleApiClient!!.isConnected) {
+            //checking build version equals or more than the marshmallow build version
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (ActivityCompat.checkSelfPermission(context!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    //request for permission
+                    ActivityCompat.requestPermissions(activity!!, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 100)
+                    return
+                }
             }
 
+            //create location request object
             val locationRequest = LocationRequest()
             locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             locationRequest.interval = 5000
 
+            //request location updates from FusedLocationApi
             LocationServices.FusedLocationApi.requestLocationUpdates(
                     mGoogleApiClient,
                     locationRequest,
                     this
             )
-        }else{
-            Snackbar.make(view!!,"GoogleApiClient is not ready yet", Snackbar.LENGTH_LONG).show()
+        } else {
+            Snackbar.make(view!!, "GoogleApiClient is not ready yet", Snackbar.LENGTH_LONG).show()
         }
     }
+
     //stop updating the location
     private fun stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(
@@ -127,6 +156,7 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
     //region GoogleApiClient.ConnectionCallbacks
     //This callback will have a public function onConnected() which will be called whenever device is connected and disconnected.
     override fun onConnected(bundle: Bundle?) {
+        startLocationUpdates()
 
     }
 
@@ -145,17 +175,10 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
 
     //LocationListener: This callback will be called whenever there is change in location of device. Function onLocationChanged() will be called.
     override fun onLocationChanged(location: Location) {
-        Snackbar.make(view!!, "Location update received!", Snackbar.LENGTH_SHORT).show()
-        val latitudeString = "Latitude: " + location.latitude.toString()
-        val longitudeString = "Longitude: " + location.longitude.toString()
-        val accuracyString = "Accuracy: " + location.accuracy.toString() + "m"
-
-        //texrview
-
-        val userLatLng = LatLng(location.latitude,location.longitude)
+        val userLatLng = LatLng(location.latitude, location.longitude)
 
         if (mLocationMarker == null) {
-            val markerOptions = MarkerOptions().position(userLatLng).title("Here I am!")
+            val markerOptions = MarkerOptions().position(userLatLng)
             mLocationMarker = mGoogleMap!!.addMarker(markerOptions)
         } else {
             mLocationMarker!!.position = userLatLng
