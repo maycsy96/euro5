@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
@@ -36,12 +37,17 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
 
     private var mLocationMarker: Marker? = null
     private var mLocationCircle: Circle? = null
+
     //private var mSearchDestination: android.support.v7.SearchView?= null
+    private var mCenterUserBtn: FloatingActionButton? = null
+
+    //not UI member
+    private var currentUserLocation : LatLng?= null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.fragment_map_display, container, false)
-
+        var rootView = inflater.inflate(R.layout.fragment_map_display, container, false)
+        mCenterUserBtn= rootView.findViewById<View>(R.id.fragment_map_display_btn_center_user) as FloatingActionButton
 
         if (savedInstanceState == null) {
             setupGoogleMapsFragment();
@@ -49,7 +55,7 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
             //get supportmapfragment and request notification when the map is ready to use
             mMapFragment = activity!!.supportFragmentManager.findFragmentById(R.id.fragment_map_display_vg_container) as SupportMapFragment
         }
-        return view
+        return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,6 +69,15 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
 
 //            mGoogleApiClient?.connect()
         }
+        mCenterUserBtn!!.setOnClickListener{
+            centerMapOnUserLocation()
+        }
+    }
+
+    private fun centerMapOnUserLocation() {
+
+        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentUserLocation, 16f)
+        mGoogleMap!!.moveCamera(cameraUpdate)
     }
 
     //putting the google map into the map fragment
@@ -150,6 +165,8 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
                 && grantResults.size > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             startLocationUpdates()
+        }else{
+            Snackbar.make(view!!, "Unable to show current location - permission is required", Snackbar.LENGTH_LONG).show()
         }
     }
 
@@ -176,6 +193,7 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
     //LocationListener: This callback will be called whenever there is change in location of device. Function onLocationChanged() will be called.
     override fun onLocationChanged(location: Location) {
         val userLatLng = LatLng(location.latitude, location.longitude)
+        currentUserLocation = userLatLng
 
         if (mLocationMarker == null) {
             val markerOptions = MarkerOptions().position(userLatLng)
