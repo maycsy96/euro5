@@ -18,28 +18,28 @@ import learn.apptivitylab.com.petrolnav.R
 
 class RegisterActivity : AppCompatActivity() {
 
-    private var rImageLogo: AppCompatImageView? = null
-    private var rNameEditText: AppCompatEditText? = null
-    private var rEmailEditText: AppCompatEditText? = null
-    private var rPasswordEditText: AppCompatEditText? = null
-    private var rLoginLink: TextView? = null
-    private var rRegisterButton: AppCompatButton? = null
-    private var rContentViewGroup: ViewGroup? = null
+    private var imageLogo: AppCompatImageView? = null
+    private var nameEditText: AppCompatEditText? = null
+    private var emailEditText: AppCompatEditText? = null
+    private var passwordEditText: AppCompatEditText? = null
+    private var loginLink: TextView? = null
+    private var registerButton: AppCompatButton? = null
+    private var contentViewGroup: ViewGroup? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        rImageLogo = findViewById<View>(R.id.activity_register_logo_petrolnav) as AppCompatImageView
-        rNameEditText = findViewById<View>(R.id.activity_register_et_name) as AppCompatEditText
-        rEmailEditText = findViewById<View>(R.id.activity_register_et_email) as AppCompatEditText
-        rPasswordEditText = findViewById<View>(R.id.activity_register_et_password) as AppCompatEditText
-        rLoginLink = findViewById<View>(R.id.activity_register_textview_login) as TextView
-        rRegisterButton = findViewById<View>(R.id.activity_register_btn_register) as AppCompatButton
-        rContentViewGroup = findViewById<View>(R.id.activity_register_vg_container) as ViewGroup
+        this.imageLogo = findViewById<View>(R.id.activity_register_logo_petrolnav) as AppCompatImageView
+        this.nameEditText = findViewById<View>(R.id.activity_register_et_name) as AppCompatEditText
+        this.emailEditText = findViewById<View>(R.id.activity_register_et_email) as AppCompatEditText
+        this.passwordEditText = findViewById<View>(R.id.activity_register_et_password) as AppCompatEditText
+        this.loginLink = findViewById<View>(R.id.activity_register_textview_login) as TextView
+        this.registerButton = findViewById<View>(R.id.activity_register_btn_register) as AppCompatButton
+        this.contentViewGroup = findViewById<View>(R.id.activity_register_vg_container) as ViewGroup
 
-        rRegisterButton!!.setOnClickListener { register() }
-        rLoginLink!!.setOnClickListener {
+        this.registerButton!!.setOnClickListener { register() }
+        this.loginLink!!.setOnClickListener {
             //finish this registration screen and return to login activity
             finish()
         }
@@ -51,10 +51,10 @@ class RegisterActivity : AppCompatActivity() {
             onRegisterFailed()
             return
         }
-        rRegisterButton!!.isEnabled = false
-        val name = rNameEditText!!.text.toString()
-        val email = rEmailEditText!!.text.toString()
-        val password = rPasswordEditText!!.text.toString()
+        this.registerButton!!.isEnabled = false
+        val name = this.nameEditText!!.text.toString()
+        val email = this.emailEditText!!.text.toString()
+        val password = this.passwordEditText!!.text.toString()
 
         //registration logic
 
@@ -62,7 +62,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     fun onRegisterSuccess() {
-        rRegisterButton!!.isEnabled = true
+        this.registerButton!!.isEnabled = true
         /*
         setResult(RESULT_OK);
         asd//should be finish this activity and return to login screen
@@ -73,35 +73,35 @@ class RegisterActivity : AppCompatActivity() {
     fun onRegisterFailed() {
         Toast.makeText(baseContext, "Register failed", Toast.LENGTH_LONG).show()
 
-        rRegisterButton!!.isEnabled = true
+        this.registerButton!!.isEnabled = true
     }
 
     fun validate(): Boolean {
         var valid = true
 
-        val name = rNameEditText!!.text.toString()
-        val email = rEmailEditText!!.text.toString()
-        val password = rPasswordEditText!!.text.toString()
+        val name = this.nameEditText!!.text.toString()
+        val email = this.emailEditText!!.text.toString()
+        val password = this.passwordEditText!!.text.toString()
 
         if (name.isEmpty() || name.length < 3) {
-            rNameEditText!!.error = "at least 3 characters"
+            this.nameEditText!!.error = "at least 3 characters"
             valid = false
         } else {
-            rNameEditText!!.error = null
+            this.nameEditText!!.error = null
         }
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            rEmailEditText!!.error = "enter a valid email address"
+            this.emailEditText!!.error = "enter a valid email address"
             valid = false
         } else {
-            rEmailEditText!!.error = null
+            this.emailEditText!!.error = null
         }
 
         if (password.isEmpty() || password.length < 4 || password.length > 10) {
-            rPasswordEditText!!.error = "between 4 and 10 alphanumeric characters"
+            this.passwordEditText!!.error = "between 4 and 10 alphanumeric characters"
             valid = false
         } else {
-            rPasswordEditText!!.error = null
+            this.passwordEditText!!.error = null
         }
 
         return valid

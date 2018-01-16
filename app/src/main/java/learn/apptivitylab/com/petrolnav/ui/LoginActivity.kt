@@ -20,26 +20,26 @@ import learn.apptivitylab.com.petrolnav.R
 
 class LoginActivity : AppCompatActivity() {
 
-    private var lImageLogo: AppCompatImageView? = null
-    private var lEmailEditText: TextInputEditText? = null
-    private var lPasswordEditText: TextInputEditText? = null
-    private var lRegisterLink: TextView? = null
-    private var lLoginButton: AppCompatButton? = null
-    private var lContentViewGroup: ViewGroup? = null
+    private var imageLogo: AppCompatImageView? = null
+    private var emailEditText: TextInputEditText? = null
+    private var passwordEditText: TextInputEditText? = null
+    private var registerLink: TextView? = null
+    private var loginButton: AppCompatButton? = null
+    private var contentViewGroup: ViewGroup? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        lImageLogo = findViewById<View>(R.id.activity_login_logo_petrolnav) as AppCompatImageView
-        lEmailEditText = findViewById<View>(R.id.activity_login_et_email) as TextInputEditText
-        lPasswordEditText = findViewById<View>(R.id.activity_login_et_password) as TextInputEditText
-        lRegisterLink = findViewById<View>(R.id.activity_login_textview_register) as TextView
-        lLoginButton = findViewById<View>(R.id.activity_login_btn_login) as AppCompatButton
-        lContentViewGroup = findViewById<View>(R.id.activity_login_vg_container) as ViewGroup
+        this.imageLogo = findViewById<View>(R.id.activity_login_logo_petrolnav) as AppCompatImageView
+        this.emailEditText = findViewById<View>(R.id.activity_login_et_email) as TextInputEditText
+        this.passwordEditText = findViewById<View>(R.id.activity_login_et_password) as TextInputEditText
+        this.registerLink = findViewById<View>(R.id.activity_login_textview_register) as TextView
+        this.loginButton = findViewById<View>(R.id.activity_login_btn_login) as AppCompatButton
+        this.contentViewGroup = findViewById<View>(R.id.activity_login_vg_container) as ViewGroup
 
-        lLoginButton!!.setOnClickListener { login() }
-        lRegisterLink!!.setOnClickListener {
+        this.loginButton!!.setOnClickListener { login() }
+        this.registerLink!!.setOnClickListener {
             //start the register Activity
             val intent = Intent(applicationContext, RegisterActivity::class.java)
             startActivityForResult(intent, REQUEST_SIGNUP)
@@ -57,11 +57,11 @@ class LoginActivity : AppCompatActivity() {
         }
 
         //validation successful
-        lLoginButton!!.isEnabled = false
+        this.loginButton!!.isEnabled = false
 
         //show loading
-        val email = lEmailEditText!!.text.toString()
-        val password = lPasswordEditText!!.text.toString()
+        val email = emailEditText!!.text.toString()
+        val password = passwordEditText!!.text.toString()
 
         //Authentication logic
 
@@ -88,33 +88,33 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun onLoginSuccess() {
-        lLoginButton!!.isEnabled = true
+        this.loginButton!!.isEnabled = true
         val intent = Intent(applicationContext, MainActivity::class.java)
         startActivityForResult(intent, REQUEST_LOGIN)
     }
 
     fun onLoginFailed() {
         Toast.makeText(baseContext, "Login Failed", Toast.LENGTH_LONG).show()
-        lLoginButton!!.isEnabled = true
+        this.loginButton!!.isEnabled = true
     }
 
     fun validate(): Boolean {
         var valid = true
-        val email = lEmailEditText!!.text.toString()
-        val password = lPasswordEditText!!.text.toString()
+        val email = this.emailEditText!!.text.toString()
+        val password = this.passwordEditText!!.text.toString()
 
         if (email.isEmpty()) {
-            lEmailEditText!!.error = "Please enter username"
+            this.emailEditText!!.error = "Please enter username"
             valid = false
         } else {
-            lEmailEditText!!.error = null
+            this.emailEditText!!.error = null
         }
 
         if (password.isEmpty() || password.length < 4 || password.length > 10) {
-            lPasswordEditText!!.error = "Please enter password"
+            this.passwordEditText!!.error = "Please enter password"
             valid = false
         } else {
-            lPasswordEditText!!.error = null
+            this.passwordEditText!!.error = null
         }
         return valid
     }

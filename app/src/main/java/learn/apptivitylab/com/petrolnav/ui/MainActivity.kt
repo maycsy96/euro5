@@ -13,49 +13,36 @@ import android.view.View
 import android.view.ViewGroup
 import learn.apptivitylab.com.petrolnav.R
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
-import android.location.Location;
 /**
  * Created by apptivitylab on 09/01/2018.
  */
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    private var mDrawerLayout: DrawerLayout? = null
-    private var mContentViewGroup: ViewGroup? = null
-    private var mNavigationView: NavigationView? = null
-    private var mToolbar: Toolbar? = null
+    private var drawerLayout: DrawerLayout? = null
+    private var contentViewGroup: ViewGroup? = null
+    private var navigationView: NavigationView? = null
+    private var toolbar: Toolbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mDrawerLayout = findViewById<View>(R.id.activity_main_drawer_layout) as DrawerLayout
-        mContentViewGroup = findViewById<View>(R.id.activity_main_vg_container) as ViewGroup
-        mNavigationView = findViewById<View>(R.id.activity_main_navigation_view) as NavigationView
-        mToolbar = findViewById<View>(R.id.activity_main_toolbar) as Toolbar
+        this.drawerLayout = findViewById<View>(R.id.activity_main_drawer_layout) as DrawerLayout
+        this.contentViewGroup = findViewById<View>(R.id.activity_main_vg_container) as ViewGroup
+        this.navigationView = findViewById<View>(R.id.activity_main_navigation_view) as NavigationView
+        this.toolbar = findViewById<View>(R.id.activity_main_toolbar) as Toolbar
 
         //Prepare ActionBar
-        setSupportActionBar(mToolbar)
+        setSupportActionBar(toolbar)
 
         //Create ActionBarDrawer Toggle
-        val drawerToggle = ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.openDrawer, R.string.closeDrawer)
-        mDrawerLayout!!.addDrawerListener(drawerToggle)
+        val drawerToggle = ActionBarDrawerToggle(this, this.drawerLayout, this.toolbar, R.string.openDrawer, R.string.closeDrawer)
+        this.drawerLayout!!.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
 
         //prepare menu for navigationView
-        mNavigationView!!.inflateMenu(R.menu.navigation_drawer_menu)
-        mNavigationView!!.setNavigationItemSelectedListener(this)
+        this.navigationView!!.inflateMenu(R.menu.navigation_drawer_menu)
+        this.navigationView!!.setNavigationItemSelectedListener(this)
 
         //Set a fragment as the default content fragment
         supportFragmentManager
@@ -75,7 +62,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val id = item.itemId
         //switch to red,green,blue fragment
         changeFragment(id)
-        mDrawerLayout!!.closeDrawers()
+        this.drawerLayout!!.closeDrawers()
         return false
     }
 
