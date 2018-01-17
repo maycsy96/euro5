@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val id = item.itemId
         changeFragment(id)
         this.drawer_layout?.closeDrawers()
-        return false
+        return true
     }
 
     private fun changeFragment(id: Int) {
