@@ -137,7 +137,9 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
                     this
             )
         } else {
-            Snackbar.make(view!!, "GoogleApiClient is not ready yet", Snackbar.LENGTH_LONG).show()
+            this.view?.let{
+                Snackbar.make(it, "GoogleApiClient is not ready yet", Snackbar.LENGTH_LONG).show()
+            }
         }
     }
 
@@ -165,7 +167,9 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
 
                 }else{
                     this.googleMap?.isMyLocationEnabled = false
-                    Snackbar.make(view!!, "Unable to show current location - permission is required", Snackbar.LENGTH_LONG).show()
+                    this.view?.let{
+                        Snackbar.make(it, "Unable to show current location - permission is required", Snackbar.LENGTH_LONG).show()
+                    }
                 }
             }
         }
