@@ -2,14 +2,9 @@ package learn.apptivitylab.com.petrolnav.ui
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.AppCompatButton
-import android.support.v7.widget.AppCompatEditText
-import android.support.v7.widget.AppCompatImageView
 import android.util.Log
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_register.*
 import learn.apptivitylab.com.petrolnav.R
 
 /**
@@ -18,28 +13,12 @@ import learn.apptivitylab.com.petrolnav.R
 
 class RegisterActivity : AppCompatActivity() {
 
-    private var imageLogo: AppCompatImageView? = null
-    private var nameEditText: AppCompatEditText? = null
-    private var emailEditText: AppCompatEditText? = null
-    private var passwordEditText: AppCompatEditText? = null
-    private var loginLink: TextView? = null
-    private var registerButton: AppCompatButton? = null
-    private var contentViewGroup: ViewGroup? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        this.imageLogo = findViewById<View>(R.id.activity_register_logo_petrolnav) as AppCompatImageView
-        this.nameEditText = findViewById<View>(R.id.activity_register_et_name) as AppCompatEditText
-        this.emailEditText = findViewById<View>(R.id.activity_register_et_email) as AppCompatEditText
-        this.passwordEditText = findViewById<View>(R.id.activity_register_et_password) as AppCompatEditText
-        this.loginLink = findViewById<View>(R.id.activity_register_textview_login) as TextView
-        this.registerButton = findViewById<View>(R.id.activity_register_btn_register) as AppCompatButton
-        this.contentViewGroup = findViewById<View>(R.id.activity_register_vg_container) as ViewGroup
-
-        this.registerButton!!.setOnClickListener { register() }
-        this.loginLink!!.setOnClickListener {
+        this.registerButton.setOnClickListener { register() }
+        this.loginTextView.setOnClickListener {
             //finish this registration screen and return to login activity
             finish()
         }
@@ -51,10 +30,10 @@ class RegisterActivity : AppCompatActivity() {
             onRegisterFailed()
             return
         }
-        this.registerButton!!.isEnabled = false
-        val name = this.nameEditText!!.text.toString()
-        val email = this.emailEditText!!.text.toString()
-        val password = this.passwordEditText!!.text.toString()
+        this.registerButton.isEnabled = false
+        val name = this.registerNameEditText.text.toString()
+        val email = this.registerEmailEditText.text.toString()
+        val password = this.registerPasswordEditText.text.toString()
 
         //registration logic
 
@@ -62,7 +41,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     fun onRegisterSuccess() {
-        this.registerButton!!.isEnabled = true
+        this.registerButton.isEnabled = true
         /*
         setResult(RESULT_OK);
         asd//should be finish this activity and return to login screen
@@ -73,35 +52,35 @@ class RegisterActivity : AppCompatActivity() {
     fun onRegisterFailed() {
         Toast.makeText(baseContext, "Register failed", Toast.LENGTH_LONG).show()
 
-        this.registerButton!!.isEnabled = true
+        this.registerButton.isEnabled = true
     }
 
     fun validate(): Boolean {
         var valid = true
 
-        val name = this.nameEditText!!.text.toString()
-        val email = this.emailEditText!!.text.toString()
-        val password = this.passwordEditText!!.text.toString()
+        val name = this.registerNameEditText.text.toString()
+        val email = this.registerEmailEditText.text.toString()
+        val password = this.registerPasswordEditText.text.toString()
 
         if (name.isEmpty() || name.length < 3) {
-            this.nameEditText!!.error = "at least 3 characters"
+            this.registerNameEditText.error = "at least 3 characters"
             valid = false
         } else {
-            this.nameEditText!!.error = null
+            this.registerNameEditText.error = null
         }
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            this.emailEditText!!.error = "enter a valid email address"
+            this.registerEmailEditText.error = "enter a valid email address"
             valid = false
         } else {
-            this.emailEditText!!.error = null
+            this.registerEmailEditText.error = null
         }
 
         if (password.isEmpty() || password.length < 4 || password.length > 10) {
-            this.passwordEditText!!.error = "between 4 and 10 alphanumeric characters"
+            this.registerPasswordEditText.error = "between 4 and 10 alphanumeric characters"
             valid = false
         } else {
-            this.passwordEditText!!.error = null
+            this.registerPasswordEditText.error = null
         }
 
         return valid

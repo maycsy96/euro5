@@ -14,7 +14,7 @@ import learn.apptivitylab.com.petrolnav.R
 class RecentFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_map_display, container, false)
+        return inflater.inflate(R.layout.fragment_recent, container, false)
 
     }
 

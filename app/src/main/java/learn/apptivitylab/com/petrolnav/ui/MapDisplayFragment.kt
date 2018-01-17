@@ -4,7 +4,6 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
@@ -23,6 +22,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import kotlinx.android.synthetic.main.fragment_map_display.*
 
 
 import learn.apptivitylab.com.petrolnav.R
@@ -37,24 +37,17 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
     private var mapFragment: SupportMapFragment? = null
     private var googleMap: GoogleMap? = null
     private var fusedLocationClient: FusedLocationProviderClient? =null
-
     private var locationMarker: Marker? = null
-
-    //private var mSearchDestination: android.support.v7.SearchView?= null
-    private var centerMapOnUserBtn: FloatingActionButton? = null
-
-    //not UI member
     private var currentUserLocation: LatLng?= null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var rootView = inflater.inflate(R.layout.fragment_map_display, container, false)
-        this.centerMapOnUserBtn = rootView.findViewById<View>(R.id.fragment_map_display_btn_center_user) as FloatingActionButton
 
         if (savedInstanceState == null) {
             setupGoogleMapsFragment();
         } else {
             //get supportmapfragment and request notification when the map is ready to use
-            this.mapFragment = activity!!.supportFragmentManager.findFragmentById(R.id.fragment_map_display_vg_container) as SupportMapFragment
+            this.mapFragment = activity!!.supportFragmentManager.findFragmentById(R.id.mapViewgroupContainer) as SupportMapFragment
         }
         return rootView
     }
@@ -67,7 +60,7 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
             buildGoogleApiClient()
         }
         this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
-        this.centerMapOnUserBtn!!.setOnClickListener{
+        this.centerUserButton.setOnClickListener{
             centerMapOnUserLocation()
         }
     }
@@ -93,7 +86,7 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
 
         activity!!.supportFragmentManager
                 .beginTransaction()
-                .add(R.id.fragment_map_display_vg_container, mapFragment)
+                .add(R.id.mapViewgroupContainer, mapFragment)
                 .commit()
 
         this.mapFragment!!.getMapAsync { googleMap ->
