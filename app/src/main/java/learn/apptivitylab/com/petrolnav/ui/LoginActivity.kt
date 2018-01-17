@@ -21,7 +21,6 @@ class LoginActivity : AppCompatActivity() {
 
         this.loginButton.setOnClickListener { login() }
         this.registerTextView.setOnClickListener {
-            //start the register Activity
             val intent = Intent(applicationContext, RegisterActivity::class.java)
             startActivityForResult(intent, REQUEST_SIGNUP)
         }
@@ -43,7 +42,6 @@ class LoginActivity : AppCompatActivity() {
 
         android.os.Handler().postDelayed(
                 {
-                    //On complete call either onLoginSuccess or onLoginFailed
                     onLoginSuccess()
                 }, 3000
         )
@@ -59,7 +57,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        //disable going back to the Main Activity
         moveTaskToBack(true)
     }
 

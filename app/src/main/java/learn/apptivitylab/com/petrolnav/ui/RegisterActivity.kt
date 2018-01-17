@@ -41,10 +41,6 @@ class RegisterActivity : AppCompatActivity() {
 
     fun onRegisterSuccess() {
         this.registerButton.isEnabled = true
-        /*
-        setResult(RESULT_OK);
-        //should be finish this activity and return to login screen
-        */
         finish()
     }
 

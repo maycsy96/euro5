@@ -118,13 +118,9 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
 
     private fun startLocationUpdates() {
         if (this.googleApiClient?.isConnected == true) {
-
-            //Requesting runtime location permission. Only for android build 6.0 version above
-            //checking build version equals or more than the marshmallow build version (6.0)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 this.context?.let {
                     if (ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        //request for permission
                         ActivityCompat.requestPermissions(it as Activity, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 100)
                         return
                     }
@@ -175,25 +171,17 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
         }
     }
 
-    //region GoogleApiClient.ConnectionCallbacks
-    //This callback will have a public function onConnected() which will be called whenever device is connected and disconnected.
     override fun onConnected(bundle: Bundle?) {
         startLocationUpdates()
     }
 
     override fun onConnectionSuspended(i: Int) {
     }
-    //endregion
 
-
-    //region GoogleApiClient.OnConnectionFailedListener
-    //Provides callbacks for scenarios that result in a failed attempt to connect the client to the service. Whenever connection is failed onConnectionFailed() will be called.
-    override fun onConnectionFailed(connectionResult: ConnectionResult) {
+   override fun onConnectionFailed(connectionResult: ConnectionResult) {
     }
-    //endregion
 
-    //LocationListener: This callback will be called whenever there is change in location of device. Function onLocationChanged() will be called.
-    override fun onLocationChanged(location: Location) {
+   override fun onLocationChanged(location: Location) {
         val userLatLng = LatLng(location.latitude, location.longitude)
         currentUserLocation = userLatLng
         if(this.locationMarker ==null){
