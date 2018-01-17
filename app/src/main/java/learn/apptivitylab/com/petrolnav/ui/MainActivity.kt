@@ -46,9 +46,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun changeFragment(id: Int) {
         var displayFragment: Fragment? = null
         when (id) {
-            R.id.nav_recent -> {
-                Log.d(TAG, "Show Recent History")
-                displayFragment = RecentFragment()
+            R.id.nav_search -> {
+                Log.d(TAG, "Show Search")
+                displayFragment = SearchFragment()
             }
             R.id.nav_petrol_price -> Log.d(TAG, "Show Petrol Price")
             R.id.nav_preference -> {

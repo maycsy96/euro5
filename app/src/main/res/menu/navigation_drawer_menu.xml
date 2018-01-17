@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/nav_recent"
+        android:id="@+id/nav_search"
         android:icon="@drawable/ic_history_black_24dp"
         android:title="Recent"
         app:showAsAction="collapseActionView|ifRoom"/>
