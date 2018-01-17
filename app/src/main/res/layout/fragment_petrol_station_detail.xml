@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    android:paddingTop="24dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/petrol_nav_launcher"
+        android:maxWidth="120dp"
+        android:maxHeight="120dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:layout_gravity="center"
+        android:layout_marginBottom="24dp"
+        />
+    <TextView
+        android:id="@+id/petrolStationNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Petrol Station Name"
+        android:gravity="center"
+        />
+    <TextView
+        android:id="@+id/petrolStationBrandTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Petrol Station Brand"
+        android:gravity="center"
+        />
+    <TextView
+        android:id="@+id/petrolStationAddressTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Petrol Station Address"
+        android:gravity="center"
+        />
+    <TextView
+        android:id="@+id/distanceTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Distance from user location to petrol Station location"
+        android:gravity="center"
+        />
+
+</LinearLayout>
