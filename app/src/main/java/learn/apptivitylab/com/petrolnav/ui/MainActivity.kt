@@ -20,37 +20,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //Prepare ActionBar
         setSupportActionBar(toolbar)
 
-        //Create ActionBarDrawer Toggle
         val drawerToggle = ActionBarDrawerToggle(this, this.drawer_layout, this.toolbar, R.string.openDrawer, R.string.closeDrawer)
         this.drawer_layout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
 
-        //prepare menu for navigationView
         this.navigationView.inflateMenu(R.menu.navigation_drawer_menu)
         this.navigationView.setNavigationItemSelectedListener(this)
 
-        //Set a fragment as the default content fragment
         supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.mainViewgroupContainer, MapDisplayFragment())
                 .commit()
 
-        /*val testObject = TestClass(15)
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.putExtra("String Key")
-        startActivity(intent)*/
-
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        //handle navigation view item click
         val id = item.itemId
-        //switch to red,green,blue fragment
         changeFragment(id)
-        this.drawer_layout!!.closeDrawers()
+        this.drawer_layout?.closeDrawers()
         return false
     }
 
@@ -68,11 +57,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_log_out -> Log.d(TAG, "Show Log Out")
         }
-        //mean add the view onto the main container view.
 
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.registerViewgroupContainer, displayFragment)
+                .replace(R.id.mainViewgroupContainer, displayFragment)
                 .addToBackStack(null)
                 .commit()
 

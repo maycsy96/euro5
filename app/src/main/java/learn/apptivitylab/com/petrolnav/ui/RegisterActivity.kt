@@ -19,7 +19,6 @@ class RegisterActivity : AppCompatActivity() {
 
         this.registerButton.setOnClickListener { register() }
         this.loginTextView.setOnClickListener {
-            //finish this registration screen and return to login activity
             finish()
         }
     }
@@ -44,7 +43,7 @@ class RegisterActivity : AppCompatActivity() {
         this.registerButton.isEnabled = true
         /*
         setResult(RESULT_OK);
-        asd//should be finish this activity and return to login screen
+        //should be finish this activity and return to login screen
         */
         finish()
     }

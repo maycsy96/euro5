@@ -7,7 +7,7 @@ data class PetrolStation(
         var id:Int,
         var name:String,
         var address:String,
-        var operatingHours: List<OperatingHours>?,
+        var operatingHours: List<OperatingHour>?,
         var petrol:List<Petrol>?,
         var petrolStationBrand: PetrolStationBrand?) {
 

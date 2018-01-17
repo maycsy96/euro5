@@ -29,19 +29,15 @@ class LoginActivity : AppCompatActivity() {
 
     fun login() {
         Log.d(TAG, "Login")
-        //validation of login information (making sure username and password are filled)
         if (!validate()) {
-            //fail validation
             onLoginFailed()
             return
         }
 
-        //validation successful
         this.loginButton.isEnabled = false
 
-        //show loading
         val email = emailEditText.text.toString()
-        val password = passwordEditText!!.text.toString()
+        val password = passwordEditText.text.toString()
 
         //Authentication logic
 
@@ -69,9 +65,6 @@ class LoginActivity : AppCompatActivity() {
 
     fun onLoginSuccess() {
         this.loginButton.isEnabled = true
-        //this.btn_login?.let {
-        //it.isEnabled = true
-
         val intent = Intent(applicationContext, MainActivity::class.java)
         startActivityForResult(intent, REQUEST_LOGIN)
     }

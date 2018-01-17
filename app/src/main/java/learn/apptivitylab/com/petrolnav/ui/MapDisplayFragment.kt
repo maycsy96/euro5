@@ -1,5 +1,7 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.app.Activity
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
@@ -8,7 +10,6 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-//import android.view.LayoutInflater
 import android.view.*
 
 
@@ -46,7 +47,6 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
         if (savedInstanceState == null) {
             setupGoogleMapsFragment();
         } else {
-            //get supportmapfragment and request notification when the map is ready to use
             this.mapFragment = activity!!.supportFragmentManager.findFragmentById(R.id.mapViewgroupContainer) as SupportMapFragment
         }
         return rootView
@@ -55,32 +55,36 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //Create an instance of GoogleAPIClient
         if (this.googleApiClient == null) {
             buildGoogleApiClient()
         }
-        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
+
+        this.context?.let {
+            this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(it)
+        }
+
         this.centerUserButton.setOnClickListener{
             centerMapOnUserLocation()
         }
     }
 
     private fun centerMapOnUserLocation() {
-        //this if condition is for checking "if there is no user location, this button will not work instead of crash the app"
         if(currentUserLocation != null){
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentUserLocation, 16f)
-            this.googleMap!!.moveCamera(cameraUpdate)
+            this.googleMap?.moveCamera(cameraUpdate)
         }else{
             return
         }
     }
 
     private fun buildGoogleApiClient(){
-        this.googleApiClient = GoogleApiClient.Builder(context!!, this, this)
-                .addApi(LocationServices.API)
-                .build()
+        this.context?.let {
+            this.googleApiClient = GoogleApiClient.Builder(it, this, this)
+                    .addApi(LocationServices.API)
+                    .build()
+        }
     }
-    //putting the google map into the map fragment
+
     private fun setupGoogleMapsFragment() {
         this.mapFragment = SupportMapFragment.newInstance()
 
@@ -89,11 +93,11 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
                 .add(R.id.mapViewgroupContainer, mapFragment)
                 .commit()
 
-        this.mapFragment!!.getMapAsync { googleMap ->
+        this.mapFragment?.getMapAsync { googleMap ->
             this.googleMap = googleMap
             val officeLatLng = LatLng(4.2105, 101.9758)
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(officeLatLng, 6f)
-            this.googleMap!!.moveCamera(cameraUpdate)
+            this.googleMap?.moveCamera(cameraUpdate)
         }
     }
 
@@ -113,24 +117,24 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
     }
 
     private fun startLocationUpdates() {
-        if (this.googleApiClient!!.isConnected) {
+        if (this.googleApiClient?.isConnected == true) {
 
             //Requesting runtime location permission. Only for android build 6.0 version above
             //checking build version equals or more than the marshmallow build version (6.0)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (ActivityCompat.checkSelfPermission(this.context!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    //request for permission
-                    ActivityCompat.requestPermissions(this.activity!!, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 100)
-                    return
+                this.context?.let {
+                    if (ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        //request for permission
+                        ActivityCompat.requestPermissions(it as Activity, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 100)
+                        return
+                    }
                 }
             }
 
-            //create location request object
             val locationRequest = LocationRequest()
             locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             locationRequest.interval = 5000
 
-            //request location updates from FusedLocationApi
             LocationServices.FusedLocationApi.requestLocationUpdates(
                     this.googleApiClient,
                     locationRequest,
@@ -141,7 +145,6 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
         }
     }
 
-    //stop updating the location
     private fun stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 this.googleApiClient,
@@ -154,14 +157,18 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
         when(requestCode){
             LOCATION_REQUEST_CODE -> {
                 if(grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    if(ContextCompat.checkSelfPermission(this.context!!, android.Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
-                        if(this.googleApiClient==null){
-                            buildGoogleApiClient()
+
+                    this.context?.let {
+                        if(ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
+                            if(this.googleApiClient==null){
+                                buildGoogleApiClient()
+                            }
+                        this.googleMap?.isMyLocationEnabled = true
                         }
-                        this.googleMap!!.isMyLocationEnabled = true
                     }
+
                 }else{
-                    this.googleMap!!.isMyLocationEnabled = false
+                    this.googleMap?.isMyLocationEnabled = false
                     Snackbar.make(view!!, "Unable to show current location - permission is required", Snackbar.LENGTH_LONG).show()
                 }
             }
@@ -192,13 +199,13 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
         if(this.locationMarker ==null){
             val markerOptions= MarkerOptions().position(userLatLng)
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-            this.locationMarker = googleMap!!.addMarker(markerOptions)
+            this.locationMarker = googleMap?.addMarker(markerOptions)
         }else{
-            this.locationMarker!!.position=userLatLng
+            this.locationMarker?.position=userLatLng
         }
 
         val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
-        this.googleMap!!.moveCamera(cameraUpdate)
+        this.googleMap?.moveCamera(cameraUpdate)
     }
 
     companion object {
