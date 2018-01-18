@@ -1,5 +1,6 @@
 package learn.apptivitylab.com.petrolnav.model
 
+import android.os.Parcel
 import com.google.android.gms.maps.model.LatLng
 import org.json.JSONObject
 
@@ -24,5 +25,4 @@ data class PetrolStation(var petrolStationId : String? = null,
         this.petrolStationAddress = jsonObject.optString("Address")
         this.petrolStationLatLng = LatLng(jsonObject.optDouble("Latitude"),jsonObject.optDouble("Longitude"))
     }
-
 }

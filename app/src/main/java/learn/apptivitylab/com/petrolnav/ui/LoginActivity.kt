@@ -23,6 +23,7 @@ class LoginActivity : AppCompatActivity() {
         this.registerTextView.setOnClickListener {
             val intent = Intent(applicationContext, RegisterActivity::class.java)
             startActivityForResult(intent, REQUEST_SIGNUP)
+            finish()
         }
     }
 
@@ -64,6 +65,7 @@ class LoginActivity : AppCompatActivity() {
         this.loginButton.isEnabled = true
         val intent = Intent(applicationContext, MainActivity::class.java)
         startActivityForResult(intent, REQUEST_LOGIN)
+        finish()
     }
 
     fun onLoginFailed() {

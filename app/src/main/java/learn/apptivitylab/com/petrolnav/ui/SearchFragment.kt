@@ -30,7 +30,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
         val petrolStationListAdapter = SearchAdapter()
         petrolStationListAdapter.setStationListener(this)
         petrolStationListRecyclerView.adapter = petrolStationListAdapter
-        //petrolStationListAdapter.updateDataSet()
+        //petrolStationListAdapter.updateView()
 
 
     }
