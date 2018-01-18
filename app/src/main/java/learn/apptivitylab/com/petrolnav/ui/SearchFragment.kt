@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import learn.apptivitylab.com.petrolnav.R
 import kotlinx.android.synthetic.main.fragment_search.*
+import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
 import learn.apptivitylab.com.petrolnav.model.PetrolStation
 
 /**
@@ -31,7 +32,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
         val petrolStationListAdapter = SearchAdapter()
         petrolStationListAdapter.setStationListener(this)
         petrolStationListRecyclerView.adapter = petrolStationListAdapter
-        //petrolStationListAdapter.updateDataSet(MockDataLoader.loadStations(context!!))
+        petrolStationListAdapter.updateDataSet(PetrolStationLoader.loadJSONStations(context!!))
     }
 
     override fun onStationSelected(petrolStation: PetrolStation) {

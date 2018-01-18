@@ -15,7 +15,6 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var petrolStationsList : ArrayList<PetrolStation> = ArrayList()
     private lateinit var petrolStationListener:StationViewHolder.onSelectStationListener
 
-
     fun setStationListener(petrolStationListener: StationViewHolder.onSelectStationListener) {
         this.petrolStationListener = petrolStationListener
     }
@@ -64,15 +63,9 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun setStation(station: PetrolStation) {
             this.petrolStation = station
-
-            updateViewHolder()
-        }
-
-        private fun updateViewHolder() {
             petrolStationName.text = petrolStation?.petrolStationName
             petrolStationBrand.text = petrolStation?.petrolStationBrand
             petrolStationAddress.text = petrolStation?.petrolStationAddress
         }
     }
-
 }
