@@ -39,19 +39,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-        changeFragment(id)
+        navigateTo(id)
         this.drawer_layout?.closeDrawers()
         return false
     }
 
-    private fun changeFragment(id: Int) {
+    private fun navigateTo(id: Int) {
         var displayFragment: Fragment? = null
         when (id) {
             R.id.nav_search -> {
                 Log.d(TAG, "Show Search")
-                displayFragment = SearchFragment()
-//                val searchIntent = Intent(this, SearchActivity::class.java)
-//                startActivity(searchIntent)
+                val searchIntent = Intent(this, SearchActivity::class.java)
+                startActivity(searchIntent)
             }
             R.id.nav_petrol_price -> Log.d(TAG, "Show Petrol Price")
             R.id.nav_preference -> {
@@ -61,12 +60,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_log_out -> Log.d(TAG, "Show Log Out")
         }
 
-        supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.mainViewgroupContainer, displayFragment)
-                .addToBackStack(null)
-                .commit()
-
+        if(displayFragment != null) {
+            supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.mainViewgroupContainer, displayFragment)
+                    .addToBackStack(null)
+                    .commit()
+        }
     }
 
     companion object {
