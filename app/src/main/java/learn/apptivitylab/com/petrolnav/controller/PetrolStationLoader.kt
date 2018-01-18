@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.android.gms.maps.model.LatLng
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.model.PetrolStation
+import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -13,25 +14,22 @@ import java.io.InputStreamReader
  */
 class PetrolStationLoader {
 
-    fun loadStations (context: Context) : ArrayList<PetrolStation> {
-        val listOfStations: ArrayList<PetrolStation> = ArrayList()
+    companion object {
+        private val TAG = "PetrolStationLoader"
 
-        val inputStream : InputStream = context.resources.openRawResource(R.raw.stations)
-        val reader : BufferedReader = BufferedReader(InputStreamReader(inputStream))
+        fun loadJSONStations (context:Context):PetrolStation{
+            val inputStream : InputStream = context.resources.openRawResource(R.raw.stations)
+            val reader = BufferedReader(InputStreamReader(inputStream))
+            val line : String?= null
+            var jsonObject = JSONObject()
+            var petrolStation = PetrolStation()
 
-        reader.forEachLine {
-            val tokens : List<String> = it.split(";")
-
-            val stationID = tokens[0]
-            val stationName = tokens[1]
-            val stationBrand = tokens[2]
-            val stationLatLng = LatLng(tokens[3].toDouble(), tokens[4].toDouble())
-
-            val station : PetrolStation = PetrolStation(stationID, stationName, stationBrand, stationLatLng)
-            listOfStations.add(station)
+            reader.forEachLine {
+                jsonObject = JSONObject(it)
+                petrolStation = PetrolStation(jsonObject)
+            }
+            return petrolStation
         }
-
-        return listOfStations
     }
 
 }
