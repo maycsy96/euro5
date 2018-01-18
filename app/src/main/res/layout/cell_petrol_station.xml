@@ -7,25 +7,26 @@
     android:padding="16dp"
     android:background="@android:color/white">
     <TextView
-        android:id="@+id/cell_petrol_station_name"
+        android:id="@+id/petrolStationNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge" 
-        android:text ="Petrol Station name: SHELL"
+        android:text ="Petrol Station name: IKEA"
         android:drawableLeft="@drawable/ic_my_location_black_24dp"
         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/cell_petrol_station_address"
+        android:id="@+id/petrolStationBrandTextView"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Station address at Subang Jaya and Glenmarie"
+        android:text="Petrol Station Brand : SHELL"
         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/cell_petrol_station_distance"
+        android:id="@+id/petrolStationAddressTextView"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Station distance from user location in km"
+        android:text="Station address at Subang Jaya and Glenmarie"
         />
+
 </LinearLayout>

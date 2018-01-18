@@ -1,5 +1,6 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -19,6 +20,8 @@ class RegisterActivity : AppCompatActivity() {
 
         this.registerButton.setOnClickListener { register() }
         this.loginTextView.setOnClickListener {
+            val intent = Intent(applicationContext, LoginActivity::class.java)
+            startActivity(intent)
             finish()
         }
     }

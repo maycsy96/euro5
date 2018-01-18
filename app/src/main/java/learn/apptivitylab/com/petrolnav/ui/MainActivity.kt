@@ -1,5 +1,6 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
@@ -38,17 +39,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-        changeFragment(id)
+        navigateTo(id)
         this.drawer_layout?.closeDrawers()
         return true
     }
 
-    private fun changeFragment(id: Int) {
+    private fun navigateTo(id: Int) {
         var displayFragment: Fragment? = null
         when (id) {
-            R.id.nav_recent -> {
-                Log.d(TAG, "Show Recent History")
-                displayFragment = RecentFragment()
+            R.id.nav_search -> {
+                Log.d(TAG, "Show Search")
+                displayFragment = SearchFragment()
             }
             R.id.nav_petrol_price -> Log.d(TAG, "Show Petrol Price")
             R.id.nav_preference -> {
@@ -58,13 +59,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_log_out -> Log.d(TAG, "Show Log Out")
         }
 
-        supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.mainViewgroupContainer, displayFragment)
-                .addToBackStack(null)
-                .commit()
-
-
+        if(displayFragment != null) {
+            supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.mainViewgroupContainer, displayFragment)
+                    .addToBackStack(null)
+                    .commit()
+        }
     }
 
     companion object {
