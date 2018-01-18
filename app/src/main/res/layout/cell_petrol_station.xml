@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@android:color/white">
+    <TextView
+        android:id="@+id/cell_petrol_station_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge" 
+        android:text ="Petrol Station name: SHELL"
+        android:drawableLeft="@drawable/ic_my_location_black_24dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cell_petrol_station_address"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Station address at Subang Jaya and Glenmarie"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cell_petrol_station_distance"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Station distance from user location in km"
+        />
+</LinearLayout>

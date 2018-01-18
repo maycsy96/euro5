@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import learn.apptivitylab.com.petrolnav.R
+import kotlinx.android.synthetic.main.fragment_preferences.*
 
 /**
  * Created by apptivitylab on 12/01/2018.

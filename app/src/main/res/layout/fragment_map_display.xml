@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    android:id="@+id/fragment_map_display_relative_layout"
+    android:id="@+id/mapRelativeLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -18,9 +18,9 @@
             <android.support.v7.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/fragment_map_display_toolbar">
+                android:id="@+id/mapToolbar">
                 <android.support.v7.widget.SearchView
-                    android:id="@+id/fragment_map_display_search_view"
+                    android:id="@+id/locationSearchView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:queryHint="Where are you going?">
@@ -28,10 +28,19 @@
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
         <FrameLayout
-            android:id="@+id/fragment_map_display_vg_container"
+            android:id="@+id/mapViewgroupContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/centerUserButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|bottom"
+                android:layout_marginBottom="4dp"
+                android:layout_marginRight="4dp"
+                android:src="@drawable/ic_my_location_black_24dp"
+                />
         </FrameLayout>
     </android.support.design.widget.CoordinatorLayout>
 </RelativeLayout>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_preferences_vg_container"
+    android:id="@+id/registerViewgroupContainer"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -21,7 +21,7 @@
             android:textColor="@android:color/white"
             />
         <TextView
-            android:id="@+id/fragment_preferences_tv_petrol_station_brands"
+            android:id="@+id/petrolStationBrandsTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Petrol Station Brands:"
@@ -33,32 +33,32 @@
             />
 
         <CheckBox
-            android:id="@+id/fragment_preferences_cb_shell"
+            android:id="@+id/shellCheckbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Shell"
             />
 
         <CheckBox
-            android:id="@+id/fragment_preferences_cb_petronas"
+            android:id="@+id/petronasCheckbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Petronas" />
 
         <CheckBox
-            android:id="@+id/fragment_preferences_cb_bhp"
+            android:id="@+id/bhpetrolCheckbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="BHPetrol" />
 
         <CheckBox
-            android:id="@+id/fragment_preferences_cb_caltex"
+            android:id="@+id/caltexCheckbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Caltex" />
 
         <TextView
-            android:id="@+id/fragment_preferences_tv_petrol_types"
+            android:id="@+id/petrolTypeTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Petrol Type:"
@@ -74,25 +74,25 @@
             android:paddingLeft="4dp"
             android:paddingTop="4dp">
             <RadioButton
-                android:id="@+id/fragment_preferences_rb_95"
+                android:id="@+id/ron95RadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="RON 95" />
 
             <RadioButton
-                android:id="@+id/fragment_preferences_rb_97"
+                android:id="@+id/ron97RadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Ron 97" />
 
             <RadioButton
-                android:id="@+id/fragment_preferences_rb_diesel"
+                android:id="@+id/dieselRadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Diesel" />
 
             <RadioButton
-                android:id="@+id/fragment_preferences_rb_euro5"
+                android:id="@+id/euro5RadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Diesel EURO5" />
@@ -107,7 +107,7 @@
         android:padding="15dp">
 
         <Button
-            android:id="@+id/fragment_preferences_btn_save"
+            android:id="@+id/saveButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
