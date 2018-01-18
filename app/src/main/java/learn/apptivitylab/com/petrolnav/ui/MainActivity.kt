@@ -49,8 +49,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (id) {
             R.id.nav_search -> {
                 Log.d(TAG, "Show Search")
-                val searchIntent = Intent(this, SearchActivity::class.java)
-                startActivity(searchIntent)
+                displayFragment = SearchFragment()
             }
             R.id.nav_petrol_price -> Log.d(TAG, "Show Petrol Price")
             R.id.nav_preference -> {

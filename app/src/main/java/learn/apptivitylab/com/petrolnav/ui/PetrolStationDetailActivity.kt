@@ -1,6 +1,5 @@
 package learn.apptivitylab.com.petrolnav.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import learn.apptivitylab.com.petrolnav.R
@@ -8,15 +7,15 @@ import learn.apptivitylab.com.petrolnav.R
 /**
  * Created by apptivitylab on 18/01/2018.
  */
-class SearchActivity : AppCompatActivity(){
+class PetrolStationDetailActivity : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+        setContentView(R.layout.activity_petrol_station_detail)
 
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.searchViewgroupContainer,SearchFragment())
+                .replace(R.id.petrolStationDetailViewgroupContainer,SearchFragment())
                 .commit()
     }
 
