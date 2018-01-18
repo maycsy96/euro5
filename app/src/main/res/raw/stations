@@ -1,0 +1,50 @@
+[{
+  "petrol_station_id":"00001",
+  "petrol_station_name":"Damansara City",
+  "petrol_station_brand":"Shell",
+  "petrol_station_address":"56,Jalan Damai Jaya Kerana Kamu 47500 Selangor",
+  "petrol_station_latlng":"4.5,107.32"
+  },
+  {
+    "petrol_station_id":"00002",
+    "petrol_station_name":"Alexander The Great",
+    "petrol_station_brand":"BhPetrol",
+    "petrol_station_address":"99, War is On, Let Fight Hard 47500 Selangor",
+    "petrol_station_latlng":"4.5,107.32"
+  },
+  {
+    "petrol_station_id":"00003",
+    "petrol_station_name":"Subang First",
+    "petrol_station_brand":"Shell",
+    "petrol_station_address":"03, Asalkan Damai bolehLah 47500 Selangor",
+    "petrol_station_latlng":"4.5,107.32"
+  },
+  {
+    "petrol_station_id":"00004",
+    "petrol_station_name":"Gasing Hill",
+    "petrol_station_brand":"Shell",
+    "petrol_station_address":"23, Jalan Gasing Temple, Buntu 47500 Selangor",
+    "petrol_station_latlng":"4.5,107.32"
+  },
+  {
+    "petrol_station_id":"00005",
+    "petrol_station_name":"Subang Parade",
+    "petrol_station_brand":"Petronas",
+    "petrol_station_address":"64, SS1/2A Jalan Subang Jaya Selangor",
+    "petrol_station_latlng":"4.5,107.32"
+  },
+  {
+    "petrol_station_id":"00006",
+    "petrol_station_name":"LightUp",
+    "petrol_station_brand":"Shell",
+    "petrol_station_address":"11, Jalan LightUp/5A Asalkan 47500 Selangor",
+    "petrol_station_latlng":"4.5,107.32"
+  },
+  {
+    "petrol_station_id":"00007",
+    "petrol_station_name":"Holland City",
+    "petrol_station_brand":"Petronas",
+    "petrol_station_address":"56,Jalan Damai Holland Raja 47500 Selangor",
+    "petrol_station_latlng":"4.5,107.32"
+  }
+]
