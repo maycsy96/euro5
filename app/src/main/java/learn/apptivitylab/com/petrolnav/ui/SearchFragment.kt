@@ -1,5 +1,6 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
@@ -15,7 +16,7 @@ import learn.apptivitylab.com.petrolnav.model.PetrolStation
  * Created by apptivitylab on 09/01/2018.
  */
 
-class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStationListener, SwipeRefreshLayout.OnRefreshListener {
+class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStationListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_search, container, false)
@@ -31,19 +32,12 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
         petrolStationListAdapter.setStationListener(this)
         petrolStationListRecyclerView.adapter = petrolStationListAdapter
         //petrolStationListAdapter.updateView()
-
-
     }
 
-    override fun onRefresh() {
-        TODO("not implemented")
-    }
-    override fun onStationSelected(station: PetrolStation) {
-        TODO("not implemented")
-//        val itemDetailsIntent = Intent(context, StationDetailsActivity::class.java)
-//        itemDetailsIntent.putExtra("Selected Station", station)
-//
-//        startActivity(itemDetailsIntent)
+    override fun onStationSelected(petrolStation: PetrolStation) {
+        val intent = Intent(context, PetrolStationDetailActivity::class.java)
+        intent.putExtra("Selected Station", petrolStation)
+        startActivity(intent)
     }
 
     companion object {

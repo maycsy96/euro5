@@ -15,7 +15,7 @@ class PetrolStationDetailActivity : AppCompatActivity(){
 
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.petrolStationDetailViewgroupContainer,SearchFragment())
+                .replace(R.id.petrolStationDetailViewgroupContainer,PetrolStationDetailFragment())
                 .commit()
     }
 
