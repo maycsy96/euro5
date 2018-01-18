@@ -31,7 +31,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
         val petrolStationListAdapter = SearchAdapter()
         petrolStationListAdapter.setStationListener(this)
         petrolStationListRecyclerView.adapter = petrolStationListAdapter
-        //petrolStationListAdapter.updateView()
+        //petrolStationListAdapter.updateDataSet(MockDataLoader.loadStations(context!!))
     }
 
     override fun onStationSelected(petrolStation: PetrolStation) {

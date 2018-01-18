@@ -37,7 +37,7 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return petrolStationsList.size
     }
 
-    fun updateView(stations: ArrayList<PetrolStation>) {
+    fun updateDataSet(stations: ArrayList<PetrolStation>) {
         this.petrolStationsList.clear()
         this.petrolStationsList = stations
         this.notifyDataSetChanged()
@@ -71,6 +71,7 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private fun updateViewHolder() {
             petrolStationName.text = petrolStation?.petrolStationName
             petrolStationBrand.text = petrolStation?.petrolStationBrand
+            petrolStationAddress.text = petrolStation?.petrolStationAddress
         }
     }
 
