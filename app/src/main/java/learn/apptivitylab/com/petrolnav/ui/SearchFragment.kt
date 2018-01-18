@@ -32,6 +32,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
         petrolStationListRecyclerView.adapter = petrolStationListAdapter
         //petrolStationListAdapter.updateDataSet()
 
+
     }
 
     override fun onRefresh() {
