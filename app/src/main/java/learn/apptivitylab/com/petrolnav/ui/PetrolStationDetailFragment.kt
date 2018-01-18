@@ -33,10 +33,12 @@ class PetrolStationDetailFragment : Fragment(){
     companion object {
         private val PETROL_STATION_DETAIL = "petrol_station_detail"
 
-        fun newInstance(petrolStation: PetrolStation){
-            val fragment = PetrolStationDetailFragment
+        fun newInstance(petrolStation: PetrolStation):PetrolStationDetailFragment{
+            val fragment = PetrolStationDetailFragment()
             val args: Bundle = Bundle()
-            args.putParcelable(PETROL_STATION_DETAIL)
+            args.putParcelable(PETROL_STATION_DETAIL,petrolStation)
+            fragment.arguments = args
+            return fragment
         }
     }
 
