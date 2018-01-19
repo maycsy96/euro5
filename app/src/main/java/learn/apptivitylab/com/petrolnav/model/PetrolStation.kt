@@ -15,6 +15,7 @@ data class PetrolStation (var petrolStationId : String? = null,
                          var petrolStationAddress : String? = null,
                          var petrolStationLatLng : LatLng? = null) : Parcelable
 {
+    var distanceFromUser: Float? = null
 
     constructor(parcel: Parcel):this(){
         petrolStationId = parcel.readString()
