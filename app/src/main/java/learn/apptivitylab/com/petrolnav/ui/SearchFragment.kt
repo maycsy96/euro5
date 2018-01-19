@@ -37,7 +37,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
 
     override fun onStationSelected(petrolStation: PetrolStation) {
         val intent = Intent(context, PetrolStationDetailActivity::class.java)
-        intent.putExtra("Selected Station", petrolStation)
+        intent.putExtra(getString(R.string.selected_station), petrolStation)
         startActivity(intent)
     }
 

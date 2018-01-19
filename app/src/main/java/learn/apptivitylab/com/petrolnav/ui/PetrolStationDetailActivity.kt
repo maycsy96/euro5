@@ -13,6 +13,7 @@ class PetrolStationDetailActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_petrol_station_detail)
 
+        val item = intent.getParcelableExtra<PetrolStation>(getString(R.string.selected_station))
         supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.petrolStationDetailViewgroupContainer,PetrolStationDetailFragment())
