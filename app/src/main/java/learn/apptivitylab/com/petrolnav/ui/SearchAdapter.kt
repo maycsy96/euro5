@@ -49,10 +49,6 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             fun onStationSelected(station: PetrolStation)
         }
 
-        private val petrolStationName = itemView.petrolStationNameTextView
-        private val petrolStationBrand = itemView.petrolStationBrandTextView
-        private val petrolStationAddress = itemView.petrolStationAddressTextView
-
         private var petrolStation : PetrolStation? = null
 
         init {
@@ -63,9 +59,10 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun setStation(station: PetrolStation) {
             this.petrolStation = station
-            petrolStationName.text = this.petrolStation?.petrolStationName
-            petrolStationBrand.text = this.petrolStation?.petrolStationBrand
-            petrolStationAddress.text = this.petrolStation?.petrolStationAddress
+            itemView.petrolStationIdTextView.text = this.petrolStation?.petrolStationId
+            itemView.petrolStationNameTextView.text = this.petrolStation?.petrolStationName
+            itemView.petrolStationBrandTextView.text = this.petrolStation?.petrolStationBrand
+            itemView.petrolStationAddressTextView.text = this.petrolStation?.petrolStationAddress
         }
     }
 }
