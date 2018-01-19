@@ -12,9 +12,8 @@ import learn.apptivitylab.com.petrolnav.model.PetrolStation
  * Created by apptivitylab on 17/01/2018.
  */
 class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var petrolStationsList : ArrayList<PetrolStation> = ArrayList()
-    private lateinit var petrolStationListener:StationViewHolder.onSelectStationListener
-
+    private var petrolStationsList: ArrayList<PetrolStation> = ArrayList()
+    private lateinit var petrolStationListener: StationViewHolder.onSelectStationListener
 
     fun setStationListener(petrolStationListener: StationViewHolder.onSelectStationListener) {
         this.petrolStationListener = petrolStationListener
@@ -27,7 +26,7 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val stationViewHolder : StationViewHolder = holder as StationViewHolder
+        val stationViewHolder: StationViewHolder = holder as StationViewHolder
         val station : PetrolStation = petrolStationsList[position]
 
         stationViewHolder.setStation(station)
@@ -37,7 +36,7 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return petrolStationsList.size
     }
 
-    fun updateView(stations: ArrayList<PetrolStation>) {
+    fun updateDataSet(stations: ArrayList<PetrolStation>) {
         this.petrolStationsList.clear()
         this.petrolStationsList = stations
         this.notifyDataSetChanged()
@@ -50,11 +49,7 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             fun onStationSelected(station: PetrolStation)
         }
 
-        private val petrolStationName = itemView.petrolStationNameTextView
-        private val petrolStationBrand = itemView.petrolStationBrandTextView
-        private val petrolStationAddress = itemView.petrolStationAddressTextView
-
-        private var petrolStation : PetrolStation? = null
+        private var petrolStation: PetrolStation? = null
 
         init {
             itemView.setOnClickListener({
@@ -64,14 +59,10 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun setStation(station: PetrolStation) {
             this.petrolStation = station
-
-            updateViewHolder()
-        }
-
-        private fun updateViewHolder() {
-            petrolStationName.text = petrolStation?.petrolStationName
-            petrolStationBrand.text = petrolStation?.petrolStationBrand
+            itemView.petrolStationIdTextView.text = this.petrolStation?.petrolStationId
+            itemView.petrolStationNameTextView.text = this.petrolStation?.petrolStationName
+            itemView.petrolStationBrandTextView.text = this.petrolStation?.petrolStationBrand
+            itemView.petrolStationAddressTextView.text = this.petrolStation?.petrolStationAddress
         }
     }
-
 }

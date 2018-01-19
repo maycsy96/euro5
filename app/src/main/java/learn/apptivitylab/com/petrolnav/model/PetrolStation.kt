@@ -3,6 +3,7 @@ package learn.apptivitylab.com.petrolnav.model
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng
+import org.json.JSONException
 import org.json.JSONObject
 
 /**
@@ -24,11 +25,15 @@ data class PetrolStation (var petrolStationId : String? = null,
     }
 
     constructor(jsonObject : JSONObject):this(){
-        this.petrolStationId = jsonObject.optString("ID:")
-        this.petrolStationName = jsonObject.optString("Name:")
-        this.petrolStationBrand = jsonObject.optString("Brand:")
-        this.petrolStationAddress = jsonObject.optString("Address")
-        this.petrolStationLatLng = LatLng(jsonObject.optDouble("Latitude"),jsonObject.optDouble("Longitude"))
+        this.petrolStationId = jsonObject.optString("petrol_station_id")
+        this.petrolStationName = jsonObject.optString("petrol_station_name")
+        this.petrolStationBrand = jsonObject.optString("petrol_station_brand")
+        this.petrolStationAddress = jsonObject.optString("petrol_station_address")
+        this.petrolStationLatLng = LatLng(jsonObject.optDouble("petrol_station_latitude"),jsonObject.optDouble("petrol_station_longitude"))
+    }
+
+    override fun describeContents(): Int {
+        return 0
     }
 
     override fun writeToParcel(parcel: Parcel?, flags: Int) {
@@ -37,10 +42,6 @@ data class PetrolStation (var petrolStationId : String? = null,
         parcel?.writeString(petrolStationBrand)
         parcel?.writeString(petrolStationAddress)
         parcel?.writeParcelable(petrolStationLatLng,flags)
-    }
-
-    override fun describeContents(): Int {
-        return 0
     }
 
     companion object CREATOR : Parcelable.Creator<PetrolStation>{
