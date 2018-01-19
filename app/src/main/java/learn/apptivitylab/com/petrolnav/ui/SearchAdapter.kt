@@ -63,9 +63,9 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun setStation(station: PetrolStation) {
             this.petrolStation = station
-            petrolStationName.text = petrolStation?.petrolStationName
-            petrolStationBrand.text = petrolStation?.petrolStationBrand
-            petrolStationAddress.text = petrolStation?.petrolStationAddress
+            petrolStationName.text = this.petrolStation?.petrolStationName
+            petrolStationBrand.text = this.petrolStation?.petrolStationBrand
+            petrolStationAddress.text = this.petrolStation?.petrolStationAddress
         }
     }
 }

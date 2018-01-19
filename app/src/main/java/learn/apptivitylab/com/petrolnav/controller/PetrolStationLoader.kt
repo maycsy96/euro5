@@ -17,18 +17,19 @@ class PetrolStationLoader {
     companion object {
         private val TAG = "PetrolStationLoader"
 
-        fun loadJSONStations (context:Context):PetrolStation{
+        fun loadJSONStations (context:Context):ArrayList<PetrolStation>{
+            val petrolStationList :ArrayList<PetrolStation> = ArrayList()
             val inputStream : InputStream = context.resources.openRawResource(R.raw.stations)
             val reader = BufferedReader(InputStreamReader(inputStream))
-            val line : String?= null
-            var jsonObject = JSONObject()
-            var petrolStation = PetrolStation()
+            var jsonObject :JSONObject
+            var petrolStation: PetrolStation
 
             reader.forEachLine {
                 jsonObject = JSONObject(it)
                 petrolStation = PetrolStation(jsonObject)
+                petrolStationList.add(petrolStation)
             }
-            return petrolStation
+            return petrolStationList
         }
     }
 
