@@ -25,25 +25,11 @@ data class PetrolStation (var petrolStationId : String? = null,
     }
 
     constructor(jsonObject : JSONObject):this(){
-        this.petrolStationId = jsonObject.optString("ID:")
-        this.petrolStationName = jsonObject.optString("Name:")
-        this.petrolStationBrand = jsonObject.optString("Brand:")
-        this.petrolStationAddress = jsonObject.optString("Address")
-        this.petrolStationLatLng = LatLng(jsonObject.optDouble("Latitude"),jsonObject.optDouble("Longitude"))
-    }
-
-    fun toJsonObject():JSONObject{
-        var jsonStation = JSONObject()
-        try{
-            jsonStation.put("petrol_station_id", this.petrolStationId)
-            jsonStation.put("petrol_station_name", this.petrolStationName)
-            jsonStation.put("petrol_station_brand", this.petrolStationBrand)
-            jsonStation.put("petrol_station_address", this.petrolStationAddress)
-            jsonStation.put("petrol_station_latlng",this.petrolStationLatLng)
-        }catch (e:JSONException){
-            e.printStackTrace()
-        }
-        return jsonStation
+        this.petrolStationId = jsonObject.optString("petrol_station_id")
+        this.petrolStationName = jsonObject.optString("petrol_station_name")
+        this.petrolStationBrand = jsonObject.optString("petrol_station_brand")
+        this.petrolStationAddress = jsonObject.optString("petrol_station_address")
+        this.petrolStationLatLng = LatLng(jsonObject.optDouble("petrol_station_latitude"),jsonObject.optDouble("petrol_station_longitude"))
     }
 
     override fun describeContents(): Int {
