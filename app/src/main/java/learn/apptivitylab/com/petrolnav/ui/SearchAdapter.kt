@@ -12,8 +12,8 @@ import learn.apptivitylab.com.petrolnav.model.PetrolStation
  * Created by apptivitylab on 17/01/2018.
  */
 class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var petrolStationsList : ArrayList<PetrolStation> = ArrayList()
-    private lateinit var petrolStationListener:StationViewHolder.onSelectStationListener
+    private var petrolStationsList: ArrayList<PetrolStation> = ArrayList()
+    private lateinit var petrolStationListener: StationViewHolder.onSelectStationListener
 
     fun setStationListener(petrolStationListener: StationViewHolder.onSelectStationListener) {
         this.petrolStationListener = petrolStationListener
@@ -26,7 +26,7 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val stationViewHolder : StationViewHolder = holder as StationViewHolder
+        val stationViewHolder: StationViewHolder = holder as StationViewHolder
         val station : PetrolStation = petrolStationsList[position]
 
         stationViewHolder.setStation(station)
@@ -49,7 +49,7 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             fun onStationSelected(station: PetrolStation)
         }
 
-        private var petrolStation : PetrolStation? = null
+        private var petrolStation: PetrolStation? = null
 
         init {
             itemView.setOnClickListener({

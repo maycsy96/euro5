@@ -20,16 +20,16 @@ class PetrolStationLoader {
         private val TAG = "PetrolStationLoader"
 
         fun loadJSONStations (context:Context):ArrayList<PetrolStation>{
-            val petrolStationList :ArrayList<PetrolStation> = ArrayList()
-            val inputStream : InputStream = context.resources.openRawResource(R.raw.stations)
+            val petrolStationList: ArrayList<PetrolStation> = ArrayList()
+            val inputStream: InputStream = context.resources.openRawResource(R.raw.stations)
             val reader = BufferedReader(InputStreamReader(inputStream))
-            var jsonObject :JSONObject
+            var jsonObject: JSONObject
             var petrolStation: PetrolStation
 
             try {
                 var jsonFile = reader.readText()
                 jsonObject = JSONObject(jsonFile.substring(jsonFile.indexOf("{"), jsonFile.lastIndexOf("}") + 1))
-                val jsonArray : JSONArray = jsonObject.optJSONArray("petrol_stations")
+                val jsonArray: JSONArray = jsonObject.optJSONArray("petrol_stations")
                 for(i in 0..jsonArray?.length()-1){
                     petrolStation = PetrolStation(jsonArray.getJSONObject(i))
                     petrolStationList.add(petrolStation)
