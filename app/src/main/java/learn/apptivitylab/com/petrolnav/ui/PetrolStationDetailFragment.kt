@@ -13,7 +13,7 @@ import learn.apptivitylab.com.petrolnav.model.PetrolStation
  * Created by apptivitylab on 17/01/2018.
  */
 class PetrolStationDetailFragment : Fragment(){
-    private var petrolStationSelected : PetrolStation? = null
+    private lateinit var petrolStationSelected: PetrolStation
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_petrol_station_detail, container, false)
@@ -25,9 +25,10 @@ class PetrolStationDetailFragment : Fragment(){
         arguments?.let {
             petrolStationSelected = it.getParcelable(PETROL_STATION_DETAIL)
         }
-        petrolStationNameTextView.text = petrolStationSelected?.petrolStationName
-        petrolStationBrandTextView.text = petrolStationSelected?.petrolStationBrand
-        petrolStationAddressTextView.text = petrolStationSelected?.petrolStationAddress
+        petrolStationIdTextView.text = petrolStationSelected.petrolStationId
+        petrolStationNameTextView.text = petrolStationSelected.petrolStationName
+        petrolStationBrandTextView.text = petrolStationSelected.petrolStationBrand
+        petrolStationAddressTextView.text = petrolStationSelected.petrolStationAddress
     }
 
     companion object {
