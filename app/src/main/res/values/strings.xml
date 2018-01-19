@@ -6,4 +6,7 @@
     <string name="google_maps_key">AIzaSyB5wAKwrZMfu_9mP7gqwmJUkSuwMeVS6r8</string>
     <string name="selected_station">Selected Petrol Station</string>
     <string name="navigate">Navigation</string>
+    <string name="user_location">User location</string>
+    <string name="petrol_station_location">Petrol Station location</string>
+    <string name="unavailable">Unavailable</string>
 </resources>

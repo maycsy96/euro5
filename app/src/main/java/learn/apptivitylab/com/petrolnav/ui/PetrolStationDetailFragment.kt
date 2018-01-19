@@ -13,6 +13,19 @@ import learn.apptivitylab.com.petrolnav.model.PetrolStation
  * Created by apptivitylab on 17/01/2018.
  */
 class PetrolStationDetailFragment : Fragment(){
+
+    companion object {
+        private val PETROL_STATION_DETAIL = "petrol_station_detail"
+
+        fun newInstance(petrolStation: PetrolStation):PetrolStationDetailFragment{
+            val fragment = PetrolStationDetailFragment()
+            val args: Bundle = Bundle()
+            args.putParcelable(PETROL_STATION_DETAIL,petrolStation)
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
     private lateinit var petrolStationSelected: PetrolStation
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -29,17 +42,7 @@ class PetrolStationDetailFragment : Fragment(){
         petrolStationNameTextView.text = petrolStationSelected.petrolStationName
         petrolStationBrandTextView.text = petrolStationSelected.petrolStationBrand
         petrolStationAddressTextView.text = petrolStationSelected.petrolStationAddress
-    }
 
-    companion object {
-        private val PETROL_STATION_DETAIL = "petrol_station_detail"
-
-        fun newInstance(petrolStation: PetrolStation):PetrolStationDetailFragment{
-            val fragment = PetrolStationDetailFragment()
-            val args: Bundle = Bundle()
-            args.putParcelable(PETROL_STATION_DETAIL,petrolStation)
-            fragment.arguments = args
-            return fragment
         }
     }
 

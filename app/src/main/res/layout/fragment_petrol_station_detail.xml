@@ -55,7 +55,7 @@
                 />
         </LinearLayout>
         <TextView
-            android:id="@+id/distanceTextView"
+            android:id="@+id/petrolStationDistanceTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Distance from user location to petrol Station location"

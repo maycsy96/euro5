@@ -27,6 +27,9 @@ import kotlinx.android.synthetic.main.fragment_map_display.*
 
 
 import learn.apptivitylab.com.petrolnav.R
+import learn.apptivitylab.com.petrolnav.R.raw.stations
+import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
+import learn.apptivitylab.com.petrolnav.model.PetrolStation
 
 /**
  * Created by apptivitylab on 09/01/2018.
