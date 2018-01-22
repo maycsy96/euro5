@@ -1,7 +1,6 @@
 package learn.apptivitylab.com.petrolnav.ui
 
 import android.app.Activity
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
@@ -12,11 +11,9 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import learn.apptivitylab.com.petrolnav.R
@@ -36,7 +33,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
 
     private var userLatLng: LatLng? = null
     private var fusedLocationClient: FusedLocationProviderClient? = null
-    private var locationCallBack : LocationCallback? = null
+    private var locationCallBack: LocationCallback? = null
 
     private var petrolStationList = ArrayList<PetrolStation>()
     val petrolStationListAdapter = SearchAdapter()
@@ -48,7 +45,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val layoutManager = LinearLayoutManager(this.activity,LinearLayoutManager.VERTICAL,false)
+        val layoutManager = LinearLayoutManager(this.activity, LinearLayoutManager.VERTICAL, false)
         petrolStationListRecyclerView.layoutManager = layoutManager
 
         petrolStationListAdapter.setStationListener(this)
@@ -64,7 +61,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
             this.context?.let {
                 if (ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(it as Activity, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 100)
-                        return
+                    return
                 }
             }
         }
@@ -78,9 +75,9 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
         fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallBack, Looper.myLooper())
     }
 
-    private fun createLocationCallBack(){
-        locationCallBack = object: LocationCallback(){
-            override fun onLocationResult(locationResult: LocationResult?){
+    private fun createLocationCallBack() {
+        locationCallBack = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
                 super.onLocationResult(locationResult)
                 locationResult?.let {
                     onLocationChanged(it.lastLocation)
@@ -91,16 +88,16 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when(requestCode){
+        when (requestCode) {
             MapDisplayFragment.LOCATION_REQUEST_CODE -> {
-                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     this.context?.let {
-                        if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
+                        if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                             startLocationUpdates()
                         }
                     }
-                }else{
-                    this.view?.let{
+                } else {
+                    this.view?.let {
                         Snackbar.make(it, "Unable to show current location - permission is required", Snackbar.LENGTH_LONG).show()
                     }
                 }
@@ -109,7 +106,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
     }
 
     private fun onLocationChanged(location: Location) {
-        location?.let{
+        location?.let {
             this.userLatLng = LatLng(it.latitude, it.longitude)
         }
         this.petrolStationList = PetrolStationLoader.loadJSONStations(context!!)
@@ -123,25 +120,24 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
     }
 
     override fun onStationSelected(petrolStation: PetrolStation) {
-        val intent = Intent(context, PetrolStationDetailActivity::class.java)
-        intent.putExtra(getString(R.string.selected_station), petrolStation)
-        startActivity(intent)
+        val launchIntent = PetrolStationDetailActivity.newLaunchIntent(this.context!!, petrolStation)
+        startActivity(launchIntent)
     }
 
-    private fun calculateDistanceFromUser(userLatlng: LatLng?){
+    private fun calculateDistanceFromUser(userLatlng: LatLng?) {
         val userLocation = Location(getString(R.string.user_location))
         userLatlng?.let {
             userLocation.latitude = it.latitude
             userLocation.longitude = it.longitude
         }
-        for(petrolStation in this.petrolStationList){
+        for (petrolStation in this.petrolStationList) {
             val petrolStationLocation = Location(getString(R.string.petrol_station_location))
 
             petrolStation.petrolStationLatLng?.let {
                 petrolStationLocation.latitude = it.latitude
                 petrolStationLocation.longitude = it.longitude
             }
-            val distance = userLocation.distanceTo(petrolStationLocation)/1000
+            val distance = userLocation.distanceTo(petrolStationLocation) / 1000
             petrolStation.distanceFromUser = distance.toDouble()
         }
     }
