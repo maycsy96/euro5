@@ -63,6 +63,13 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             itemView.petrolStationNameTextView.text = this.petrolStation?.petrolStationName
             itemView.petrolStationBrandTextView.text = this.petrolStation?.petrolStationBrand
             itemView.petrolStationAddressTextView.text = this.petrolStation?.petrolStationAddress
+
+            if(petrolStation?.distanceFromUser != null) {
+                itemView.petrolStationDistanceTextView.text = "%.2f".format(this.petrolStation?.distanceFromUser)
+            }else{
+                itemView.petrolStationDistanceTextView.text = itemView.context.getString(R.string.unavailable)
+            }
+
         }
     }
 }
