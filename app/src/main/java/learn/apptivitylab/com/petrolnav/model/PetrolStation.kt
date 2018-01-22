@@ -10,10 +10,10 @@ import org.json.JSONObject
  * Created by apptivitylab on 12/01/2018.
  */
 data class PetrolStation (var petrolStationId : String? = null,
-                         var petrolStationName : String? = null,
-                         var petrolStationBrand: String? = null,
-                         var petrolStationAddress : String? = null,
-                         var petrolStationLatLng : LatLng? = null,
+                          var petrolStationName : String? = null,
+                          var petrolStationBrand: String? = null,
+                          var petrolStationAddress : String? = null,
+                          var petrolStationLatLng : LatLng? = null,
                           var distanceFromUser: Double? = null) : Parcelable
 {
     constructor(parcel: Parcel):this(){

@@ -36,7 +36,7 @@ class MapDisplayFragment : Fragment() {
     private var locationCallBack: LocationCallback? = null
 
     private var locationMarker: Marker? = null
-    private var userLatLing: LatLng?= null
+    private var userLatLng: LatLng?= null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var rootView = inflater.inflate(R.layout.fragment_map_display, container, false)
@@ -65,8 +65,8 @@ class MapDisplayFragment : Fragment() {
     }
 
     private fun centerMapOnUserLocation() {
-        if(userLatLing != null){
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLing, 16f)
+        if (userLatLng != null){
+            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
             this.googleMap?.moveCamera(cameraUpdate)
         }else{
             return
@@ -125,9 +125,9 @@ class MapDisplayFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode){
             LOCATION_REQUEST_CODE -> {
-                if(grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     this.context?.let {
-                        if(ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
+                        if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
                             this.googleMap?.isMyLocationEnabled = true
                             startLocationUpdates()
                         }
@@ -143,19 +143,19 @@ class MapDisplayFragment : Fragment() {
     }
 
    private fun onLocationChanged(location: Location) {
-       userLatLing = LatLng(location.latitude, location.longitude)
-       if(this.locationMarker == null){
-           userLatLing?.let{
+       userLatLng = LatLng(location.latitude, location.longitude)
+       if (this.locationMarker == null){
+           userLatLng?.let{
                val markerOptions= MarkerOptions().position(it)
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
                this.locationMarker = googleMap?.addMarker(markerOptions)
            }
        }else{
            this.locationMarker?.let{
-               it.position = this.userLatLing
+               it.position = this.userLatLng
            }
        }
-       val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLing, 16f)
+       val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
        this.googleMap?.moveCamera(cameraUpdate)
     }
 

@@ -93,9 +93,9 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode){
             MapDisplayFragment.LOCATION_REQUEST_CODE -> {
-                if(grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     this.context?.let {
-                        if(ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
+                        if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
                             startLocationUpdates()
                         }
                     }
