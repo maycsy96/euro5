@@ -13,16 +13,16 @@ data class PetrolStation (var petrolStationId : String? = null,
                          var petrolStationName : String? = null,
                          var petrolStationBrand: String? = null,
                          var petrolStationAddress : String? = null,
-                         var petrolStationLatLng : LatLng? = null) : Parcelable
+                         var petrolStationLatLng : LatLng? = null,
+                          var distanceFromUser: Double? = null) : Parcelable
 {
-    var distanceFromUser: Float? = null
-
     constructor(parcel: Parcel):this(){
         petrolStationId = parcel.readString()
         petrolStationName = parcel.readString()
         petrolStationBrand = parcel.readString()
         petrolStationAddress = parcel.readString()
         petrolStationLatLng = parcel.readParcelable(LatLng::class.java.classLoader)
+        distanceFromUser = parcel.readDouble()
     }
 
     constructor(jsonObject : JSONObject):this(){
@@ -43,6 +43,10 @@ data class PetrolStation (var petrolStationId : String? = null,
         parcel?.writeString(petrolStationBrand)
         parcel?.writeString(petrolStationAddress)
         parcel?.writeParcelable(petrolStationLatLng,flags)
+        distanceFromUser?.let{
+            parcel?.writeDouble(it)
+        }
+
     }
 
     companion object CREATOR : Parcelable.Creator<PetrolStation>{

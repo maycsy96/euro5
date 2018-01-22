@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -142,21 +143,20 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
     }
 
     private fun calculateDistanceFromUser(userLatlng: LatLng?){
+        val userLocation = Location(getString(R.string.user_location))
         userLatlng?.let {
-            val userLocation = Location(getString(R.string.user_location))
             userLocation.latitude = it.latitude
             userLocation.longitude = it.longitude
+        }
+        for(petrolStation in this.petrolStationList){
+            val petrolStationLocation = Location(getString(R.string.petrol_station_location))
 
-            for(petrolStation in this.petrolStationList){
-                val petrolStationLocation = Location(getString(R.string.petrol_station_location))
-
-                petrolStation.petrolStationLatLng?.let {
-                    petrolStationLocation.latitude = it.latitude
-                    petrolStationLocation.longitude = it.longitude
-                }
-                val distance = userLocation.distanceTo(petrolStationLocation)/1000
-                petrolStation.distanceFromUser = distance
+            petrolStation.petrolStationLatLng?.let {
+                petrolStationLocation.latitude = it.latitude
+                petrolStationLocation.longitude = it.longitude
             }
+            val distance = userLocation.distanceTo(petrolStationLocation)/1000
+            petrolStation.distanceFromUser = distance.toDouble()
         }
     }
 

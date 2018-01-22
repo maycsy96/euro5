@@ -43,7 +43,7 @@ class PetrolStationDetailFragment : Fragment(){
         petrolStationBrandTextView.text = petrolStationSelected.petrolStationBrand
         petrolStationAddressTextView.text = petrolStationSelected.petrolStationAddress
 
-        if(petrolStationSelected?.distanceFromUser != null) {
+        if(petrolStationSelected.distanceFromUser != null) {
             petrolStationDistanceTextView.text = "%.2f".format(petrolStationSelected.distanceFromUser)
         }else{
             petrolStationDistanceTextView.text = context?.getString(R.string.unavailable)
