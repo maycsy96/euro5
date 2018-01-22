@@ -6,25 +6,19 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.LocationListener
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import learn.apptivitylab.com.petrolnav.R
 import kotlinx.android.synthetic.main.fragment_search.*
 import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
@@ -34,10 +28,16 @@ import learn.apptivitylab.com.petrolnav.model.PetrolStation
  * Created by apptivitylab on 09/01/2018.
  */
 
-class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStationListener {
 
-    private var googleApiClient: GoogleApiClient? = null
+    companion object {
+        private val TAG = "SearchFragment"
+    }
+
     private var userLatLng: LatLng? = null
+    private var fusedLocationClient: FusedLocationProviderClient? = null
+    private var locationCallBack : LocationCallback? = null
+
     private var petrolStationList = ArrayList<PetrolStation>()
     val petrolStationListAdapter = SearchAdapter()
 
@@ -48,46 +48,43 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (googleApiClient == null) {
-            context?.let {
-                googleApiClient = GoogleApiClient.Builder(it, this, this)
-                        .addApi(LocationServices.API)
-                        .build()
-            }
-        }
-
         val layoutManager = LinearLayoutManager(this.activity,LinearLayoutManager.VERTICAL,false)
         petrolStationListRecyclerView.layoutManager = layoutManager
 
         petrolStationListAdapter.setStationListener(this)
         petrolStationListRecyclerView.adapter = petrolStationListAdapter
         petrolStationListAdapter.updateDataSet(PetrolStationLoader.loadJSONStations(context!!))
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!)
+        startLocationUpdates()
     }
 
     private fun startLocationUpdates() {
-        if (this.googleApiClient?.isConnected == true) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                this.context?.let {
-                    if (ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(it as Activity, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 100)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            this.context?.let {
+                if (ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(it as Activity, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 100)
                         return
-                    }
                 }
             }
+        }
 
-            val locationRequest = LocationRequest()
-            locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            locationRequest.interval = 5000
+        val locationRequest = LocationRequest()
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.interval = 15000
+        locationRequest.fastestInterval = 10000
 
-            LocationServices.FusedLocationApi.requestLocationUpdates(
-                    this.googleApiClient,
-                    locationRequest,
-                    this
-            )
+        createLocationCallBack()
+        fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallBack, Looper.myLooper())
+    }
 
-        } else {
-            this.view?.let{
-                Snackbar.make(it, "GoogleApiClient is not ready yet", Snackbar.LENGTH_LONG).show()
+    private fun createLocationCallBack(){
+        locationCallBack = object: LocationCallback(){
+            override fun onLocationResult(locationResult: LocationResult?){
+                super.onLocationResult(locationResult)
+                locationResult?.let {
+                    onLocationChanged(it.lastLocation)
+                }
             }
         }
     }
@@ -97,7 +94,11 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
         when(requestCode){
             MapDisplayFragment.LOCATION_REQUEST_CODE -> {
                 if(grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    startLocationUpdates()
+                    this.context?.let {
+                        if(ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
+                            startLocationUpdates()
+                        }
+                    }
                 }else{
                     this.view?.let{
                         Snackbar.make(it, "Unable to show current location - permission is required", Snackbar.LENGTH_LONG).show()
@@ -107,17 +108,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
         }
     }
 
-    override fun onConnected(bundle: Bundle?) {
-        startLocationUpdates()
-    }
-
-    override fun onConnectionSuspended(i: Int) {
-    }
-
-    override fun onConnectionFailed(connectionResult: ConnectionResult) {
-    }
-
-    override fun onLocationChanged(location: Location) {
+    private fun onLocationChanged(location: Location) {
         location?.let{
             this.userLatLng = LatLng(it.latitude, it.longitude)
         }
@@ -126,14 +117,9 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
         petrolStationListAdapter.updateDataSet(this.petrolStationList)
     }
 
-    override fun onStart() {
-        super.onStart()
-        this.googleApiClient?.connect()
-    }
-
     override fun onStop() {
+        fusedLocationClient?.removeLocationUpdates(locationCallBack)
         super.onStop()
-        this.googleApiClient?.disconnect()
     }
 
     override fun onStationSelected(petrolStation: PetrolStation) {
@@ -158,9 +144,5 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
             val distance = userLocation.distanceTo(petrolStationLocation)/1000
             petrolStation.distanceFromUser = distance.toDouble()
         }
-    }
-
-    companion object {
-        private val TAG = "SearchFragment"
     }
 }

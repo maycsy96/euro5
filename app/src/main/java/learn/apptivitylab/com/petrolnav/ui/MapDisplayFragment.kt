@@ -1,48 +1,42 @@
 package learn.apptivitylab.com.petrolnav.ui
 
 import android.app.Activity
-import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.view.*
 
-
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationListener
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.fragment_map_display.*
-
-
 import learn.apptivitylab.com.petrolnav.R
-import learn.apptivitylab.com.petrolnav.R.raw.stations
-import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
-import learn.apptivitylab.com.petrolnav.model.PetrolStation
 
 /**
  * Created by apptivitylab on 09/01/2018.
  */
 
-class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+class MapDisplayFragment : Fragment() {
 
-    private var googleApiClient: GoogleApiClient? = null
+    companion object {
+        val LOCATION_REQUEST_CODE = 100
+    }
+
     private var mapFragment: SupportMapFragment? = null
     private var googleMap: GoogleMap? = null
-    private var fusedLocationClient: FusedLocationProviderClient? =null
+    private var fusedLocationClient: FusedLocationProviderClient? = null
+    private var locationCallBack: LocationCallback? = null
+
     private var locationMarker: Marker? = null
-    private var currentUserLocation: LatLng?= null
+    private var userLatLing: LatLng?= null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var rootView = inflater.inflate(R.layout.fragment_map_display, container, false)
@@ -58,10 +52,6 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (this.googleApiClient == null) {
-            buildGoogleApiClient()
-        }
-
         this.context?.let {
             this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(it)
         }
@@ -69,22 +59,17 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
         this.centerUserButton.setOnClickListener{
             centerMapOnUserLocation()
         }
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!)
+        startLocationUpdates()
     }
 
     private fun centerMapOnUserLocation() {
-        if(currentUserLocation != null){
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentUserLocation, 16f)
+        if(userLatLing != null){
+            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLing, 16f)
             this.googleMap?.moveCamera(cameraUpdate)
         }else{
             return
-        }
-    }
-
-    private fun buildGoogleApiClient(){
-        this.context?.let {
-            this.googleApiClient = GoogleApiClient.Builder(it, this, this)
-                    .addApi(LocationServices.API)
-                    .build()
         }
     }
 
@@ -104,53 +89,36 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        this.googleApiClient?.connect()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        this.googleApiClient?.disconnect()
-    }
-
-    override fun onPause(){
-        super.onPause()
-        stopLocationUpdates()
-    }
-
     private fun startLocationUpdates() {
-        if (this.googleApiClient?.isConnected == true) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                this.context?.let {
-                    if (ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(it as Activity, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 100)
-                        return
-                    }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            this.context?.let {
+                if (ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(it as Activity, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 100)
+                    return
                 }
             }
-
-            val locationRequest = LocationRequest()
-            locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            locationRequest.interval = 5000
-
-            LocationServices.FusedLocationApi.requestLocationUpdates(
-                    this.googleApiClient,
-                    locationRequest,
-                    this
-            )
-        } else {
-            this.view?.let{
-                Snackbar.make(it, "GoogleApiClient is not ready yet", Snackbar.LENGTH_LONG).show()
-            }
         }
+
+        val locationRequest = LocationRequest()
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.interval = 5000
+        locationRequest.fastestInterval = 3000
+
+        createLocationCallBack()
+        fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallBack, Looper.myLooper())
     }
 
-    private fun stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                this.googleApiClient,
-                this@MapDisplayFragment
-        )
+    private fun createLocationCallBack(){
+        locationCallBack = object: LocationCallback(){
+            override fun onLocationResult(locationResult: LocationResult?) {
+                super.onLocationResult(locationResult)
+
+                locationResult?.let{
+                    onLocationChanged(it.lastLocation)
+                }
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -158,16 +126,12 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
         when(requestCode){
             LOCATION_REQUEST_CODE -> {
                 if(grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-
                     this.context?.let {
                         if(ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
-                            if(this.googleApiClient==null){
-                                buildGoogleApiClient()
-                            }
-                        this.googleMap?.isMyLocationEnabled = true
+                            this.googleMap?.isMyLocationEnabled = true
+                            startLocationUpdates()
                         }
                     }
-
                 }else{
                     this.googleMap?.isMyLocationEnabled = false
                     this.view?.let{
@@ -178,33 +142,25 @@ class MapDisplayFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goog
         }
     }
 
-    override fun onConnected(bundle: Bundle?) {
-        startLocationUpdates()
+   private fun onLocationChanged(location: Location) {
+       userLatLing = LatLng(location.latitude, location.longitude)
+       if(this.locationMarker == null){
+           userLatLing?.let{
+               val markerOptions= MarkerOptions().position(it)
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+               this.locationMarker = googleMap?.addMarker(markerOptions)
+           }
+       }else{
+           this.locationMarker?.let{
+               it.position = this.userLatLing
+           }
+       }
+       val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLing, 16f)
+       this.googleMap?.moveCamera(cameraUpdate)
     }
 
-    override fun onConnectionSuspended(i: Int) {
+    override fun onStop(){
+        fusedLocationClient?.removeLocationUpdates(locationCallBack)
+        super.onStop()
     }
-
-   override fun onConnectionFailed(connectionResult: ConnectionResult) {
-    }
-
-   override fun onLocationChanged(location: Location) {
-        val userLatLng = LatLng(location.latitude, location.longitude)
-        currentUserLocation = userLatLng
-        if(this.locationMarker ==null){
-            val markerOptions= MarkerOptions().position(userLatLng)
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-            this.locationMarker = googleMap?.addMarker(markerOptions)
-        }else{
-            this.locationMarker?.position=userLatLng
-        }
-
-        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
-        this.googleMap?.moveCamera(cameraUpdate)
-    }
-
-    companion object {
-        val LOCATION_REQUEST_CODE = 100
-    }
-
 }
