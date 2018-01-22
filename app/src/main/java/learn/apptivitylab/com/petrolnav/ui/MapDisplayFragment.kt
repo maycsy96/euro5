@@ -36,7 +36,7 @@ class MapDisplayFragment : Fragment() {
     private var locationCallBack: LocationCallback? = null
 
     private var locationMarker: Marker? = null
-    private var userLatLng: LatLng?= null
+    private var userLatLng: LatLng? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var rootView = inflater.inflate(R.layout.fragment_map_display, container, false)
@@ -56,7 +56,7 @@ class MapDisplayFragment : Fragment() {
             this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(it)
         }
 
-        this.centerUserButton.setOnClickListener{
+        this.centerUserButton.setOnClickListener {
             centerMapOnUserLocation()
         }
 
@@ -65,10 +65,10 @@ class MapDisplayFragment : Fragment() {
     }
 
     private fun centerMapOnUserLocation() {
-        if (userLatLng != null){
+        if (userLatLng != null) {
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
             this.googleMap?.moveCamera(cameraUpdate)
-        }else{
+        } else {
             return
         }
     }
@@ -109,12 +109,12 @@ class MapDisplayFragment : Fragment() {
         fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallBack, Looper.myLooper())
     }
 
-    private fun createLocationCallBack(){
-        locationCallBack = object: LocationCallback(){
+    private fun createLocationCallBack() {
+        locationCallBack = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 super.onLocationResult(locationResult)
 
-                locationResult?.let{
+                locationResult?.let {
                     onLocationChanged(it.lastLocation)
                 }
             }
@@ -123,18 +123,18 @@ class MapDisplayFragment : Fragment() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when(requestCode){
+        when (requestCode) {
             LOCATION_REQUEST_CODE -> {
-                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     this.context?.let {
-                        if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
+                        if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                             this.googleMap?.isMyLocationEnabled = true
                             startLocationUpdates()
                         }
                     }
-                }else{
+                } else {
                     this.googleMap?.isMyLocationEnabled = false
-                    this.view?.let{
+                    this.view?.let {
                         Snackbar.make(it, "Unable to show current location - permission is required", Snackbar.LENGTH_LONG).show()
                     }
                 }
@@ -142,24 +142,24 @@ class MapDisplayFragment : Fragment() {
         }
     }
 
-   private fun onLocationChanged(location: Location) {
-       userLatLng = LatLng(location.latitude, location.longitude)
-       if (this.locationMarker == null){
-           userLatLng?.let{
-               val markerOptions= MarkerOptions().position(it)
+    private fun onLocationChanged(location: Location) {
+        userLatLng = LatLng(location.latitude, location.longitude)
+        if (this.locationMarker == null) {
+            userLatLng?.let {
+                val markerOptions = MarkerOptions().position(it)
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-               this.locationMarker = googleMap?.addMarker(markerOptions)
-           }
-       }else{
-           this.locationMarker?.let{
-               it.position = this.userLatLng
-           }
-       }
-       val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
-       this.googleMap?.moveCamera(cameraUpdate)
+                this.locationMarker = googleMap?.addMarker(markerOptions)
+            }
+        } else {
+            this.locationMarker?.let {
+                it.position = this.userLatLng
+            }
+        }
+        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
+        this.googleMap?.moveCamera(cameraUpdate)
     }
 
-    override fun onStop(){
+    override fun onStop() {
         fusedLocationClient?.removeLocationUpdates(locationCallBack)
         super.onStop()
     }

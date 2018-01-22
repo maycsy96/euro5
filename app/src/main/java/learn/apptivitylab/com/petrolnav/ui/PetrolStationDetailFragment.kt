@@ -12,15 +12,15 @@ import learn.apptivitylab.com.petrolnav.model.PetrolStation
 /**
  * Created by apptivitylab on 17/01/2018.
  */
-class PetrolStationDetailFragment : Fragment(){
+class PetrolStationDetailFragment : Fragment() {
 
     companion object {
         private val PETROL_STATION_DETAIL = "petrol_station_detail"
 
-        fun newInstance(petrolStation: PetrolStation):PetrolStationDetailFragment{
+        fun newInstance(petrolStation: PetrolStation): PetrolStationDetailFragment {
             val fragment = PetrolStationDetailFragment()
             val args: Bundle = Bundle()
-            args.putParcelable(PETROL_STATION_DETAIL,petrolStation)
+            args.putParcelable(PETROL_STATION_DETAIL, petrolStation)
             fragment.arguments = args
             return fragment
         }
@@ -43,9 +43,9 @@ class PetrolStationDetailFragment : Fragment(){
         petrolStationBrandTextView.text = petrolStationSelected.petrolStationBrand
         petrolStationAddressTextView.text = petrolStationSelected.petrolStationAddress
 
-        if(petrolStationSelected.distanceFromUser != null) {
+        if (petrolStationSelected.distanceFromUser != null) {
             petrolStationDistanceTextView.text = "%.2f".format(petrolStationSelected.distanceFromUser)
-        }else{
+        } else {
             petrolStationDistanceTextView.text = context?.getString(R.string.unavailable)
         }
     }

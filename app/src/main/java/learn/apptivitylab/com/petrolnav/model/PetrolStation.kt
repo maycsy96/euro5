@@ -9,14 +9,14 @@ import org.json.JSONObject
 /**
  * Created by apptivitylab on 12/01/2018.
  */
-data class PetrolStation (var petrolStationId : String? = null,
-                          var petrolStationName : String? = null,
-                          var petrolStationBrand: String? = null,
-                          var petrolStationAddress : String? = null,
-                          var petrolStationLatLng : LatLng? = null,
-                          var distanceFromUser: Double? = null) : Parcelable
-{
-    constructor(parcel: Parcel):this(){
+data class PetrolStation(var petrolStationId: String? = null,
+                         var petrolStationName: String? = null,
+                         var petrolStationBrand: String? = null,
+                         var petrolStationAddress: String? = null,
+                         var petrolStationLatLng: LatLng? = null,
+                         var distanceFromUser: Double? = null) : Parcelable {
+
+    constructor(parcel: Parcel) : this() {
         petrolStationId = parcel.readString()
         petrolStationName = parcel.readString()
         petrolStationBrand = parcel.readString()
@@ -25,12 +25,12 @@ data class PetrolStation (var petrolStationId : String? = null,
         distanceFromUser = parcel.readDouble()
     }
 
-    constructor(jsonObject : JSONObject):this(){
+    constructor(jsonObject: JSONObject) : this() {
         this.petrolStationId = jsonObject.optString("petrol_station_id")
         this.petrolStationName = jsonObject.optString("petrol_station_name")
         this.petrolStationBrand = jsonObject.optString("petrol_station_brand")
         this.petrolStationAddress = jsonObject.optString("petrol_station_address")
-        this.petrolStationLatLng = LatLng(jsonObject.optDouble("petrol_station_latitude"),jsonObject.optDouble("petrol_station_longitude"))
+        this.petrolStationLatLng = LatLng(jsonObject.optDouble("petrol_station_latitude"), jsonObject.optDouble("petrol_station_longitude"))
     }
 
     override fun describeContents(): Int {
@@ -42,14 +42,14 @@ data class PetrolStation (var petrolStationId : String? = null,
         parcel?.writeString(petrolStationName)
         parcel?.writeString(petrolStationBrand)
         parcel?.writeString(petrolStationAddress)
-        parcel?.writeParcelable(petrolStationLatLng,flags)
-        distanceFromUser?.let{
+        parcel?.writeParcelable(petrolStationLatLng, flags)
+        distanceFromUser?.let {
             parcel?.writeDouble(it)
         }
 
     }
 
-    companion object CREATOR : Parcelable.Creator<PetrolStation>{
+    companion object CREATOR : Parcelable.Creator<PetrolStation> {
         override fun createFromParcel(parcel: Parcel): PetrolStation {
             return PetrolStation(parcel)
         }

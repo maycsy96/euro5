@@ -8,7 +8,7 @@ import learn.apptivitylab.com.petrolnav.model.PetrolStation
 /**
  * Created by apptivitylab on 18/01/2018.
  */
-class PetrolStationDetailActivity : AppCompatActivity(){
+class PetrolStationDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,7 +18,7 @@ class PetrolStationDetailActivity : AppCompatActivity(){
 
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.petrolStationDetailViewgroupContainer,PetrolStationDetailFragment.newInstance(item))
+                .replace(R.id.petrolStationDetailViewgroupContainer, PetrolStationDetailFragment.newInstance(item))
                 .commit()
 
 
