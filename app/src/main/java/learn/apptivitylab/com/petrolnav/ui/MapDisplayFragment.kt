@@ -105,11 +105,6 @@ class MapDisplayFragment : Fragment() {
         locationRequest.interval = 5000
         locationRequest.fastestInterval = 3000
 
-        createLocationCallBack()
-        fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallBack, Looper.myLooper())
-    }
-
-    private fun createLocationCallBack() {
         locationCallBack = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 super.onLocationResult(locationResult)
@@ -119,6 +114,8 @@ class MapDisplayFragment : Fragment() {
                 }
             }
         }
+
+        fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallBack, Looper.myLooper())
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

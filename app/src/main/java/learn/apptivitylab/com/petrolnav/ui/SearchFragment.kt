@@ -71,11 +71,6 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
         locationRequest.interval = 15000
         locationRequest.fastestInterval = 10000
 
-        createLocationCallBack()
-        fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallBack, Looper.myLooper())
-    }
-
-    private fun createLocationCallBack() {
         locationCallBack = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 super.onLocationResult(locationResult)
@@ -84,6 +79,8 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
                 }
             }
         }
+        
+        fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallBack, Looper.myLooper())
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
