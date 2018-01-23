@@ -146,36 +146,36 @@ class MapDisplayFragment : Fragment() {
         }
     }
 
-    private fun onLocationChanged(location: Location) {
-        userLatLng = LatLng(location.latitude, location.longitude)
-        if (this.locationMarker == null) {
-            userLatLng?.let {
+    private fun onLocationChanged(location: Location?) {
+        location?.let {
+            this.userLatLng = LatLng(it.latitude, it.longitude)
+            if (this.locationMarker != null) {
+                this.locationMarker?.remove()
+            }
+            this.userLatLng?.let {
                 val markerOptions = MarkerOptions().position(it)
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
                 this.locationMarker = googleMap?.addMarker(markerOptions)
             }
-        } else {
-            this.locationMarker?.let {
-                it.position = this.userLatLng
+
+            this.petrolStationList.sortBy { petrolStation ->
+                petrolStation.distanceFromUser
             }
-        }
 
-        this.petrolStationList.sortBy { petrolStation ->
-            petrolStation.distanceFromUser
-        }
-        val nearestStationsCount = 5
-        var nearestStationsList = petrolStationList.take(nearestStationsCount)
+            val nearestStationsCount = 5
+            var nearestStationsList = this.petrolStationList.take(nearestStationsCount)
 
-        for (nearestStation in nearestStationsList) {
-            var nearestStationLatLng = nearestStation.petrolStationLatLng
-            nearestStationLatLng?.let {
-                var nearestStationMarkerOptions = MarkerOptions().position(it)
-                nearestStationLocationMarker = googleMap?.addMarker(nearestStationMarkerOptions)
+            for (nearestStation in nearestStationsList) {
+                var nearestStationLatLng = nearestStation.petrolStationLatLng
+                nearestStationLatLng?.let {
+                    var nearestStationMarkerOptions = MarkerOptions().position(it)
+                    nearestStationLocationMarker = googleMap?.addMarker(nearestStationMarkerOptions)
+                }
             }
-        }
 
-        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
-        this.googleMap?.moveCamera(cameraUpdate)
+            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
+            this.googleMap?.moveCamera(cameraUpdate)
+        }
     }
 
     override fun onStop() {
