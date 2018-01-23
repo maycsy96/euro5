@@ -46,7 +46,6 @@ data class PetrolStation(var petrolStationId: String? = null,
         distanceFromUser?.let {
             parcel?.writeDouble(it)
         }
-
     }
 
     companion object CREATOR : Parcelable.Creator<PetrolStation> {
