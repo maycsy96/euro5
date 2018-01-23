@@ -2,6 +2,7 @@ package learn.apptivitylab.com.petrolnav.ui
 
 import android.app.Activity
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.util.Log
 import android.view.*
 
 import com.google.android.gms.location.*
@@ -31,6 +33,7 @@ class MapDisplayFragment : Fragment() {
 
     companion object {
         val LOCATION_REQUEST_CODE = 100
+        val TAG = "MapDisplayFragment"
     }
 
     private var mapFragment: SupportMapFragment? = null
@@ -139,7 +142,7 @@ class MapDisplayFragment : Fragment() {
                 } else {
                     this.googleMap?.isMyLocationEnabled = false
                     this.view?.let {
-                        Snackbar.make(it, "Unable to show current location - permission is required", Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(it, getString(R.string.unavailable), Snackbar.LENGTH_LONG).show()
                     }
                 }
             }
@@ -158,6 +161,7 @@ class MapDisplayFragment : Fragment() {
                 this.locationMarker = googleMap?.addMarker(markerOptions)
             }
 
+            calculateDistanceFromUser(this.userLatLng)
             this.petrolStationList.sortBy { petrolStation ->
                 petrolStation.distanceFromUser
             }
@@ -169,12 +173,30 @@ class MapDisplayFragment : Fragment() {
                 var nearestStationLatLng = nearestStation.petrolStationLatLng
                 nearestStationLatLng?.let {
                     var nearestStationMarkerOptions = MarkerOptions().position(it)
+                            .title(nearestStation.petrolStationName)
                     nearestStationLocationMarker = googleMap?.addMarker(nearestStationMarkerOptions)
                 }
             }
-
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
             this.googleMap?.moveCamera(cameraUpdate)
+        }
+    }
+
+    fun calculateDistanceFromUser(userLatlng: LatLng?) {
+        val userLocation = Location(getString(R.string.user_location))
+        userLatlng?.let {
+            userLocation.latitude = it.latitude
+            userLocation.longitude = it.longitude
+        }
+        for (petrolStation in this.petrolStationList) {
+            val petrolStationLocation = Location(getString(R.string.petrol_station_location))
+
+            petrolStation.petrolStationLatLng?.let {
+                petrolStationLocation.latitude = it.latitude
+                petrolStationLocation.longitude = it.longitude
+            }
+            val distance = userLocation.distanceTo(petrolStationLocation) / 1000
+            petrolStation.distanceFromUser = distance.toDouble()
         }
     }
 
