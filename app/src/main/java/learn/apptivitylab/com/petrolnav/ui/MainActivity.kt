@@ -17,6 +17,10 @@ import learn.apptivitylab.com.petrolnav.R
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    companion object {
+        private val TAG = "Navigation View"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -63,16 +67,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_log_out -> Log.d(TAG, "Show Log Out")
         }
 
-        if(displayFragment != null) {
+        if (displayFragment != null) {
             supportFragmentManager
                     .beginTransaction()
                     .replace(R.id.mainViewgroupContainer, displayFragment)
                     .addToBackStack(null)
                     .commit()
         }
-    }
-
-    companion object {
-        private val TAG = "Navigation View"
     }
 }
