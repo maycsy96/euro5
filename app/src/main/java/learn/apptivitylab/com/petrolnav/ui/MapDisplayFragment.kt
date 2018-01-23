@@ -19,6 +19,9 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.fragment_map_display.*
 import learn.apptivitylab.com.petrolnav.R
+import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
+import learn.apptivitylab.com.petrolnav.model.PetrolStation
+import java.util.ArrayList
 
 /**
  * Created by apptivitylab on 09/01/2018.
@@ -37,6 +40,9 @@ class MapDisplayFragment : Fragment() {
 
     private var locationMarker: Marker? = null
     private var userLatLng: LatLng? = null
+
+    private var petrolStationList = ArrayList<PetrolStation>()
+    private var nearestStationLocationMarker: Marker? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var rootView = inflater.inflate(R.layout.fragment_map_display, container, false)
@@ -60,6 +66,7 @@ class MapDisplayFragment : Fragment() {
             centerMapOnUserLocation()
         }
 
+        this.petrolStationList = PetrolStationLoader.loadJSONStations(context!!)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!)
         startLocationUpdates()
     }
@@ -152,6 +159,21 @@ class MapDisplayFragment : Fragment() {
                 it.position = this.userLatLng
             }
         }
+
+        this.petrolStationList.sortBy { petrolStation ->
+            petrolStation.distanceFromUser
+        }
+        val nearestStationsCount = 5
+        var nearestStationsList = petrolStationList.take(nearestStationsCount)
+
+        for (nearestStation in nearestStationsList) {
+            var nearestStationLatLng = nearestStation.petrolStationLatLng
+            nearestStationLatLng?.let {
+                var nearestStationMarkerOptions = MarkerOptions().position(it)
+                nearestStationLocationMarker = googleMap?.addMarker(nearestStationMarkerOptions)
+            }
+        }
+
         val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
         this.googleMap?.moveCamera(cameraUpdate)
     }
