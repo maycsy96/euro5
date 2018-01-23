@@ -17,6 +17,10 @@ import learn.apptivitylab.com.petrolnav.R
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    companion object {
+        private val TAG = "Navigation View"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -47,28 +51,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun navigateTo(id: Int) {
         var displayFragment: Fragment? = null
         when (id) {
+            R.id.nav_map -> {
+                displayFragment = MapDisplayFragment()
+            }
             R.id.nav_search -> {
-                Log.d(TAG, "Show Search")
                 displayFragment = SearchFragment()
             }
             R.id.nav_petrol_price -> Log.d(TAG, "Show Petrol Price")
             R.id.nav_preference -> {
-                Log.d(TAG, "Show Preference")
                 displayFragment = PreferencesFragment()
             }
             R.id.nav_log_out -> Log.d(TAG, "Show Log Out")
         }
 
-        if(displayFragment != null) {
+        if (displayFragment != null) {
             supportFragmentManager
                     .beginTransaction()
                     .replace(R.id.mainViewgroupContainer, displayFragment)
                     .addToBackStack(null)
                     .commit()
         }
-    }
-
-    companion object {
-        private val TAG = "Navigation View"
     }
 }

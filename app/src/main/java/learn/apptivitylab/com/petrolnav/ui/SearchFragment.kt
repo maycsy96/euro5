@@ -20,6 +20,7 @@ import learn.apptivitylab.com.petrolnav.R
 import kotlinx.android.synthetic.main.fragment_search.*
 import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
 import learn.apptivitylab.com.petrolnav.model.PetrolStation
+import java.util.*
 
 /**
  * Created by apptivitylab on 09/01/2018.
@@ -79,7 +80,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
                 }
             }
         }
-        
+
         fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallBack, Looper.myLooper())
     }
 
@@ -95,7 +96,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
                     }
                 } else {
                     this.view?.let {
-                        Snackbar.make(it, "Unable to show current location - permission is required", Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(it, getString(R.string.unavailable), Snackbar.LENGTH_LONG).show()
                     }
                 }
             }
@@ -108,11 +109,14 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
         }
         this.petrolStationList = PetrolStationLoader.loadJSONStations(context!!)
         calculateDistanceFromUser(userLatLng)
-        petrolStationListAdapter.updateDataSet(this.petrolStationList)
+        this.petrolStationList.sortBy { petrolStation ->
+            petrolStation.distanceFromUser
+        }
+        this.petrolStationListAdapter.updateDataSet(this.petrolStationList)
     }
 
     override fun onStop() {
-        fusedLocationClient?.removeLocationUpdates(locationCallBack)
+        this.fusedLocationClient?.removeLocationUpdates(locationCallBack)
         super.onStop()
     }
 

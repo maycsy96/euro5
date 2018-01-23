@@ -4,6 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/nav_map"
+        android:icon="@drawable/ic_near_me_black_24dp"
+        android:title="Nearby"
+        app:showAsAction="collapseActionView|ifRoom"/>
+    <item
         android:id="@+id/nav_search"
         android:icon="@drawable/ic_history_black_24dp"
         android:title="Recent"
