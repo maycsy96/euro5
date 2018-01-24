@@ -82,6 +82,10 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
                     return
                 }
             }
+        val petrolStation = this.petrolStationList.firstOrNull { it.equals(marker?.snippet) }
+        petrolStation?.let {
+            val launchIntent = PetrolStationDetailActivity.newLaunchIntent(this.context!!, it)
+            startActivity(launchIntent)
         }
     }
 
