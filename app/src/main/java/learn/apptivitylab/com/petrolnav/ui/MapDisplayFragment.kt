@@ -2,7 +2,6 @@ package learn.apptivitylab.com.petrolnav.ui
 
 import android.app.Activity
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -11,12 +10,12 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import android.util.Log
 import android.view.*
 
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.fragment_map_display.*
@@ -29,7 +28,7 @@ import java.util.ArrayList
  * Created by apptivitylab on 09/01/2018.
  */
 
-class MapDisplayFragment : Fragment() {
+class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
 
     companion object {
         val LOCATION_REQUEST_CODE = 100
@@ -74,6 +73,18 @@ class MapDisplayFragment : Fragment() {
         startLocationUpdates()
     }
 
+    override fun onInfoWindowClick(marker: Marker?) {
+        for (petrolStation in this.petrolStationList) {
+            petrolStation.petrolStationId?.let {
+                if (it.equals(marker?.snippet)) {
+                    val launchIntent = PetrolStationDetailActivity.newLaunchIntent(this.context!!, petrolStation)
+                    startActivity(launchIntent)
+                    return
+                }
+            }
+        }
+    }
+
     private fun centerMapOnUserLocation() {
         if (userLatLng != null) {
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
@@ -93,6 +104,7 @@ class MapDisplayFragment : Fragment() {
 
         this.mapFragment?.getMapAsync { googleMap ->
             this.googleMap = googleMap
+            this.googleMap?.setOnInfoWindowClickListener(this)
             val officeLatLng = LatLng(4.2105, 101.9758)
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(officeLatLng, 6f)
             this.googleMap?.moveCamera(cameraUpdate)
@@ -124,7 +136,6 @@ class MapDisplayFragment : Fragment() {
                 }
             }
         }
-
         fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallBack, Looper.myLooper())
     }
 
@@ -174,6 +185,7 @@ class MapDisplayFragment : Fragment() {
                 nearestStationLatLng?.let {
                     var nearestStationMarkerOptions = MarkerOptions().position(it)
                             .title(nearestStation.petrolStationName)
+                            .snippet(nearestStation.petrolStationId)
                     nearestStationLocationMarker = googleMap?.addMarker(nearestStationMarkerOptions)
                 }
             }
