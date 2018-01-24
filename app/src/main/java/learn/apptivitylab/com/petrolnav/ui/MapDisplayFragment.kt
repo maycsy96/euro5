@@ -149,7 +149,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
                 } else {
                     this.googleMap?.isMyLocationEnabled = false
                     this.view?.let {
-                        Snackbar.make(it, getString(R.string.unavailable), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(it, getString(R.string.message_unavailable_location), Snackbar.LENGTH_LONG).show()
                     }
                 }
             }

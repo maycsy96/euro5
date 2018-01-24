@@ -67,7 +67,7 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             if(petrolStation?.distanceFromUser != null) {
                 itemView.petrolStationDistanceTextView.text = "%.2f".format(this.petrolStation?.distanceFromUser)
             }else{
-                itemView.petrolStationDistanceTextView.text = itemView.context.getString(R.string.unavailable)
+                itemView.petrolStationDistanceTextView.text = itemView.context.getString(R.string.message_unavailable_location)
             }
 
         }
