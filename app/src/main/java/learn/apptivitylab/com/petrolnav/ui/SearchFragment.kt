@@ -108,7 +108,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
             this.userLatLng = LatLng(it.latitude, it.longitude)
         }
         this.petrolStationList = PetrolStationLoader.loadJSONStations(context!!)
-        calculateDistanceFromUser(userLatLng)
+        updatePetrolStationsDistanceFromUser(userLatLng,this.petrolStationList)
         this.petrolStationList.sortBy { petrolStation ->
             petrolStation.distanceFromUser
         }
@@ -125,13 +125,13 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
         startActivity(launchIntent)
     }
 
-    private fun calculateDistanceFromUser(userLatlng: LatLng?) {
+    fun updatePetrolStationsDistanceFromUser(userLatlng: LatLng?, petrolStationList: ArrayList<PetrolStation>) {
         val userLocation = Location(getString(R.string.user_location))
         userLatlng?.let {
             userLocation.latitude = it.latitude
             userLocation.longitude = it.longitude
         }
-        for (petrolStation in this.petrolStationList) {
+        for (petrolStation in petrolStationList) {
             val petrolStationLocation = Location(getString(R.string.petrol_station_location))
 
             petrolStation.petrolStationLatLng?.let {

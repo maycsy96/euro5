@@ -74,14 +74,6 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
     }
 
     override fun onInfoWindowClick(marker: Marker?) {
-        for (petrolStation in this.petrolStationList) {
-            petrolStation.petrolStationId?.let {
-                if (it.equals(marker?.snippet)) {
-                    val launchIntent = PetrolStationDetailActivity.newLaunchIntent(this.context!!, petrolStation)
-                    startActivity(launchIntent)
-                    return
-                }
-            }
         val petrolStation = this.petrolStationList.firstOrNull { it.equals(marker?.snippet) }
         petrolStation?.let {
             val launchIntent = PetrolStationDetailActivity.newLaunchIntent(this.context!!, it)
@@ -176,7 +168,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
                 this.locationMarker = googleMap?.addMarker(markerOptions)
             }
 
-            calculateDistanceFromUser(this.userLatLng)
+            updatePetrolStationsDistanceFromUser(this.userLatLng,this.petrolStationList)
             this.petrolStationList.sortBy { petrolStation ->
                 petrolStation.distanceFromUser
             }
@@ -198,13 +190,13 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         }
     }
 
-    fun calculateDistanceFromUser(userLatlng: LatLng?) {
+    fun updatePetrolStationsDistanceFromUser(userLatlng: LatLng?, petrolStationList: ArrayList<PetrolStation>) {
         val userLocation = Location(getString(R.string.user_location))
         userLatlng?.let {
             userLocation.latitude = it.latitude
             userLocation.longitude = it.longitude
         }
-        for (petrolStation in this.petrolStationList) {
+        for (petrolStation in petrolStationList) {
             val petrolStationLocation = Location(getString(R.string.petrol_station_location))
 
             petrolStation.petrolStationLatLng?.let {
