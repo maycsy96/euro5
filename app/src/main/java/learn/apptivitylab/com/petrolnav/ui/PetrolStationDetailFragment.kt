@@ -46,7 +46,7 @@ class PetrolStationDetailFragment : Fragment() {
         if (petrolStationSelected.distanceFromUser != null) {
             petrolStationDistanceTextView.text = "%.2f".format(petrolStationSelected.distanceFromUser)
         } else {
-            petrolStationDistanceTextView.text = context?.getString(R.string.unavailable)
+            petrolStationDistanceTextView.text = context?.getString(R.string.message_unavailable_distance)
         }
     }
 }

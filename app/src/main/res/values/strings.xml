@@ -7,5 +7,6 @@
     <string name="navigate">Navigation</string>
     <string name="user_location">User location</string>
     <string name="petrol_station_location">Petrol Station location</string>
-    <string name="unavailable">Unavailable</string>
+    <string name="message_unavailable_location">Unable to show current location</string>
+    <string name="message_unavailable_distance">Unavailable distance</string>
 </resources>
