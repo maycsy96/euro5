@@ -168,7 +168,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
                 this.locationMarker = googleMap?.addMarker(markerOptions)
             }
 
-            updatePetrolStationsDistanceFromUser(this.userLatLng,this.petrolStationList)
+            updatePetrolStationsDistanceFromUser(this.userLatLng, this.petrolStationList)
             this.petrolStationList.sortBy { petrolStation ->
                 petrolStation.distanceFromUser
             }
