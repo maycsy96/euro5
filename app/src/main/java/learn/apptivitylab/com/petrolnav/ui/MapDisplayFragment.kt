@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.fragment_map_display.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
 import learn.apptivitylab.com.petrolnav.model.PetrolStation
+import learn.apptivitylab.com.petrolnav.model.User
 import java.util.ArrayList
 
 /**
@@ -33,6 +34,16 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
     companion object {
         val LOCATION_REQUEST_CODE = 100
         val TAG = "MapDisplayFragment"
+
+        private val ARG_USER_DETAIL = "user_detail"
+
+        fun newInstance(user: User): MapDisplayFragment{
+            val fragment = MapDisplayFragment()
+            val args: Bundle = Bundle()
+            args.putParcelable(ARG_USER_DETAIL,user)
+            fragment.arguments = args
+            return fragment
+        }
     }
 
     private var mapFragment: SupportMapFragment? = null

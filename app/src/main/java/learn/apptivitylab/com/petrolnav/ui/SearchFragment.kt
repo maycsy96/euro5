@@ -20,6 +20,7 @@ import learn.apptivitylab.com.petrolnav.R
 import kotlinx.android.synthetic.main.fragment_search.*
 import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
 import learn.apptivitylab.com.petrolnav.model.PetrolStation
+import learn.apptivitylab.com.petrolnav.model.User
 import java.util.*
 
 /**
@@ -30,6 +31,15 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
 
     companion object {
         private val TAG = "SearchFragment"
+
+        const val ARG_USER_DETAIL = "user_detail"
+        fun newInstance(user: User): SearchFragment {
+            val fragment = SearchFragment()
+            val args: Bundle = Bundle()
+            args.putParcelable(ARG_USER_DETAIL, user)
+            fragment.arguments = args
+            return fragment
+        }
     }
 
     private var userLatLng: LatLng? = null
@@ -108,7 +118,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
             this.userLatLng = LatLng(it.latitude, it.longitude)
         }
         this.petrolStationList = PetrolStationLoader.loadJSONStations(context!!)
-        updatePetrolStationsDistanceFromUser(userLatLng,this.petrolStationList)
+        updatePetrolStationsDistanceFromUser(userLatLng, this.petrolStationList)
         this.petrolStationList.sortBy { petrolStation ->
             petrolStation.distanceFromUser
         }

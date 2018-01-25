@@ -8,12 +8,16 @@ import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_login.*
 import learn.apptivitylab.com.petrolnav.R
+import learn.apptivitylab.com.petrolnav.controller.UserController
+import learn.apptivitylab.com.petrolnav.model.User
 
 /**
  * Created by apptivitylab on 08/01/2018.
  */
 
 class LoginActivity : AppCompatActivity() {
+
+    private var user = User()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
         val email = emailEditText.text.toString()
         val password = passwordEditText.text.toString()
 
-        //Authentication logic
+        //TODO Authentication Logic
 
         android.os.Handler().postDelayed(
                 {
@@ -63,8 +67,9 @@ class LoginActivity : AppCompatActivity() {
 
     fun onLoginSuccess() {
         this.loginButton.isEnabled = true
-        val intent = Intent(applicationContext, MainActivity::class.java)
-        startActivityForResult(intent, REQUEST_LOGIN)
+        this.user = UserController.loadJSONUser(this)
+        val launchIntent = MainActivity.newLaunchIntent(this, user)
+        startActivityForResult(launchIntent, REQUEST_LOGIN)
         finish()
     }
 
