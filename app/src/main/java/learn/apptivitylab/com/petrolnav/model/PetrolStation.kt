@@ -3,7 +3,6 @@ package learn.apptivitylab.com.petrolnav.model
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng
-import org.json.JSONException
 import org.json.JSONObject
 
 /**
@@ -15,6 +14,16 @@ data class PetrolStation(var petrolStationId: String? = null,
                          var petrolStationAddress: String? = null,
                          var petrolStationLatLng: LatLng? = null,
                          var distanceFromUser: Double? = null) : Parcelable {
+
+    companion object CREATOR : Parcelable.Creator<PetrolStation> {
+        override fun createFromParcel(parcel: Parcel): PetrolStation {
+            return PetrolStation(parcel)
+        }
+
+        override fun newArray(size: Int): Array<PetrolStation?> {
+            return arrayOfNulls(size)
+        }
+    }
 
     constructor(parcel: Parcel) : this() {
         petrolStationId = parcel.readString()
@@ -45,16 +54,6 @@ data class PetrolStation(var petrolStationId: String? = null,
         parcel?.writeParcelable(petrolStationLatLng, flags)
         distanceFromUser?.let {
             parcel?.writeDouble(it)
-        }
-    }
-
-    companion object CREATOR : Parcelable.Creator<PetrolStation> {
-        override fun createFromParcel(parcel: Parcel): PetrolStation {
-            return PetrolStation(parcel)
-        }
-
-        override fun newArray(size: Int): Array<PetrolStation?> {
-            return arrayOfNulls(size)
         }
     }
 }
