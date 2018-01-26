@@ -43,11 +43,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.navigationView.inflateMenu(R.menu.navigation_drawer_menu)
         this.navigationView.setNavigationItemSelectedListener(this)
 
-        val item = intent.getParcelableExtra<User>(EXTRA_USER_DETAIL)
+        val user = intent.getParcelableExtra<User>(EXTRA_USER_DETAIL)
 
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.mainViewgroupContainer, MapDisplayFragment.newInstance(item))
+                .replace(R.id.mainViewgroupContainer, MapDisplayFragment.newInstance(user))
                 .commit()
 
     }
@@ -61,17 +61,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun navigateTo(id: Int) {
         var displayFragment: Fragment? = null
-        val item = intent.getParcelableExtra<User>(EXTRA_USER_DETAIL)
+        val user = intent.getParcelableExtra<User>(EXTRA_USER_DETAIL)
         when (id) {
             R.id.nav_map -> {
-                displayFragment = MapDisplayFragment.newInstance(item)
+                displayFragment = MapDisplayFragment.newInstance(user)
             }
             R.id.nav_search -> {
-                displayFragment = SearchFragment.newInstance(item)
+                displayFragment = SearchFragment.newInstance(user)
             }
             R.id.nav_petrol_price -> Log.d(TAG, "Show Petrol Price")
             R.id.nav_preference -> {
-                displayFragment = PreferencesFragment.newInstance(item)
+                displayFragment = PreferencesFragment.newInstance(user)
             }
             R.id.nav_log_out -> Log.d(TAG, "Show Log Out")
         }
@@ -85,3 +85,4 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 }
+
