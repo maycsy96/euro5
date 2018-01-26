@@ -189,7 +189,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
                 petrolStation.distanceFromUser
             }
 
-            var filteredPetrolStationListBasedPreferredPetrol = filterPetrolStationListBasedPreferredPetrol(this.petrolStationList,this.user)
+            var filteredPetrolStationListBasedPreferredPetrol = filterPetrolStationListBasedPreferredPetrol(this.petrolStationList, this.user)
 
             val nearestStationsCount = 5
             var nearestStationsList = filteredPetrolStationListBasedPreferredPetrol.take(nearestStationsCount)

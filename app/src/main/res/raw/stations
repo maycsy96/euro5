@@ -1,204 +1,204 @@
 {
-"petrol_stations":[
-  {
-    "petrol_station_id": "00001",
-    "petrol_station_name": "Shell Shah Alam",
-    "petrol_station_brand": "Shell",
-    "petrol_station_address": "Federal Hwy, Kawasan Perindustrian Temasya, 47500 Shah Alam, Selangor",
-    "petrol_station_latitude": "3.0852932",
-    "petrol_station_longitude": "101.5849345",
-    "petrols":[
-      {
-        "petrol_id": "P0001",
-        "petrol_name": "RON95",
-        "petrol_price": "1.05"
-      },
-      {
-        "petrol_id": "P0002",
-        "petrol_name": "RON97",
-        "petrol_price": "1.15"
-      }
-    ]
-  },
-  {
-    "petrol_station_id": "00002",
-    "petrol_station_name": "Petronas Temasya Federal Highway",
-    "petrol_station_brand": "Petronas",
-    "petrol_station_address": "Federal Hwy, Kawasan Perindustrian Temasya, 47500 Shah Alam, Selangor",
-    "petrol_station_latitude": "3.0851379",
-    "petrol_station_longitude": "101.5843612",
-    "petrols":[
-      {
-        "petrol_id": "P0002",
-        "petrol_name": "RON97",
-        "petrol_price": "1.15"
-      },
-      {
-        "petrol_id": "P0003",
-        "petrol_name": "Diesel",
-        "petrol_price": "1.00"
-      },
-      {
-        "petrol_id": "P0004",
-        "petrol_name": "EURO5",
-        "petrol_price": "0.95"
-      }
-    ]
-  },
-  {
-    "petrol_station_id": "00003",
-    "petrol_station_name": "Shell Subang Jaya",
-    "petrol_station_brand": "Shell",
-    "petrol_station_address": "3, Jalan SS 17/1a, Ss 17, 47500 Subang Jaya, Selangor",
-    "petrol_station_latitude": "3.0791783",
-    "petrol_station_longitude": "101.5811962",
-    "petrols":[
-      {
-        "petrol_id": "P0001",
-        "petrol_name": "RON95",
-        "petrol_price": "1.05"
-      },
-      {
-        "petrol_id": "P0002",
-        "petrol_name": "RON97",
-        "petrol_price": "1.15"
-      },
-      {
-        "petrol_id": "P0003",
-        "petrol_name": "Diesel",
-        "petrol_price": "1.00"
-      },
-      {
-        "petrol_id": "P0004",
-        "petrol_name": "EURO5",
-        "petrol_price": "0.95"
-      }
-    ]
-  },
-  {
-    "petrol_station_id": "00004",
-    "petrol_station_name": "Petron",
-    "petrol_station_brand": "Petron",
-    "petrol_station_address": "1, Jalan SS 17/1a, Ss 17, 47500 Subang Jaya, Selangor",
-    "petrol_station_latitude": "3.0793105",
-    "petrol_station_longitude": "101.5819113",
-    "petrols": [
-      {
-        "petrol_id": "P0003",
-        "petrol_name": "Diesel",
-        "petrol_price": "1.00"
-      },
-      {
-        "petrol_id": "P0004",
-        "petrol_name": "EURO5",
-        "petrol_price": "0.95"
-      }
-    ]
-  },
-  {
-    "petrol_station_id": "00005",
-    "petrol_station_name": "Shell Subang Jaya",
-    "petrol_station_brand": "Shell",
-    "petrol_station_address": "Jalan SS 15/3B 214, 47500 Subang Jaya, Selangor",
-    "petrol_station_latitude": "3.0787598",
-    "petrol_station_longitude": "101.5860204",
-    "petrols": [
-      {
-        "petrol_id": "P0001",
-        "petrol_name": "RON95",
-        "petrol_price": "1.05"
-      },
-      {
-        "petrol_id": "P0002",
-        "petrol_name": "RON97",
-        "petrol_price": "1.15"
-      },
-      {
-        "petrol_id": "P0003",
-        "petrol_name": "Diesel",
-        "petrol_price": "1.00"
-      }
-    ]
-  },
-  {
-    "petrol_station_id": "00006",
-    "petrol_station_name": "Petronas Subang Jaya",
-    "petrol_station_brand": "Shell",
-    "petrol_station_address": "Jalan SS 17/2, Ss 17, 47500 Subang Jaya, Selangor",
-    "petrol_station_latitude": "3.0738507",
-    "petrol_station_longitude": "101.5844101",
-    "petrols": [
-      {
-        "petrol_id": "P0001",
-        "petrol_name": "RON95",
-        "petrol_price": "1.05"
-      },
-      {
-        "petrol_id": "P0002",
-        "petrol_name": "RON97",
-        "petrol_price": "1.15"
-      },
-      {
-        "petrol_id": "P0003",
-        "petrol_name": "Diesel",
-        "petrol_price": "1.00"
-      },
-      {
-        "petrol_id": "P0004",
-        "petrol_name": "EURO5",
-        "petrol_price": "0.95"
-      }
-    ]
-  },
-  {
-    "petrol_station_id": "00007",
-    "petrol_station_name": "Caltex @ Subang Jaya",
-    "petrol_station_brand": "Caltex",
-    "petrol_station_address": "Jalan SS 14/1, Ss 14, 47500 Subang Jaya, Selangor",
-    "petrol_station_latitude": "3.0728165",
-    "petrol_station_longitude": "101.5868043",
-    "petrols": [
-      {
-        "petrol_id": "P0001",
-        "petrol_name": "RON95",
-        "petrol_price": "1.05"
-      },
-      {
-        "petrol_id": "P0003",
-        "petrol_name": "Diesel",
-        "petrol_price": "1.00"
-      },
-      {
-        "petrol_id": "P0004",
-        "petrol_name": "EURO5",
-        "petrol_price": "0.95"
-      }
-    ]
-  },
-  {
-    "petrol_station_id": "00008",
-    "petrol_station_name": "BHPetrol Subang Jaya",
-    "petrol_station_brand": "BHPetrol",
-    "petrol_station_address": "Lot 4973,, 2, Jalan SS 14, Ss 14, 47500 Subang Jaya, Selangor",
-    "petrol_station_latitude": "3.0726287",
-    "petrol_station_longitude": "101.5926804",
-    "petrols": [
-      {
-        "petrol_id": "P0001",
-        "petrol_name": "RON95",
-        "petrol_price": "1.05"
-      },
-      {
-        "petrol_id": "P0002",
-        "petrol_name": "RON97",
-        "petrol_price": "1.15"
-      },
-      {
-        "petrol_id": "P0004",
-        "petrol_name": "EURO5",
-        "petrol_price": "0.95"
-      }
-    ]
-  }
-]
+  "petrol_stations": [
+    {
+      "petrol_station_id": "00001",
+      "petrol_station_name": "Shell Shah Alam",
+      "petrol_station_brand": "Shell",
+      "petrol_station_address": "Federal Hwy, Kawasan Perindustrian Temasya, 47500 Shah Alam, Selangor",
+      "petrol_station_latitude": "3.0852932",
+      "petrol_station_longitude": "101.5849345",
+      "petrols": [
+        {
+          "petrol_id": "P0001",
+          "petrol_name": "RON95",
+          "petrol_price": "1.05"
+        },
+        {
+          "petrol_id": "P0002",
+          "petrol_name": "RON97",
+          "petrol_price": "1.15"
+        }
+      ]
+    },
+    {
+      "petrol_station_id": "00002",
+      "petrol_station_name": "Petronas Temasya Federal Highway",
+      "petrol_station_brand": "Petronas",
+      "petrol_station_address": "Federal Hwy, Kawasan Perindustrian Temasya, 47500 Shah Alam, Selangor",
+      "petrol_station_latitude": "3.0851379",
+      "petrol_station_longitude": "101.5843612",
+      "petrols": [
+        {
+          "petrol_id": "P0002",
+          "petrol_name": "RON97",
+          "petrol_price": "1.15"
+        },
+        {
+          "petrol_id": "P0003",
+          "petrol_name": "Diesel",
+          "petrol_price": "1.00"
+        },
+        {
+          "petrol_id": "P0004",
+          "petrol_name": "EURO5",
+          "petrol_price": "0.95"
+        }
+      ]
+    },
+    {
+      "petrol_station_id": "00003",
+      "petrol_station_name": "Shell Subang Jaya",
+      "petrol_station_brand": "Shell",
+      "petrol_station_address": "3, Jalan SS 17/1a, Ss 17, 47500 Subang Jaya, Selangor",
+      "petrol_station_latitude": "3.0791783",
+      "petrol_station_longitude": "101.5811962",
+      "petrols": [
+        {
+          "petrol_id": "P0001",
+          "petrol_name": "RON95",
+          "petrol_price": "1.05"
+        },
+        {
+          "petrol_id": "P0002",
+          "petrol_name": "RON97",
+          "petrol_price": "1.15"
+        },
+        {
+          "petrol_id": "P0003",
+          "petrol_name": "Diesel",
+          "petrol_price": "1.00"
+        },
+        {
+          "petrol_id": "P0004",
+          "petrol_name": "EURO5",
+          "petrol_price": "0.95"
+        }
+      ]
+    },
+    {
+      "petrol_station_id": "00004",
+      "petrol_station_name": "Petron",
+      "petrol_station_brand": "Petron",
+      "petrol_station_address": "1, Jalan SS 17/1a, Ss 17, 47500 Subang Jaya, Selangor",
+      "petrol_station_latitude": "3.0793105",
+      "petrol_station_longitude": "101.5819113",
+      "petrols": [
+        {
+          "petrol_id": "P0003",
+          "petrol_name": "Diesel",
+          "petrol_price": "1.00"
+        },
+        {
+          "petrol_id": "P0004",
+          "petrol_name": "EURO5",
+          "petrol_price": "0.95"
+        }
+      ]
+    },
+    {
+      "petrol_station_id": "00005",
+      "petrol_station_name": "Shell Subang Jaya",
+      "petrol_station_brand": "Shell",
+      "petrol_station_address": "Jalan SS 15/3B 214, 47500 Subang Jaya, Selangor",
+      "petrol_station_latitude": "3.0787598",
+      "petrol_station_longitude": "101.5860204",
+      "petrols": [
+        {
+          "petrol_id": "P0001",
+          "petrol_name": "RON95",
+          "petrol_price": "1.05"
+        },
+        {
+          "petrol_id": "P0002",
+          "petrol_name": "RON97",
+          "petrol_price": "1.15"
+        },
+        {
+          "petrol_id": "P0003",
+          "petrol_name": "Diesel",
+          "petrol_price": "1.00"
+        }
+      ]
+    },
+    {
+      "petrol_station_id": "00006",
+      "petrol_station_name": "Petronas Subang Jaya",
+      "petrol_station_brand": "Shell",
+      "petrol_station_address": "Jalan SS 17/2, Ss 17, 47500 Subang Jaya, Selangor",
+      "petrol_station_latitude": "3.0738507",
+      "petrol_station_longitude": "101.5844101",
+      "petrols": [
+        {
+          "petrol_id": "P0001",
+          "petrol_name": "RON95",
+          "petrol_price": "1.05"
+        },
+        {
+          "petrol_id": "P0002",
+          "petrol_name": "RON97",
+          "petrol_price": "1.15"
+        },
+        {
+          "petrol_id": "P0003",
+          "petrol_name": "Diesel",
+          "petrol_price": "1.00"
+        },
+        {
+          "petrol_id": "P0004",
+          "petrol_name": "EURO5",
+          "petrol_price": "0.95"
+        }
+      ]
+    },
+    {
+      "petrol_station_id": "00007",
+      "petrol_station_name": "Caltex @ Subang Jaya",
+      "petrol_station_brand": "Caltex",
+      "petrol_station_address": "Jalan SS 14/1, Ss 14, 47500 Subang Jaya, Selangor",
+      "petrol_station_latitude": "3.0728165",
+      "petrol_station_longitude": "101.5868043",
+      "petrols": [
+        {
+          "petrol_id": "P0001",
+          "petrol_name": "RON95",
+          "petrol_price": "1.05"
+        },
+        {
+          "petrol_id": "P0003",
+          "petrol_name": "Diesel",
+          "petrol_price": "1.00"
+        },
+        {
+          "petrol_id": "P0004",
+          "petrol_name": "EURO5",
+          "petrol_price": "0.95"
+        }
+      ]
+    },
+    {
+      "petrol_station_id": "00008",
+      "petrol_station_name": "BHPetrol Subang Jaya",
+      "petrol_station_brand": "BHPetrol",
+      "petrol_station_address": "Lot 4973,, 2, Jalan SS 14, Ss 14, 47500 Subang Jaya, Selangor",
+      "petrol_station_latitude": "3.0726287",
+      "petrol_station_longitude": "101.5926804",
+      "petrols": [
+        {
+          "petrol_id": "P0001",
+          "petrol_name": "RON95",
+          "petrol_price": "1.05"
+        },
+        {
+          "petrol_id": "P0002",
+          "petrol_name": "RON97",
+          "petrol_price": "1.15"
+        },
+        {
+          "petrol_id": "P0004",
+          "petrol_name": "EURO5",
+          "petrol_price": "0.95"
+        }
+      ]
+    }
+  ]
 }
