@@ -224,6 +224,38 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         }
     }
 
+    fun filterPetrolStationListBasedPreferredPetrol(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<PetrolStation> {
+        var preferredPetrolStationListBasedPetrol = ArrayList<PetrolStation>()
+        for (petrolStation in petrolStationList) {
+            petrolStation.petrolList?.let {
+                for (petrol in it) {
+                    if (petrol.petrolId == user.userPreferredPetrol?.petrolId) {
+                        preferredPetrolStationListBasedPetrol.add(petrolStation)
+                        break
+                    }
+                }
+            }
+        }
+        return preferredPetrolStationListBasedPetrol
+    }
+
+    fun filterPetrolStationListBasedPreferredBrand(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<PetrolStation> {
+        var preferredPetrolStationListBasedBrand = ArrayList<PetrolStation>()
+
+        for (petrolStation in petrolStationList) {
+            user.userPreferredPetrolStationBrandList?.let {
+                for (preferredBrand in it) {
+                    petrolStation.petrolStationBrand?.let {
+                        if (it.equals(preferredBrand)) {
+                            preferredPetrolStationListBasedBrand.add(petrolStation)
+                        }
+                    }
+                }
+            }
+        }
+        return preferredPetrolStationListBasedBrand
+    }
+
     override fun onStop() {
         fusedLocationClient?.removeLocationUpdates(locationCallBack)
         super.onStop()
