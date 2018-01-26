@@ -67,8 +67,12 @@ class LoginActivity : AppCompatActivity() {
 
     fun onLoginSuccess() {
         this.loginButton.isEnabled = true
-        this.user = UserController.loadJSONUser(this)
-        val launchIntent = MainActivity.newLaunchIntent(this, user)
+
+        UserController.loadJSONUser(this)?.let {
+            this.user = it
+        }
+
+        val launchIntent = MainActivity.newLaunchIntent(this, this.user)
         startActivityForResult(launchIntent, REQUEST_LOGIN)
         finish()
     }

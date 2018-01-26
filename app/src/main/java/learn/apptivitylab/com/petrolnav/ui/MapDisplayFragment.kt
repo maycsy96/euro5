@@ -37,10 +37,10 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
 
         private val ARG_USER_DETAIL = "user_detail"
 
-        fun newInstance(user: User): MapDisplayFragment{
+        fun newInstance(user: User): MapDisplayFragment {
             val fragment = MapDisplayFragment()
             val args: Bundle = Bundle()
-            args.putParcelable(ARG_USER_DETAIL,user)
+            args.putParcelable(ARG_USER_DETAIL, user)
             fragment.arguments = args
             return fragment
         }
@@ -56,6 +56,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
 
     private var petrolStationList = ArrayList<PetrolStation>()
     private var nearestStationLocationMarker: Marker? = null
+    private var user = User()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var rootView = inflater.inflate(R.layout.fragment_map_display, container, false)
@@ -77,6 +78,10 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
 
         this.centerUserButton.setOnClickListener {
             centerMapOnUserLocation()
+        }
+
+        arguments?.let {
+            this.user = it.getParcelable(ARG_USER_DETAIL)
         }
 
         this.petrolStationList = PetrolStationLoader.loadJSONStations(context!!)

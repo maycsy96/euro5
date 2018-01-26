@@ -26,9 +26,9 @@ data class PetrolStationBrand(
         petrolStationBrandName = parcel.readString()
     }
 
-    constructor(jsonObject: JSONObject) : this() {
-        this.petrolStationBrandId = jsonObject.optString("brand_id")
-        this.petrolStationBrandName = jsonObject.optString("brand_name")
+    constructor(jsonObject: JSONObject?) : this() {
+        this.petrolStationBrandId = jsonObject?.optString("brand_id")
+        this.petrolStationBrandName = jsonObject?.optString("brand_name")
     }
 
     override fun describeContents(): Int {

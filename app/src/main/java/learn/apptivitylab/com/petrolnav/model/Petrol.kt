@@ -18,10 +18,10 @@ data class Petrol(
         petrolPrice = parcel.readDouble()
     }
 
-    constructor(jsonObject: JSONObject) : this() {
-        this.petrolId = jsonObject.optString("petrol_id")
-        this.petrolName = jsonObject.optString("petrol_name")
-        this.petrolPrice = jsonObject.optDouble("petrol_price")
+    constructor(jsonObject: JSONObject?) : this() {
+        this.petrolId = jsonObject?.optString("petrol_id")
+        this.petrolName = jsonObject?.optString("petrol_name")
+        this.petrolPrice = jsonObject?.optDouble("petrol_price")
     }
 
     override fun writeToParcel(parcel: Parcel?, flags: Int) {
