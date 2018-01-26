@@ -90,7 +90,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
     }
 
     override fun onInfoWindowClick(marker: Marker?) {
-        val petrolStation = this.petrolStationList.firstOrNull { it.equals(marker?.snippet) }
+        val petrolStation = this.petrolStationList.firstOrNull { it.petrolStationId.equals(marker?.snippet) }
         petrolStation?.let {
             val launchIntent = PetrolStationDetailActivity.newLaunchIntent(this.context!!, it)
             startActivity(launchIntent)
