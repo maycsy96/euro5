@@ -189,10 +189,10 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
                 petrolStation.distanceFromUser
             }
 
-            var filteredPetrolStationListBasedPreferredPetrol = filterPetrolStationListBasedPreferredPetrol(this.petrolStationList, this.user)
+            var filteredListByPreferredPetrol = filterByPreferredPetrol(this.petrolStationList, this.user)
 
             val nearestStationsCount = 5
-            var nearestStationsList = filteredPetrolStationListBasedPreferredPetrol.take(nearestStationsCount)
+            var nearestStationsList = filteredListByPreferredPetrol.take(nearestStationsCount)
 
             for (nearestStation in nearestStationsList) {
                 var nearestStationLatLng = nearestStation.petrolStationLatLng
@@ -226,30 +226,30 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         }
     }
 
-    fun filterPetrolStationListBasedPreferredPetrol(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<PetrolStation> {
-        var preferredPetrolStationListBasedPetrol = ArrayList<PetrolStation>()
+    fun filterByPreferredPetrol(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<PetrolStation> {
+        var preferredPetrolStationList = ArrayList<PetrolStation>()
 
         petrolStationList.forEach { petrolStation ->
             petrolStation.petrolList?.forEach { petrol ->
                 if (petrol.petrolId == user.userPreferredPetrol?.petrolId) {
-                    preferredPetrolStationListBasedPetrol.add(petrolStation)
+                    preferredPetrolStationList.add(petrolStation)
                 }
             }
         }
-        return preferredPetrolStationListBasedPetrol
+        return preferredPetrolStationList
     }
 
-    fun filterPetrolStationListBasedPreferredBrand(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<PetrolStation> {
-        var preferredPetrolStationListBasedBrand = ArrayList<PetrolStation>()
+    fun filterByPreferredBrand(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<PetrolStation> {
+        var preferredPetrolStationList = ArrayList<PetrolStation>()
 
         petrolStationList.forEach { petrolStation ->
             user.userPreferredPetrolStationBrandList?.forEach { preferredBrand ->
                 if (petrolStation.petrolStationBrand == preferredBrand.petrolStationBrandName) {
-                    preferredPetrolStationListBasedBrand.add(petrolStation)
+                    preferredPetrolStationList.add(petrolStation)
                 }
             }
         }
-        return preferredPetrolStationListBasedBrand
+        return preferredPetrolStationList
     }
 
     override fun onStop() {
