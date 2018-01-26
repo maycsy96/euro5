@@ -1,5 +1,6 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
@@ -10,6 +11,7 @@ import android.util.Log
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import learn.apptivitylab.com.petrolnav.R
+import learn.apptivitylab.com.petrolnav.model.User
 
 /**
  * Created by apptivitylab on 09/01/2018.
@@ -19,6 +21,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     companion object {
         private val TAG = "Navigation View"
+        const val EXTRA_USER_DETAIL = "user_detail"
+
+        fun newLaunchIntent(context: Context, user: User): Intent {
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra(EXTRA_USER_DETAIL, user)
+            return intent
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,9 +43,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.navigationView.inflateMenu(R.menu.navigation_drawer_menu)
         this.navigationView.setNavigationItemSelectedListener(this)
 
+        val user = intent.getParcelableExtra<User>(EXTRA_USER_DETAIL)
+
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.mainViewgroupContainer, MapDisplayFragment())
+                .replace(R.id.mainViewgroupContainer, MapDisplayFragment.newInstance(user))
                 .commit()
 
     }
@@ -50,16 +61,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun navigateTo(id: Int) {
         var displayFragment: Fragment? = null
+        val user = intent.getParcelableExtra<User>(EXTRA_USER_DETAIL)
         when (id) {
             R.id.nav_map -> {
-                displayFragment = MapDisplayFragment()
+                displayFragment = MapDisplayFragment.newInstance(user)
             }
             R.id.nav_search -> {
-                displayFragment = SearchFragment()
+                displayFragment = SearchFragment.newInstance(user)
             }
             R.id.nav_petrol_price -> Log.d(TAG, "Show Petrol Price")
             R.id.nav_preference -> {
-                displayFragment = PreferencesFragment()
+                displayFragment = PreferencesFragment.newInstance(user)
             }
             R.id.nav_log_out -> Log.d(TAG, "Show Log Out")
         }
@@ -73,3 +85,4 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 }
+

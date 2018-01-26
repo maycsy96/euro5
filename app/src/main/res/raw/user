@@ -1,0 +1,29 @@
+{
+  "user_id": "0001",
+  "user_name": "May",
+  "user_email": "may@apptivitylab.com",
+  "user_password": "12345",
+  "petrol": {
+    "petrol_id": "P0001",
+    "petrol_name": "RON95",
+    "petrol_price": "1.05"
+  },
+  "petrol_station_brands": [
+    {
+      "brand_id": "B0001",
+      "brand_name": "Shell"
+    },
+    {
+      "brand_id": "B0002",
+      "brand_name": "Petronas"
+    },
+    {
+      "brand_id": "B0003",
+      "brand_name": "BHPetrol"
+    },
+    {
+      "brand_id": "B0004",
+      "brand_name": "Caltex"
+    }
+  ]
+}

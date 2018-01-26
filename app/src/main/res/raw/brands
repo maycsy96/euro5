@@ -1,0 +1,20 @@
+{
+  "brands": [
+    {
+      "brand_id": "B0001",
+      "brand_name": "Shell"
+    },
+    {
+      "brand_id": "B0002",
+      "brand_name": "Petronas"
+    },
+    {
+      "brand_id": "B0003",
+      "brand_name": "BHPetrol"
+    },
+    {
+      "brand_id": "B0004",
+      "brand_name": "Caltex"
+    }
+  ]
+}

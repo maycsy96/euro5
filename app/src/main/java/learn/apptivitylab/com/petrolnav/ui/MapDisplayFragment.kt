@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.fragment_map_display.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
 import learn.apptivitylab.com.petrolnav.model.PetrolStation
+import learn.apptivitylab.com.petrolnav.model.User
 import java.util.ArrayList
 
 /**
@@ -33,6 +34,16 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
     companion object {
         val LOCATION_REQUEST_CODE = 100
         val TAG = "MapDisplayFragment"
+
+        private val ARG_USER_DETAIL = "user_detail"
+
+        fun newInstance(user: User): MapDisplayFragment {
+            val fragment = MapDisplayFragment()
+            val args: Bundle = Bundle()
+            args.putParcelable(ARG_USER_DETAIL, user)
+            fragment.arguments = args
+            return fragment
+        }
     }
 
     private var mapFragment: SupportMapFragment? = null
@@ -45,6 +56,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
 
     private var petrolStationList = ArrayList<PetrolStation>()
     private var nearestStationLocationMarker: Marker? = null
+    private var user = User()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var rootView = inflater.inflate(R.layout.fragment_map_display, container, false)
@@ -68,13 +80,17 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             centerMapOnUserLocation()
         }
 
+        arguments?.let {
+            this.user = it.getParcelable(ARG_USER_DETAIL)
+        }
+
         this.petrolStationList = PetrolStationLoader.loadJSONStations(context!!)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!)
         startLocationUpdates()
     }
 
     override fun onInfoWindowClick(marker: Marker?) {
-        val petrolStation = this.petrolStationList.firstOrNull { it.equals(marker?.snippet) }
+        val petrolStation = this.petrolStationList.firstOrNull { it.petrolStationId.equals(marker?.snippet) }
         petrolStation?.let {
             val launchIntent = PetrolStationDetailActivity.newLaunchIntent(this.context!!, it)
             startActivity(launchIntent)
