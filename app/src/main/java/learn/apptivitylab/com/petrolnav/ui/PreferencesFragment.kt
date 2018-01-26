@@ -128,7 +128,6 @@ class PreferencesFragment : Fragment() {
 
         try {
             val outputStream = context?.openFileOutput("user.txt", Context.MODE_PRIVATE)
-            outputStream?.flush()
             outputStream?.write(userJsonObject.toString().toByteArray())
             outputStream?.close()
         } catch (e: FileNotFoundException) {
