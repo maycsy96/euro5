@@ -228,13 +228,11 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
 
     fun filterPetrolStationListBasedPreferredPetrol(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<PetrolStation> {
         var preferredPetrolStationListBasedPetrol = ArrayList<PetrolStation>()
-        for (petrolStation in petrolStationList) {
-            petrolStation.petrolList?.let {
-                for (petrol in it) {
-                    if (petrol.petrolId == user.userPreferredPetrol?.petrolId) {
-                        preferredPetrolStationListBasedPetrol.add(petrolStation)
-                        break
-                    }
+
+        petrolStationList.forEach { petrolStation ->
+            petrolStation.petrolList?.forEach { petrol ->
+                if (petrol.petrolId == user.userPreferredPetrol?.petrolId) {
+                    preferredPetrolStationListBasedPetrol.add(petrolStation)
                 }
             }
         }
@@ -244,14 +242,10 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
     fun filterPetrolStationListBasedPreferredBrand(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<PetrolStation> {
         var preferredPetrolStationListBasedBrand = ArrayList<PetrolStation>()
 
-        for (petrolStation in petrolStationList) {
-            user.userPreferredPetrolStationBrandList?.let {
-                for (preferredBrand in it) {
-                    petrolStation.petrolStationBrand?.let {
-                        if (it.equals(preferredBrand)) {
-                            preferredPetrolStationListBasedBrand.add(petrolStation)
-                        }
-                    }
+        petrolStationList.forEach { petrolStation ->
+            user.userPreferredPetrolStationBrandList?.forEach { preferredBrand ->
+                if (petrolStation.petrolStationBrand == preferredBrand.petrolStationBrandName) {
+                    preferredPetrolStationListBasedBrand.add(petrolStation)
                 }
             }
         }
