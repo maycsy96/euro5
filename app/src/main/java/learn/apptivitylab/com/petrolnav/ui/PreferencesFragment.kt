@@ -124,7 +124,7 @@ class PreferencesFragment : Fragment() {
         user.userPreferredPetrolStationBrandList = preferredPetrolStationBrandList
         user.userPreferredPetrol = preferredPetrol
 
-        var userJsonObject = UserController.toJsonObject(user)
+        var userJsonObject = user.toJsonObject()
 
         try {
             val outputStream = context?.openFileOutput("user.txt", Context.MODE_PRIVATE)

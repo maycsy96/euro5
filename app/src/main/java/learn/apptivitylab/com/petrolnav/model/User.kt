@@ -55,23 +55,23 @@ data class User(var userId: String? = null,
         }
     }
 
-    fun toJsonObject(user: User): JSONObject {
+    fun toJsonObject(): JSONObject {
         var jsonObjectUser = JSONObject()
-        jsonObjectUser.put("user_id", user.userId)
-        jsonObjectUser.put("user_name", user.userName)
-        jsonObjectUser.put("user_email", user.userEmail)
-        jsonObjectUser.put("user_password", user.userPassword)
+        jsonObjectUser.put("user_id", this.userId)
+        jsonObjectUser.put("user_name", this.userName)
+        jsonObjectUser.put("user_email", this.userEmail)
+        jsonObjectUser.put("user_password", this.userPassword)
 
         var jsonObjectPetrol = JSONObject()
         with(jsonObjectPetrol) {
-            put("petrol_id", user.userPreferredPetrol?.petrolId)
-            put("petrol_name", user.userPreferredPetrol?.petrolName)
-            put("petrol_price", user.userPreferredPetrol?.petrolPrice)
+            put("petrol_id", userPreferredPetrol?.petrolId)
+            put("petrol_name", userPreferredPetrol?.petrolName)
+            put("petrol_price", userPreferredPetrol?.petrolPrice)
         }
         jsonObjectUser.put("petrol", jsonObjectPetrol)
 
         var jsonObjectPetrolStationBrands = JSONArray()
-        user.userPreferredPetrolStationBrandList?.forEach {
+        this.userPreferredPetrolStationBrandList?.forEach {
             var jsonObjectBrand = JSONObject()
             with(jsonObjectBrand) {
                 put("brand_id", it.petrolStationBrandId)
@@ -83,7 +83,7 @@ data class User(var userId: String? = null,
 
         return jsonObjectUser
     }
-    
+
     override fun writeToParcel(parcel: Parcel?, flags: Int) {
         parcel?.writeString(userId)
         parcel?.writeString(userName)
