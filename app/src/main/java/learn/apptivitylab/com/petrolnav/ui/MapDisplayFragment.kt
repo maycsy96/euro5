@@ -184,7 +184,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
                 this.locationMarker = googleMap?.addMarker(markerOptions)
             }
 
-            updatePetrolStationsDistanceFromUser(this.userLatLng, this.petrolStationList)
+            setStationsDistanceFromUser(this.userLatLng, this.petrolStationList)
             this.petrolStationList.sortBy { petrolStation ->
                 petrolStation.distanceFromUser
             }
@@ -208,7 +208,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         }
     }
 
-    fun updatePetrolStationsDistanceFromUser(userLatlng: LatLng?, petrolStationList: ArrayList<PetrolStation>) {
+    fun setStationsDistanceFromUser(userLatlng: LatLng?, petrolStationList: ArrayList<PetrolStation>) {
         val userLocation = Location(getString(R.string.user_location))
         userLatlng?.let {
             userLocation.latitude = it.latitude
