@@ -189,8 +189,10 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
                 petrolStation.distanceFromUser
             }
 
+            var filteredListByPreferredPetrol = filterByPreferredPetrol(this.petrolStationList, this.user)
+
             val nearestStationsCount = 5
-            var nearestStationsList = this.petrolStationList.take(nearestStationsCount)
+            var nearestStationsList = filteredListByPreferredPetrol.take(nearestStationsCount)
 
             for (nearestStation in nearestStationsList) {
                 var nearestStationLatLng = nearestStation.petrolStationLatLng
@@ -222,6 +224,32 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             val distance = userLocation.distanceTo(petrolStationLocation) / 1000
             petrolStation.distanceFromUser = distance.toDouble()
         }
+    }
+
+    fun filterByPreferredPetrol(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<PetrolStation> {
+        var preferredPetrolStationList = ArrayList<PetrolStation>()
+
+        petrolStationList.forEach { petrolStation ->
+            petrolStation.petrolList?.forEach { petrol ->
+                if (petrol.petrolId == user.userPreferredPetrol?.petrolId) {
+                    preferredPetrolStationList.add(petrolStation)
+                }
+            }
+        }
+        return preferredPetrolStationList
+    }
+
+    fun filterByPreferredBrand(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<PetrolStation> {
+        var preferredPetrolStationList = ArrayList<PetrolStation>()
+
+        petrolStationList.forEach { petrolStation ->
+            user.userPreferredPetrolStationBrandList?.forEach { preferredBrand ->
+                if (petrolStation.petrolStationBrand == preferredBrand.petrolStationBrandName) {
+                    preferredPetrolStationList.add(petrolStation)
+                }
+            }
+        }
+        return preferredPetrolStationList
     }
 
     override fun onStop() {

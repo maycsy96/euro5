@@ -3,6 +3,7 @@ package learn.apptivitylab.com.petrolnav.model
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng
+import org.json.JSONException
 import org.json.JSONObject
 
 /**
@@ -13,7 +14,8 @@ data class PetrolStation(var petrolStationId: String? = null,
                          var petrolStationBrand: String? = null,
                          var petrolStationAddress: String? = null,
                          var petrolStationLatLng: LatLng? = null,
-                         var distanceFromUser: Double? = null) : Parcelable {
+                         var distanceFromUser: Double? = null,
+                         var petrolList: ArrayList<Petrol>? = null) : Parcelable {
 
     companion object CREATOR : Parcelable.Creator<PetrolStation> {
         override fun createFromParcel(parcel: Parcel): PetrolStation {
@@ -40,6 +42,18 @@ data class PetrolStation(var petrolStationId: String? = null,
         this.petrolStationBrand = jsonObject.optString("petrol_station_brand")
         this.petrolStationAddress = jsonObject.optString("petrol_station_address")
         this.petrolStationLatLng = LatLng(jsonObject.optDouble("petrol_station_latitude"), jsonObject.optDouble("petrol_station_longitude"))
+
+        var petrol: Petrol
+        var petrolListJsonArray = jsonObject.optJSONArray("petrols")
+        this.petrolList = ArrayList<Petrol>()
+        for (i in 0..petrolListJsonArray.length() - 1) {
+            try {
+                petrol = Petrol(petrolListJsonArray?.getJSONObject(i))
+                this.petrolList?.add(petrol)
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+        }
     }
 
     override fun describeContents(): Int {
