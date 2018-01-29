@@ -239,17 +239,9 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         return preferredPetrolStationList
     }
 
-    fun filterByPreferredBrand(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<PetrolStation> {
-        var preferredPetrolStationList = ArrayList<PetrolStation>()
-
-        petrolStationList.forEach { petrolStation ->
-            user.userPreferredPetrolStationBrandList?.forEach { preferredBrand ->
-                if (petrolStation.petrolStationBrand == preferredBrand.petrolStationBrandName) {
-                    preferredPetrolStationList.add(petrolStation)
                 }
             }
         }
-        return preferredPetrolStationList
     }
 
     override fun onStop() {
