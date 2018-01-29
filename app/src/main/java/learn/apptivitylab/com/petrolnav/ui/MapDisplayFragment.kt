@@ -1,5 +1,6 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -77,10 +78,6 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(it)
         }
 
-        this.centerUserButton.setOnClickListener {
-            centerMapOnUserLocation()
-        }
-
         arguments?.let {
             this.user = it.getParcelable(ARG_USER_DETAIL)
         }
@@ -95,15 +92,6 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         petrolStation?.let {
             val launchIntent = PetrolStationDetailActivity.newLaunchIntent(this.context!!, it)
             startActivity(launchIntent)
-        }
-    }
-
-    private fun centerMapOnUserLocation() {
-        if (userLatLng != null) {
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
-            this.googleMap?.moveCamera(cameraUpdate)
-        } else {
-            return
         }
     }
 
@@ -173,6 +161,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun onLocationChanged(location: Location?) {
         location?.let {
             this.userLatLng = LatLng(it.latitude, it.longitude)
@@ -196,7 +185,8 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             createPetrolStationMarker(nearestStationsList, this.user)
 
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
-            this.googleMap?.moveCamera(cameraUpdate)
+            this.googleMap?.animateCamera(cameraUpdate)
+            this.googleMap?.isMyLocationEnabled = true
         }
     }
 
