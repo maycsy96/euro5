@@ -109,6 +109,12 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             val officeLatLng = LatLng(4.2105, 101.9758)
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(officeLatLng, 6f)
             this.googleMap?.moveCamera(cameraUpdate)
+
+            var filteredListByPreferredPetrol = filterByPreferredPetrol(this.petrolStationList, this.user)
+            if (filteredListByPreferredPetrol.isEmpty()) {
+                filteredListByPreferredPetrol = petrolStationList
+            }
+            createPetrolStationMarker(filteredListByPreferredPetrol, this.user)
         }
     }
 
@@ -178,11 +184,6 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             this.petrolStationList.sortBy { petrolStation ->
                 petrolStation.distanceFromUser
             }
-
-            var filteredListByPreferredPetrol = filterByPreferredPetrol(this.petrolStationList, this.user)
-            val nearestStationsCount = 5
-            var nearestStationsList = filteredListByPreferredPetrol.take(nearestStationsCount)
-            createPetrolStationMarker(nearestStationsList, this.user)
 
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
             this.googleMap?.animateCamera(cameraUpdate)
