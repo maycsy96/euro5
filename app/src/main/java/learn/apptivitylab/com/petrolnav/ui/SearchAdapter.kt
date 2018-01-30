@@ -46,7 +46,7 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         : RecyclerView.ViewHolder(itemView) {
 
         interface onSelectStationListener {
-            fun onStationSelected(station: PetrolStation)
+            fun onStationSelected(petrolStation: PetrolStation)
         }
 
         private var petrolStation: PetrolStation? = null
