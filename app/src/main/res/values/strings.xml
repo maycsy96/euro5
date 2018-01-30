@@ -9,4 +9,6 @@
     <string name="petrol_station_location">Petrol Station location</string>
     <string name="message_unavailable_location">Unable to show current location</string>
     <string name="message_unavailable_distance">Unavailable distance</string>
+    <string name="preferred_petrol_station">Preferred Petrol Station</string>
+    <string name="non_preferred_petrol_station">Non-preferred Petrol Station</string>
 </resources>
