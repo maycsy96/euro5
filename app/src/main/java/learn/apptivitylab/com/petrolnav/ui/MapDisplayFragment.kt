@@ -1,7 +1,10 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -55,7 +58,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
     private var userLatLng: LatLng? = null
 
     private var petrolStationList = ArrayList<PetrolStation>()
-    private var nearestStationLocationMarker: Marker? = null
+    private var filteredListByPreferredPetrol = ArrayList<PetrolStation>()
     private var user = User()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -76,10 +79,6 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(it)
         }
 
-        this.centerUserButton.setOnClickListener {
-            centerMapOnUserLocation()
-        }
-
         arguments?.let {
             this.user = it.getParcelable(ARG_USER_DETAIL)
         }
@@ -97,15 +96,6 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         }
     }
 
-    private fun centerMapOnUserLocation() {
-        if (userLatLng != null) {
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
-            this.googleMap?.moveCamera(cameraUpdate)
-        } else {
-            return
-        }
-    }
-
     private fun setupGoogleMapsFragment() {
         this.mapFragment = SupportMapFragment.newInstance()
 
@@ -120,6 +110,12 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             val officeLatLng = LatLng(4.2105, 101.9758)
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(officeLatLng, 6f)
             this.googleMap?.moveCamera(cameraUpdate)
+
+            this.filteredListByPreferredPetrol = filterByPreferredPetrol(this.petrolStationList, this.user)
+            if (this.filteredListByPreferredPetrol.isEmpty()) {
+                this.filteredListByPreferredPetrol = petrolStationList
+            }
+            createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
         }
     }
 
@@ -172,6 +168,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun onLocationChanged(location: Location?) {
         location?.let {
             this.userLatLng = LatLng(it.latitude, it.longitude)
@@ -184,31 +181,28 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
                 this.locationMarker = googleMap?.addMarker(markerOptions)
             }
 
-            updatePetrolStationsDistanceFromUser(this.userLatLng, this.petrolStationList)
-            this.petrolStationList.sortBy { petrolStation ->
+            setStationsDistanceFromUser(this.userLatLng, this.petrolStationList)
+
+            this.filteredListByPreferredPetrol.sortBy { petrolStation ->
                 petrolStation.distanceFromUser
             }
 
-            var filteredListByPreferredPetrol = filterByPreferredPetrol(this.petrolStationList, this.user)
-
-            val nearestStationsCount = 5
-            var nearestStationsList = filteredListByPreferredPetrol.take(nearestStationsCount)
-
-            for (nearestStation in nearestStationsList) {
-                var nearestStationLatLng = nearestStation.petrolStationLatLng
-                nearestStationLatLng?.let {
-                    var nearestStationMarkerOptions = MarkerOptions().position(it)
-                            .title(nearestStation.petrolStationName)
-                            .snippet(nearestStation.petrolStationId)
-                    nearestStationLocationMarker = googleMap?.addMarker(nearestStationMarkerOptions)
-                }
+            var boundsBuilder = LatLngBounds.Builder()
+            var nearestStationsCount = 5
+            var nearestStationList = this.filteredListByPreferredPetrol.take(nearestStationsCount)
+            nearestStationList.forEach { nearestStation ->
+                boundsBuilder.include(nearestStation.petrolStationLatLng)
             }
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
-            this.googleMap?.moveCamera(cameraUpdate)
+            boundsBuilder.include(this.userLatLng)
+            var bounds = boundsBuilder.build()
+
+            val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100)
+            this.googleMap?.animateCamera(cameraUpdate)
+            this.googleMap?.isMyLocationEnabled = true
         }
     }
 
-    fun updatePetrolStationsDistanceFromUser(userLatlng: LatLng?, petrolStationList: ArrayList<PetrolStation>) {
+    fun setStationsDistanceFromUser(userLatlng: LatLng?, petrolStationList: ArrayList<PetrolStation>) {
         val userLocation = Location(getString(R.string.user_location))
         userLatlng?.let {
             userLocation.latitude = it.latitude
@@ -239,17 +233,32 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         return preferredPetrolStationList
     }
 
-    fun filterByPreferredBrand(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<PetrolStation> {
-        var preferredPetrolStationList = ArrayList<PetrolStation>()
+    fun createPetrolStationMarker(petrolStationList: List<PetrolStation>, user: User) {
+        var bitmapImage: Bitmap
+        var resizedBitmapImage: Bitmap
+        var petrolStationLocationMarker: Marker?
 
-        petrolStationList.forEach { petrolStation ->
-            user.userPreferredPetrolStationBrandList?.forEach { preferredBrand ->
-                if (petrolStation.petrolStationBrand == preferredBrand.petrolStationBrandName) {
-                    preferredPetrolStationList.add(petrolStation)
+        for (nearestStation in petrolStationList) {
+            var nearestStationLatLng = nearestStation.petrolStationLatLng
+            user.userPreferredPetrolStationBrandList?.let {
+                if (it.any { brand ->
+                    brand.petrolStationBrandName == nearestStation.petrolStationBrand
+                }) {
+                    bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.ic_petrol_station_marker)
+                    resizedBitmapImage = Bitmap.createScaledBitmap(bitmapImage, 100, 100, false)
+                } else {
+                    bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.circle_marker)
+                    resizedBitmapImage = Bitmap.createScaledBitmap(bitmapImage, 50, 50, false)
+                }
+                nearestStationLatLng?.let {
+                    var preferredStationMarkerOptions = MarkerOptions().position(it)
+                            .title(nearestStation.petrolStationName)
+                            .snippet(nearestStation.petrolStationId)
+                            .icon(BitmapDescriptorFactory.fromBitmap(resizedBitmapImage))
+                    petrolStationLocationMarker = googleMap?.addMarker(preferredStationMarkerOptions)
                 }
             }
         }
-        return preferredPetrolStationList
     }
 
     override fun onStop() {
