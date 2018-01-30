@@ -58,6 +58,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
     private var userLatLng: LatLng? = null
 
     private var petrolStationList = ArrayList<PetrolStation>()
+    private var filteredListByPreferredPetrol = ArrayList<PetrolStation>()
     private var user = User()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -110,11 +111,11 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(officeLatLng, 6f)
             this.googleMap?.moveCamera(cameraUpdate)
 
-            var filteredListByPreferredPetrol = filterByPreferredPetrol(this.petrolStationList, this.user)
-            if (filteredListByPreferredPetrol.isEmpty()) {
-                filteredListByPreferredPetrol = petrolStationList
+            this.filteredListByPreferredPetrol = filterByPreferredPetrol(this.petrolStationList, this.user)
+            if (this.filteredListByPreferredPetrol.isEmpty()) {
+                this.filteredListByPreferredPetrol = petrolStationList
             }
-            createPetrolStationMarker(filteredListByPreferredPetrol, this.user)
+            createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
         }
     }
 
@@ -181,11 +182,21 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             }
 
             setStationsDistanceFromUser(this.userLatLng, this.petrolStationList)
-            this.petrolStationList.sortBy { petrolStation ->
+
+            this.filteredListByPreferredPetrol.sortBy { petrolStation ->
                 petrolStation.distanceFromUser
             }
 
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLatLng, 16f)
+            var boundsBuilder = LatLngBounds.Builder()
+            var nearestStationsCount = 5
+            var nearestStationList = this.filteredListByPreferredPetrol.take(nearestStationsCount)
+            nearestStationList.forEach { nearestStation ->
+                boundsBuilder.include(nearestStation.petrolStationLatLng)
+            }
+            boundsBuilder.include(this.userLatLng)
+            var bounds = boundsBuilder.build()
+
+            val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100)
             this.googleMap?.animateCamera(cameraUpdate)
             this.googleMap?.isMyLocationEnabled = true
         }
