@@ -22,6 +22,7 @@ import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
 import learn.apptivitylab.com.petrolnav.model.PetrolStation
 import learn.apptivitylab.com.petrolnav.model.User
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by apptivitylab on 09/01/2018.
@@ -47,7 +48,10 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
     private var locationCallBack: LocationCallback? = null
 
     private var petrolStationList = ArrayList<PetrolStation>()
+    private var filteredListByPreferredPetrol = ArrayList<PetrolStation>()
     val petrolStationListAdapter = SearchAdapter()
+
+    private var user = User()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_search, container, false)
@@ -56,12 +60,24 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        arguments?.let {
+            this.user = it.getParcelable(ARG_USER_DETAIL)
+        }
+
         val layoutManager = LinearLayoutManager(this.activity, LinearLayoutManager.VERTICAL, false)
         petrolStationListRecyclerView.layoutManager = layoutManager
 
-        petrolStationListAdapter.setStationListener(this)
+        this.petrolStationListAdapter.setStationListener(this)
         petrolStationListRecyclerView.adapter = petrolStationListAdapter
-        petrolStationListAdapter.updateDataSet(PetrolStationLoader.loadJSONStations(context!!))
+
+        this.petrolStationList = PetrolStationLoader.loadJSONStations(context!!)
+
+        this.filteredListByPreferredPetrol = filterByPreferredPetrol(this.petrolStationList, this.user)
+        if (this.filteredListByPreferredPetrol.isEmpty()) {
+            this.filteredListByPreferredPetrol = petrolStationList
+        }
+        var filteredListByPreferredBrand = filterByPreferredBrand(this.filteredListByPreferredPetrol, this.user)
+        petrolStationListAdapter.updateDataSet(filteredListByPreferredBrand)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!)
         startLocationUpdates()
@@ -117,12 +133,16 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
         location?.let {
             this.userLatLng = LatLng(it.latitude, it.longitude)
         }
-        this.petrolStationList = PetrolStationLoader.loadJSONStations(context!!)
-        updatePetrolStationsDistanceFromUser(userLatLng, this.petrolStationList)
-        this.petrolStationList.sortBy { petrolStation ->
+
+        setStationsDistanceFromUser(this.userLatLng, this.petrolStationList)
+
+        this.filteredListByPreferredPetrol.sortBy { petrolStation ->
             petrolStation.distanceFromUser
         }
-        this.petrolStationListAdapter.updateDataSet(this.petrolStationList)
+
+        var filteredListByPreferredBrand = filterByPreferredBrand(this.filteredListByPreferredPetrol, this.user)
+        petrolStationListAdapter.updateDataSet(filteredListByPreferredBrand)
+
     }
 
     override fun onStop() {
@@ -135,7 +155,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
         startActivity(launchIntent)
     }
 
-    fun updatePetrolStationsDistanceFromUser(userLatlng: LatLng?, petrolStationList: ArrayList<PetrolStation>) {
+    fun setStationsDistanceFromUser(userLatlng: LatLng?, petrolStationList: ArrayList<PetrolStation>) {
         val userLocation = Location(getString(R.string.user_location))
         userLatlng?.let {
             userLocation.latitude = it.latitude
@@ -151,5 +171,42 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
             val distance = userLocation.distanceTo(petrolStationLocation) / 1000
             petrolStation.distanceFromUser = distance.toDouble()
         }
+    }
+
+    fun filterByPreferredPetrol(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<PetrolStation> {
+        var preferredPetrolStationList = ArrayList<PetrolStation>()
+
+        petrolStationList.forEach { petrolStation ->
+            petrolStation.petrolList?.forEach { petrol ->
+                if (petrol.petrolId == user.userPreferredPetrol?.petrolId) {
+                    preferredPetrolStationList.add(petrolStation)
+                }
+            }
+        }
+        return preferredPetrolStationList
+    }
+
+    fun filterByPreferredBrand(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<Any> {
+        var preferredStationList = ArrayList<PetrolStation>()
+        for (petrolStation in petrolStationList) {
+            user.userPreferredPetrolStationBrandList?.let {
+                if (it.any { brand ->
+                    brand.petrolStationBrandName == petrolStation.petrolStationBrand
+                }) {
+                    preferredStationList.add(petrolStation)
+                }
+            }
+        }
+        var nonPreferredStationList = ArrayList<PetrolStation> ()
+        nonPreferredStationList.addAll(petrolStationList)
+        nonPreferredStationList.removeAll(preferredStationList)
+
+        var filteredListByBrand = ArrayList<Any>()
+        filteredListByBrand.add(getString(R.string.preferred_petrol_station))
+        filteredListByBrand.addAll(preferredStationList)
+        filteredListByBrand.add(getString(R.string.non_preferred_petrol_station))
+        filteredListByBrand.addAll(nonPreferredStationList)
+
+        return filteredListByBrand
     }
 }
