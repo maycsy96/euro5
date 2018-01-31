@@ -74,7 +74,7 @@ class PetrolStationDetailFragment : Fragment() {
                 startActivity(chooser)
             }else{
                 this.view?.let{
-                    Snackbar.make(it, getString(R.string.message_unavailable_location), Snackbar.LENGTH_LONG)
+                    Snackbar.make(it, getString(R.string.message_unavailable_app), Snackbar.LENGTH_LONG)
                 }
             }
         }
