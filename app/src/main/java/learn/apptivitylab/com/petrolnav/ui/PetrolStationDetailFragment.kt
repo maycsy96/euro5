@@ -1,6 +1,10 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -38,15 +42,41 @@ class PetrolStationDetailFragment : Fragment() {
         arguments?.let {
             petrolStationSelected = it.getParcelable(PETROL_STATION_DETAIL)
         }
-        petrolStationIdTextView.text = petrolStationSelected.petrolStationId
-        petrolStationNameTextView.text = petrolStationSelected.petrolStationName
-        petrolStationBrandTextView.text = petrolStationSelected.petrolStationBrand
-        petrolStationAddressTextView.text = petrolStationSelected.petrolStationAddress
+        this.petrolStationIdTextView.text = petrolStationSelected.petrolStationId
+        this.petrolStationNameTextView.text = petrolStationSelected.petrolStationName
+        this.petrolStationBrandTextView.text = petrolStationSelected.petrolStationBrand
+        this.petrolStationAddressTextView.text = petrolStationSelected.petrolStationAddress
 
         if (petrolStationSelected.distanceFromUser != null) {
-            petrolStationDistanceTextView.text = "%.2f".format(petrolStationSelected.distanceFromUser)
+            this.petrolStationDistanceTextView.text = "%.2f".format(petrolStationSelected.distanceFromUser)
         } else {
-            petrolStationDistanceTextView.text = context?.getString(R.string.message_unavailable_distance)
+            this.petrolStationDistanceTextView.text = context?.getString(R.string.message_unavailable_distance)
+        }
+
+        this.petrolTextView.text = petrolStationSelected.petrolList
+                ?.map { it.petrolName }
+                ?.joinToString(" , ")
+
+        this.navigationButton.setOnClickListener{
+            navigateToPetrolStation(this.petrolStationSelected)
+        }
+    }
+
+    fun navigateToPetrolStation(petrolStation: PetrolStation){
+        petrolStation.petrolStationLatLng?.let{
+            val locationUri = Uri.parse("geo:0,0?q=${it.latitude},${it.longitude}")
+            val navigateIntent = Intent(Intent.ACTION_VIEW, locationUri)
+            val packageManager = context!!.packageManager
+            val availableApps = packageManager.queryIntentActivities(navigateIntent, PackageManager.MATCH_DEFAULT_ONLY)
+            val isIntentSafe = availableApps.size > 0
+            val chooser = Intent.createChooser(navigateIntent, getString(R.string.navigate))
+            if(isIntentSafe){
+                startActivity(chooser)
+            }else{
+                this.view?.let{
+                    Snackbar.make(it, getString(R.string.message_unavailable_location), Snackbar.LENGTH_LONG)
+                }
+            }
         }
     }
 }

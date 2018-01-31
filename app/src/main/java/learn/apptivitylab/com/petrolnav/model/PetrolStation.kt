@@ -34,6 +34,7 @@ data class PetrolStation(var petrolStationId: String? = null,
         petrolStationAddress = parcel.readString()
         petrolStationLatLng = parcel.readParcelable(LatLng::class.java.classLoader)
         distanceFromUser = parcel.readDouble()
+        petrolList = parcel.readArrayList(Petrol::class.java.classLoader) as ArrayList<Petrol>
     }
 
     constructor(jsonObject: JSONObject) : this() {
@@ -69,5 +70,6 @@ data class PetrolStation(var petrolStationId: String? = null,
         distanceFromUser?.let {
             parcel?.writeDouble(it)
         }
+        parcel?.writeList(petrolList)
     }
 }
