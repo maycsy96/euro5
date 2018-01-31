@@ -57,8 +57,26 @@ class PetrolStationDetailFragment : Fragment() {
                 ?.map { it.petrolName }
                 ?.joinToString(" , ")
 
+        this.navigationButton.setOnClickListener{
+            navigateToPetrolStation(this.petrolStationSelected)
+        }
     }
 
+    fun navigateToPetrolStation(petrolStation: PetrolStation){
+        petrolStation.petrolStationLatLng?.let{
+            val locationUri = Uri.parse("geo:0,0?q=${it.latitude},${it.longitude}")
+            val navigateIntent = Intent(Intent.ACTION_VIEW, locationUri)
+            val packageManager = context!!.packageManager
+            val availableApps = packageManager.queryIntentActivities(navigateIntent, PackageManager.MATCH_DEFAULT_ONLY)
+            val isIntentSafe = availableApps.size > 0
+            val chooser = Intent.createChooser(navigateIntent, getString(R.string.navigate))
+            if(isIntentSafe){
+                startActivity(chooser)
+            }else{
+                this.view?.let{
+                    Snackbar.make(it, getString(R.string.message_unavailable_location), Snackbar.LENGTH_LONG)
+                }
+            }
         }
     }
 }
