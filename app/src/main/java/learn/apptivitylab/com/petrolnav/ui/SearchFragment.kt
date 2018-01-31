@@ -197,7 +197,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.onSelectStati
                 }
             }
         }
-        var nonPreferredStationList = ArrayList<PetrolStation> ()
+        var nonPreferredStationList = ArrayList<PetrolStation>()
         nonPreferredStationList.addAll(petrolStationList)
         nonPreferredStationList.removeAll(preferredStationList)
 
