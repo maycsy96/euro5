@@ -13,7 +13,7 @@ import learn.apptivitylab.com.petrolnav.model.User
  */
 class PetrolPriceActivity : AppCompatActivity() {
     companion object {
-        const val EXTRA_USER_DETAIL = "user detail"
+        const val EXTRA_USER_DETAIL = "user_detail"
 
         fun newLaunchIntent(context: Context, user: User): Intent {
             val intent = Intent(context, PetrolPriceActivity::class.java)
