@@ -69,7 +69,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_search -> {
                 displayFragment = SearchFragment.newInstance(user)
             }
-            R.id.nav_petrol_price -> Log.d(TAG, "Show Petrol Price")
+            R.id.nav_petrol_price -> {
+                val launchIntent = PetrolPriceActivity.newLaunchIntent(this, user)
+                startActivity(launchIntent)
+            }
             R.id.nav_preference -> {
                 displayFragment = PreferencesFragment.newInstance(user)
             }
