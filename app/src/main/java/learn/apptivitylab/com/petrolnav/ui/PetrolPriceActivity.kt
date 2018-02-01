@@ -13,11 +13,11 @@ import learn.apptivitylab.com.petrolnav.model.User
  */
 class PetrolPriceActivity : AppCompatActivity() {
     companion object {
-        const val EXTRA_USER_DETAIL = "user_detail"
+        const val ARG_USER_DETAIL = "user_detail"
 
         fun newLaunchIntent(context: Context, user: User): Intent {
             val intent = Intent(context, PetrolPriceActivity::class.java)
-            intent.putExtra(EXTRA_USER_DETAIL, user)
+            intent.putExtra(ARG_USER_DETAIL, user)
             return intent
         }
     }
@@ -29,7 +29,7 @@ class PetrolPriceActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.title = getString(R.string.petrol_price_history)
 
-        val item = intent.getParcelableExtra<User>(EXTRA_USER_DETAIL)
+        val item = intent.getParcelableExtra<User>(ARG_USER_DETAIL)
 
         supportFragmentManager
                 .beginTransaction()
