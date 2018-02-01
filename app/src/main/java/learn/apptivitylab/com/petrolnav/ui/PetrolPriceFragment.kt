@@ -2,9 +2,11 @@ package learn.apptivitylab.com.petrolnav.ui
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.fragment_petrol_price.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.controller.PetrolLoader
 import learn.apptivitylab.com.petrolnav.model.Petrol
@@ -27,8 +29,9 @@ class PetrolPriceFragment : Fragment() {
         }
     }
 
-    private var petrolList: ArrayList<Petrol>? = null
+    private var petrolList: ArrayList<Any>? = null
     private var user = User()
+    val petrolListAdapter = PetrolPriceAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_petrol_price, container, false)
@@ -41,6 +44,12 @@ class PetrolPriceFragment : Fragment() {
             user = it.getParcelable(ARG_USER_DETAIL)
         }
 
-        this.petrolList = PetrolLoader.loadJSONPetrols(this.context!!)
+        val layoutManager = LinearLayoutManager(this.activity, LinearLayoutManager.VERTICAL, false)
+        this.petrolListRecyclerView.layoutManager = layoutManager
+
+        this.petrolListRecyclerView.adapter = petrolListAdapter
+        this.petrolList = PetrolLoader.loadJSONPetrols(this.context!!) as ArrayList<Any>
+        this.petrolListAdapter.updateDataSet(this.petrolList as ArrayList<Any>)
+
     }
 }
