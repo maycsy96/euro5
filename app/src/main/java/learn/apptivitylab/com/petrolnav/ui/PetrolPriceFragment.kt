@@ -29,7 +29,7 @@ class PetrolPriceFragment : Fragment() {
         }
     }
 
-    private var petrolList: ArrayList<Any>? = null
+    private var petrolList: ArrayList<Petrol>? = null
     private var user = User()
     val petrolListAdapter = PetrolPriceAdapter()
 
@@ -48,8 +48,7 @@ class PetrolPriceFragment : Fragment() {
         this.petrolListRecyclerView.layoutManager = layoutManager
 
         this.petrolListRecyclerView.adapter = petrolListAdapter
-        this.petrolList = PetrolLoader.loadJSONPetrols(this.context!!) as ArrayList<Any>
-        this.petrolListAdapter.updateDataSet(this.petrolList as ArrayList<Any>)
-
+        this.petrolList = PetrolLoader.loadJSONPetrols(this.context!!)
+        this.petrolListAdapter.updateDataSet(this.petrolList as ArrayList<Petrol>)
     }
 }

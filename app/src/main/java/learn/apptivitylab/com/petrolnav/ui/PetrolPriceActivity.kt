@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_petrol_price.*
 import learn.apptivitylab.com.petrolnav.R
-import learn.apptivitylab.com.petrolnav.model.Petrol
 import learn.apptivitylab.com.petrolnav.model.User
 
 /**
@@ -26,11 +26,14 @@ class PetrolPriceActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_petrol_price)
 
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = getString(R.string.petrol_price_history)
+
         val item = intent.getParcelableExtra<User>(EXTRA_USER_DETAIL)
 
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.petrolPriceViewgroupContainer, PetrolPriceFragment.newInstance(item))
+                .replace(R.id.petrolPriceMainViewgroupContainer, PetrolPriceFragment.newInstance(item))
                 .commit()
     }
 }
