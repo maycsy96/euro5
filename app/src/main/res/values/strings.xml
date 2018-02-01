@@ -19,4 +19,5 @@
     <string name="petrol_station_petrol">Petrol List : </string>
     <string name="petrol">Petrol</string>
     <string name="message_unavailable_app">Navigation applications not found</string>
+    <string name="petrol_price_history">Petrol Price History</string>
 </resources>
