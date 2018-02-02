@@ -12,7 +12,7 @@ data class Petrol(
         var petrolId: String? = null,
         var petrolName: String? = null,
         var petrolPrice: Double? = null,
-        var petrolPriceHistoryList: ArrayList<PriceHistory>? = null) : Parcelable {
+        var petrolPriceHistoryList: ArrayList<PriceHistory> = ArrayList<PriceHistory>()) : Parcelable {
 
     constructor(parcel: Parcel) : this() {
         petrolId = parcel.readString()
@@ -34,7 +34,7 @@ data class Petrol(
             for(i in 0..it.length()-1){
                 try {
                     petrolPriceHistory = PriceHistory(petrolPriceHistoryListJsonArray.getJSONObject(i))
-                    this.petrolPriceHistoryList?.add(petrolPriceHistory)
+                    this.petrolPriceHistoryList.add(petrolPriceHistory)
                 } catch (e: JSONException) {
                     e.printStackTrace()
                 }
