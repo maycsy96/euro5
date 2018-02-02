@@ -20,4 +20,6 @@
     <string name="petrol">Petrol</string>
     <string name="message_unavailable_app">Navigation applications not found</string>
     <string name="petrol_price_history">Petrol Price History</string>
+    <string name="petrol_price_date">Date : %1$s - %2$s</string>
+    <string name="petrol_price_value">RM %1$.2f</string>
 </resources>
