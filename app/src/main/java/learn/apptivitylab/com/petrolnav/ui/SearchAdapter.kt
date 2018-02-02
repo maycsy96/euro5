@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.cell_header.view.*
+import kotlinx.android.synthetic.main.cell_header_petrol_station.view.*
 import kotlinx.android.synthetic.main.cell_petrol_station.view.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.model.PetrolStation
@@ -34,7 +34,7 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                         parent, false), petrolStationListener)
             }
             else -> {
-                HeaderViewHolder(LayoutInflater.from(parent!!.context).inflate(R.layout.cell_header,
+                HeaderViewHolder(LayoutInflater.from(parent!!.context).inflate(R.layout.cell_header_petrol_station,
                         parent, false))
             }
         }
