@@ -5,24 +5,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/holo_green_dark">
-            </android.support.v7.widget.Toolbar>
+                android:background="@android:color/holo_green_dark"></android.support.v7.widget.Toolbar>
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/petrolPriceTabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabSelectedTextColor="@android:color/white"
+                android:background="@android:color/holo_green_light">
+
+            </android.support.design.widget.TabLayout>
         </android.support.design.widget.AppBarLayout>
-        <FrameLayout
-            android:id="@+id/petrolPriceMainViewgroupContainer"
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/petrolPriceViewPagerContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        </FrameLayout>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"></android.support.v4.view.ViewPager>
     </android.support.design.widget.CoordinatorLayout>
 </LinearLayout>
