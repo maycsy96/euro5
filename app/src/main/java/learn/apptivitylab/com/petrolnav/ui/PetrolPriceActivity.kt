@@ -15,11 +15,8 @@ import learn.apptivitylab.com.petrolnav.model.Petrol
  */
 class PetrolPriceActivity : AppCompatActivity() {
     companion object {
-        const val ARG_USER_DETAIL = "user_detail"
-
-        fun newLaunchIntent(context: Context, user: User): Intent {
+        fun newLaunchIntent(context: Context): Intent {
             val intent = Intent(context, PetrolPriceActivity::class.java)
-            intent.putExtra(ARG_USER_DETAIL, user)
             return intent
         }
     }
@@ -40,7 +37,6 @@ class PetrolPriceActivity : AppCompatActivity() {
 
         this.petrolList = PetrolLoader.loadJSONPetrols(this)
 
-        val item = intent.getParcelableExtra<User>(ARG_USER_DETAIL)
         this.pagerAdapter = PetrolPricePagerAdapter(this.supportFragmentManager, this.petrolList)
         this.petrolPriceViewPagerContainer.adapter = this.pagerAdapter
         this.petrolPriceTabLayout.setupWithViewPager(this.petrolPriceViewPagerContainer)
