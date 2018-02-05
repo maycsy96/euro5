@@ -32,8 +32,8 @@ data class Petrol(
         var petrolPriceHistoryListJsonArray = jsonObject?.optJSONArray("petrol_price_history")
         this.petrolPriceHistoryList = ArrayList<PriceHistory>()
 
-        petrolPriceHistoryListJsonArray?.let{
-            for(i in 0..it.length()-1){
+        petrolPriceHistoryListJsonArray?.let {
+            for (i in 0..it.length() - 1) {
                 try {
                     petrolPriceHistory = PriceHistory(petrolPriceHistoryListJsonArray.getJSONObject(i))
                     this.petrolPriceHistoryList.add(petrolPriceHistory)
@@ -50,7 +50,7 @@ data class Petrol(
         petrolPrice?.let {
             parcel?.writeDouble(it)
         }
-        petrolPriceChange?.let{
+        petrolPriceChange?.let {
             parcel?.writeDouble(it)
         }
         parcel?.writeList(petrolPriceHistoryList)
