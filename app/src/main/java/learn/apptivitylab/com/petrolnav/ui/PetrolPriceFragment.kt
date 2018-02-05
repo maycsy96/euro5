@@ -8,9 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_petrol_price.*
 import learn.apptivitylab.com.petrolnav.R
-import learn.apptivitylab.com.petrolnav.controller.PetrolLoader
 import learn.apptivitylab.com.petrolnav.model.Petrol
-import learn.apptivitylab.com.petrolnav.model.User
 
 /**
  * Created by apptivitylab on 12/01/2018.
@@ -18,20 +16,19 @@ import learn.apptivitylab.com.petrolnav.model.User
 class PetrolPriceFragment : Fragment() {
 
     companion object {
-        private val ARG_USER_DETAIL = "user_detail"
+        private val ARG_PETROL_DETAIL = "petrol"
 
-        fun newInstance(user: User): PetrolPriceFragment {
+        fun newInstance(petrol: Petrol): PetrolPriceFragment {
             val fragment = PetrolPriceFragment()
             val args: Bundle = Bundle()
-            args.putParcelable(ARG_USER_DETAIL, user)
+            args.putParcelable(ARG_PETROL_DETAIL, petrol)
             fragment.arguments = args
             return fragment
         }
     }
 
-    private var petrolList: ArrayList<Petrol>? = null
-    private var user = User()
-    val petrolListAdapter = PetrolPriceAdapter()
+    private var petrol = Petrol()
+    val petrolAdapter = PetrolPriceRecyclerAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_petrol_price, container, false)
@@ -41,14 +38,23 @@ class PetrolPriceFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.let {
-            user = it.getParcelable(ARG_USER_DETAIL)
+            petrol = it.getParcelable(ARG_PETROL_DETAIL)
         }
 
         val layoutManager = LinearLayoutManager(this.activity, LinearLayoutManager.VERTICAL, false)
         this.petrolListRecyclerView.layoutManager = layoutManager
+        this.petrolListRecyclerView.adapter = petrolAdapter
 
-        this.petrolListRecyclerView.adapter = petrolListAdapter
-        this.petrolList = PetrolLoader.loadJSONPetrols(this.context!!)
-        this.petrolListAdapter.updateDataSet(this.petrolList as ArrayList<Petrol>)
+        setPetrolPriceChange(this.petrol)
+        this.petrolAdapter.updateDataSet(this.petrol)
+    }
+
+    fun setPetrolPriceChange(petrol: Petrol) {
+        var previousPrice = petrol.petrolPriceHistoryList.first().price
+
+        previousPrice?.let {
+            petrol.petrolPriceChange = petrol.petrolPrice?.minus(it)
+        }
+
     }
 }

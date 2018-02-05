@@ -1,5 +1,6 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -15,15 +16,14 @@ import java.text.SimpleDateFormat
 /**
  * Created by apptivitylab on 31/01/2018.
  */
-class PetrolPriceAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class PetrolPriceRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
         private val HEADER = 0
         private val ITEM = 1
     }
 
-    private var petrolList: ArrayList<Petrol> = ArrayList()
-    private var petrolStates: HashMap<Petrol, Boolean> = HashMap()
+    private var petrol: Petrol? = null
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -38,27 +38,35 @@ class PetrolPriceAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
-        when (item) {
-            is Petrol -> {
-                (holder as PetrolViewHolder).itemView.tag = holder
-                (holder as PetrolViewHolder).setPetrol(item)
-                holder.itemView.setOnClickListener(this)
+
+        when (holder) {
+            is PetrolViewHolder -> {
+                holder.itemView.tag = holder
+                holder.setPetrol(item as Petrol)
             }
-            is PriceHistory -> {
-                (holder as PriceHistoryViewHolder).itemView.tag = holder
-                (holder as PriceHistoryViewHolder).setPriceHistory(item)
+
+            is PriceHistoryViewHolder -> {
+                holder.itemView.tag = holder
+                holder.setPriceHistory(item as PriceHistory)
             }
         }
     }
 
+    fun getItem(position: Int): Any {
+        val petrolDetailList = ArrayList<Any>()
+        val petrol = this.petrol
+        petrolDetailList.add(petrol as Petrol)
+        petrolDetailList.addAll(petrol.petrolPriceHistoryList)
+
+        return petrolDetailList[position]
     }
 
     override fun getItemCount(): Int {
         var historyCount = 0
-        this.petrolList.forEach {
-            historyCount += it.petrolPriceHistoryList.count()
+        this.petrol?.let {
+            historyCount = it.petrolPriceHistoryList.count()
         }
-        return petrolList.size + historyCount
+        return 1 + historyCount
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -69,19 +77,12 @@ class PetrolPriceAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    fun updateDataSet(petrolList: ArrayList<Petrol>) {
-        this.petrolList.clear()
-        this.petrolList.addAll(petrolList)
-        petrolList.forEach {
-            if (!this.petrolStates.containsKey(it)) {
-                this.petrolStates.put(it, false)
-            }
-        }
+    fun updateDataSet(petrol: Petrol) {
+        this.petrol = petrol
         this.notifyDataSetChanged()
     }
 
     class PetrolViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
         private var petrol: Petrol? = null
 
         fun setPetrol(petrol: Petrol) {
@@ -89,6 +90,23 @@ class PetrolPriceAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             itemView.petrolIdTextView.text = this.petrol?.petrolId
             itemView.petrolNameTextView.text = this.petrol?.petrolName
             itemView.petrolPriceTextView.text = itemView.context?.getString(R.string.petrol_price_value, this.petrol?.petrolPrice)
+
+            petrol.petrolPriceChange?.let {
+                if (it != null) {
+                    itemView.petrolPriceChangeTextView.text = String.format("%.2f", it)
+                } else {
+                    itemView.petrolPriceChangeTextView.text = itemView.context.getString(R.string.message_unavailable_price_change)
+                }
+
+
+                if (it < 0.0f) {
+                    itemView.petrolPriceChangeTextView.setTextColor(Color.RED)
+                } else if (it > 0.0f) {
+                    itemView.petrolPriceChangeTextView.setTextColor(Color.GREEN)
+                } else {
+                    itemView.petrolPriceChangeTextView.setTextColor(Color.BLACK)
+                }
+            }
         }
     }
 
