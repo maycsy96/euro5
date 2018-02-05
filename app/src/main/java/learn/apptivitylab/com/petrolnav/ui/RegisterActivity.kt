@@ -55,12 +55,24 @@ class RegisterActivity : AppCompatActivity() {
             return
         }
         this.registerButton.isEnabled = false
-        val name = this.registerNameEditText.text.toString()
-        val email = this.registerEmailEditText.text.toString()
-        val password = this.registerPasswordEditText.text.toString()
+        this.user.userName = this.nameEditText.text.toString()
+        this.user.userEmail = this.emailEditText.text.toString()
+        this.user.userPassword = this.passwordEditText.text.toString()
 
-        //registration logic
-
+        this.userList.add(this.user)
+        var userListJsonArray = JSONArray()
+        for(user in userList){
+            userListJsonArray.put(user.toJsonObject())
+        }
+        try {
+            val outputStream = this.openFileOutput("userlist.txt", Context.MODE_PRIVATE)
+            outputStream?.write(userListJsonArray.toString().toByteArray())
+            outputStream?.close()
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
         onRegisterSuccess()
     }
 
