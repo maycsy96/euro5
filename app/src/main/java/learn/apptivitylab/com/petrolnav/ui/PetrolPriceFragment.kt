@@ -16,7 +16,7 @@ import learn.apptivitylab.com.petrolnav.model.Petrol
 class PetrolPriceFragment : Fragment() {
 
     companion object {
-        private val ARG_PETROL_DETAIL = "petrol"
+        private val ARG_PETROL_DETAIL = "petrol_detail"
 
         fun newInstance(petrol: Petrol): PetrolPriceFragment {
             val fragment = PetrolPriceFragment()
