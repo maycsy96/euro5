@@ -12,12 +12,14 @@ data class Petrol(
         var petrolId: String? = null,
         var petrolName: String? = null,
         var petrolPrice: Double? = null,
+        var petrolPriceChange: Double? = null,
         var petrolPriceHistoryList: ArrayList<PriceHistory> = ArrayList<PriceHistory>()) : Parcelable {
 
     constructor(parcel: Parcel) : this() {
         petrolId = parcel.readString()
         petrolName = parcel.readString()
         petrolPrice = parcel.readDouble()
+        petrolPriceChange = parcel.readDouble()
         petrolPriceHistoryList = parcel.readArrayList(PriceHistory::class.java.classLoader) as ArrayList<PriceHistory>
     }
 
@@ -46,6 +48,9 @@ data class Petrol(
         parcel?.writeString(petrolId)
         parcel?.writeString(petrolName)
         petrolPrice?.let {
+            parcel?.writeDouble(it)
+        }
+        petrolPriceChange?.let{
             parcel?.writeDouble(it)
         }
         parcel?.writeList(petrolPriceHistoryList)
