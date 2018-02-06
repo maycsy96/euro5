@@ -40,7 +40,9 @@ data class User(var userId: String? = null,
         this.userName = jsonObject.optString("user_name")
         this.userEmail = jsonObject.optString("user_email")
         this.userPassword = jsonObject.optString("user_password")
-        this.userPreferredPetrol = Petrol(jsonObject?.optJSONObject("petrol"))
+        if (!jsonObject?.optJSONObject("petrol").optString("petrol_id").isNullOrEmpty()){
+            this.userPreferredPetrol = Petrol(jsonObject?.optJSONObject("petrol"))
+        }
 
         var petrolStationBrand: PetrolStationBrand
         var petrolStationBrandListJsonArray = jsonObject.optJSONArray("petrol_station_brands")
