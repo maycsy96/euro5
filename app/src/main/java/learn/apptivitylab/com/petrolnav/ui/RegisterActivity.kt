@@ -8,10 +8,8 @@ import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_register.*
 import learn.apptivitylab.com.petrolnav.R
+import learn.apptivitylab.com.petrolnav.controller.UserController
 import learn.apptivitylab.com.petrolnav.model.User
-import org.json.JSONArray
-import java.io.FileNotFoundException
-import java.io.IOException
 
 /**
  * Created by apptivitylab on 08/01/2018.
@@ -60,30 +58,25 @@ class RegisterActivity : AppCompatActivity() {
         this.user.userPassword = this.passwordEditText.text.toString()
 
         this.userList.add(this.user)
-        var userListJsonArray = JSONArray()
-        for(user in userList){
-            userListJsonArray.put(user.toJsonObject())
+        var id = 0
+        for (user in userList) {
+            if (user.userId == null) {
+                user.userId = id.toString()
+            }
+            id++
         }
-        try {
-            val outputStream = this.openFileOutput("userlist.txt", Context.MODE_PRIVATE)
-            outputStream?.write(userListJsonArray.toString().toByteArray())
-            outputStream?.close()
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+        UserController.writeToJSONUserList(this, userList)
         onRegisterSuccess()
     }
 
     fun onRegisterSuccess() {
+        Toast.makeText(baseContext, getString(R.string.message_register_success), Toast.LENGTH_LONG).show()
         this.registerButton.isEnabled = true
         finish()
     }
 
     fun onRegisterFailed() {
-        Toast.makeText(baseContext, "Register failed", Toast.LENGTH_LONG).show()
-
+        Toast.makeText(baseContext, getString(R.string.message_register_failed), Toast.LENGTH_LONG).show()
         this.registerButton.isEnabled = true
     }
 
@@ -96,38 +89,36 @@ class RegisterActivity : AppCompatActivity() {
         var confirmPassword = this.confirmPasswordEditText.text.toString()
 
         if (name.isEmpty() || name.length < 3) {
-            this.nameEditText.error = "at least 3 characters"
+            this.nameEditText.error = getString(R.string.message_invalid_name)
             valid = false
         } else {
             this.nameEditText.error = null
         }
 
+        var userEmail = this.userList.firstOrNull { it.userEmail == email }
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            this.emailEditText.error = "enter a valid email address"
+            this.emailEditText.error = getString(R.string.message_invalid_email_address)
+            valid = false
+        } else if (userEmail != null) {
+            this.emailEditText.error = getString(R.string.message_unavailable_email)
             valid = false
         } else {
             this.emailEditText.error = null
         }
 
         if (password.isEmpty() || password.length < 4) {
-            this.passwordEditText.error = "at least 4 alphanumeric characters"
+            this.passwordEditText.error = getString(R.string.message_invalid_password)
             valid = false
         } else {
-            this.confirmPasswordEditText.error = null
+            this.passwordEditText.error = null
         }
 
         if (confirmPassword.isEmpty()) {
-            this.confirmPasswordEditText.error = "enter password to confirm"
+            this.confirmPasswordEditText.error = getString(R.string.message_invalid_confirm_password)
         } else if (confirmPassword != password) {
-            this.confirmPasswordEditText.error = "It is not same as the password you input"
+            this.confirmPasswordEditText.error = getString(R.string.message_mismatch_confirm_password)
         } else {
             this.confirmPasswordEditText.error = null
-        }
-
-        var userEmail = this.userList.firstOrNull{ it.userEmail == email}
-        if(userEmail != null){
-            this.emailEditText.error = "the email had been used. Please use other email"
-            valid = false
         }
 
         return valid
