@@ -18,6 +18,7 @@ import learn.apptivitylab.com.petrolnav.model.User
 class LoginActivity : AppCompatActivity() {
 
     private var user = User()
+    private var userList = ArrayList<User>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,9 +26,13 @@ class LoginActivity : AppCompatActivity() {
 
         this.loginButton.setOnClickListener { login() }
         this.registerTextView.setOnClickListener {
-            val intent = Intent(applicationContext, RegisterActivity::class.java)
-            startActivityForResult(intent, REQUEST_SIGNUP)
-            finish()
+
+            UserController.loadJSONUserList(this)?.let{
+                this.userList = it
+            }
+
+            val launchIntent = RegisterActivity.newLaunchIntent(this, userList)
+            startActivityForResult(launchIntent, REQUEST_SIGNUP)
         }
     }
 
@@ -52,25 +57,12 @@ class LoginActivity : AppCompatActivity() {
         )
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUEST_SIGNUP && resultCode == Activity.RESULT_OK) {
-            //implement signup logic here
-            this.finish()
-        }
-    }
-
     override fun onBackPressed() {
         moveTaskToBack(true)
     }
 
     fun onLoginSuccess() {
         this.loginButton.isEnabled = true
-
-        UserController.loadJSONUser(this)?.let {
-            this.user = it
-        }
 
         val launchIntent = MainActivity.newLaunchIntent(this, this.user)
         startActivityForResult(launchIntent, REQUEST_LOGIN)
