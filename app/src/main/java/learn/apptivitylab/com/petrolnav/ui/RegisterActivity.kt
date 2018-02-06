@@ -32,15 +32,15 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register)
+        this.setContentView(R.layout.activity_register)
 
         this.userList = intent.getParcelableArrayListExtra(ARG_USER_LIST)
 
-        this.registerButton.setOnClickListener { registerAccount() }
+        this.registerButton.setOnClickListener { this.registerAccount() }
 
         this.loginTextView.setOnClickListener {
-            setResult(Activity.RESULT_CANCELED, intent)
-            finish()
+            this.setResult(Activity.RESULT_CANCELED, intent)
+            this.finish()
         }
     }
 
@@ -62,20 +62,20 @@ class RegisterActivity : AppCompatActivity() {
 
         this.userList.add(this.user)
 
-        userList.forEachIndexed { id, user ->
+        this.userList.forEachIndexed { id, user ->
             if (user.userId == null) {
                 user.userId = id.toString()
             }
         }
 
-        UserController.writeToJSONUserList(this, userList)
+        UserController.writeToJSONUserList(this, this.userList)
         this.onRegisterSuccess()
     }
 
     fun onRegisterSuccess() {
         Toast.makeText(baseContext, getString(R.string.message_register_success), Toast.LENGTH_LONG).show()
         this.registerButton.isEnabled = true
-        setResult(Activity.RESULT_OK, intent.putExtra(ARG_USER_LIST, userList))
+        setResult(Activity.RESULT_OK, intent.putExtra(ARG_USER_LIST, this.userList))
         finish()
     }
 
