@@ -41,10 +41,15 @@ class RegisterActivity : AppCompatActivity() {
         this.registerButton.setOnClickListener { register() }
 
         this.loginTextView.setOnClickListener {
-            val intent = Intent(applicationContext, LoginActivity::class.java)
-            startActivity(intent)
+            setResult(Activity.RESULT_CANCELED, intent)
             finish()
         }
+    }
+
+    override fun onBackPressed() {
+        setResult(Activity.RESULT_CANCELED, intent)
+        super.onBackPressed()
+        finish()
     }
 
     fun register() {

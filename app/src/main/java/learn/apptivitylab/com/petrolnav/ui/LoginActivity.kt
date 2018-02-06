@@ -59,8 +59,10 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_SIGNUP && resultCode == Activity.RESULT_OK) {
-            this.userList = data.getParcelableArrayListExtra(RegisterActivity.ARG_USER_LIST)
+        if (requestCode == REQUEST_SIGNUP) {
+            if (resultCode == Activity.RESULT_OK) {
+                this.userList = data.getParcelableArrayListExtra(RegisterActivity.ARG_USER_LIST)
+            }
         }
     }
 
