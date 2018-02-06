@@ -23,4 +23,12 @@
     <string name="petrol_price_history">Petrol Price History</string>
     <string name="petrol_price_date">Date : %1$s - %2$s</string>
     <string name="petrol_price_value">RM %1$.2f</string>
+    <string name="message_register_failed">Register failed</string>
+    <string name="message_register_success">Register successful!</string>
+    <string name="message_invalid_name">The name should be at least 3 characters.</string>
+    <string name="message_invalid_email_address">Please enter a valid email address.</string>
+    <string name="message_unavailable_email">The email had been used. Please use other email.</string>
+    <string name="message_invalid_password">The password should be at least 4 characters.</string>
+    <string name="message_invalid_confirm_password">Please enter the same password to confirm.</string>
+    <string name="message_mismatch_confirm_password">The password you input does not match with inputted password</string>
 </resources>
