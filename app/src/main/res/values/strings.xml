@@ -31,4 +31,10 @@
     <string name="message_invalid_password">The password should be at least 4 characters.</string>
     <string name="message_invalid_confirm_password">Please enter the same password to confirm.</string>
     <string name="message_mismatch_confirm_password">The password you input does not match with inputted password</string>
+    <string name="user_name">Name</string>
+    <string name="user_email">Email</string>
+    <string name="user_password">Password</string>
+    <string name="user_confirm_password">Confirm Password</string>
+    <string name="register">Register</string>
+    <string name="if_a_member_login">Already a member? Login</string>
 </resources>
