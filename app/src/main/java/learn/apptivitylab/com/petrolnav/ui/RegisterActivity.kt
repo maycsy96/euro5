@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_register.*
 import learn.apptivitylab.com.petrolnav.R
@@ -53,8 +52,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     fun register() {
-        Log.d(TAG, "Register")
-        if (!validate()) {
+        if (!validateTextInput()) {
             onRegisterFailed()
             return
         }
@@ -87,7 +85,7 @@ class RegisterActivity : AppCompatActivity() {
         this.registerButton.isEnabled = true
     }
 
-    fun validate(): Boolean {
+    fun validateTextInput(): Boolean {
         var valid = true
 
         val name = this.nameEditText.text.toString()
