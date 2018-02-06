@@ -28,7 +28,7 @@
     <string name="message_invalid_name">The name should be at least 3 characters.</string>
     <string name="message_invalid_email_address">Please enter a valid email address.</string>
     <string name="message_unavailable_email">The email had been used. Please use other email.</string>
-    <string name="message_invalid_password">The password should be at least 4 characters.</string>
+    <string name="message_invalid_length_password">The password should be at least 4 characters.</string>
     <string name="message_invalid_confirm_password">Please enter the same password to confirm.</string>
     <string name="message_mismatch_confirm_password">The password you input does not match with inputted password</string>
     <string name="user_name">Name</string>
@@ -37,4 +37,6 @@
     <string name="user_confirm_password">Confirm Password</string>
     <string name="register">Register</string>
     <string name="if_a_member_login">Already a member? Login</string>
+    <string name="message_login_failed">Login Failed</string>
+    <string name="message_invalid_password">Please enter a password</string>
 </resources>

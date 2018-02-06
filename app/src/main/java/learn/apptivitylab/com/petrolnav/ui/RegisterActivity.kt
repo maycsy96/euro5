@@ -18,7 +18,6 @@ import learn.apptivitylab.com.petrolnav.model.User
 class RegisterActivity : AppCompatActivity() {
 
     companion object {
-        private val TAG = "RegisterActivity"
         val ARG_USER_LIST = "user_list"
 
         fun newLaunchIntent(context: Context, userList: ArrayList<User>): Intent {
@@ -112,18 +111,16 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         if (password.isEmpty() || password.length < 4) {
-            this.passwordEditText.error = getString(R.string.message_invalid_password)
+            this.passwordEditText.error = getString(R.string.message_invalid_length_password)
             valid = false
         } else {
             this.passwordEditText.error = null
         }
 
-        if (confirmPassword.isEmpty()) {
-            this.confirmPasswordEditText.error = getString(R.string.message_invalid_confirm_password)
-        } else if (confirmPassword != password) {
-            this.confirmPasswordEditText.error = getString(R.string.message_mismatch_confirm_password)
-        } else {
-            this.confirmPasswordEditText.error = null
+        when {
+            confirmPassword.isEmpty() -> this.confirmPasswordEditText.error = getString(R.string.message_invalid_confirm_password)
+            confirmPassword != password -> this.confirmPasswordEditText.error = getString(R.string.message_mismatch_confirm_password)
+            else -> this.confirmPasswordEditText.error = null
         }
 
         return valid

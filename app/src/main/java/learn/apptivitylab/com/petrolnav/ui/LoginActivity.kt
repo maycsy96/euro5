@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_login.*
 import learn.apptivitylab.com.petrolnav.R
@@ -37,7 +36,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun login() {
-        Log.d(TAG, "Login")
         if (!validate()) {
             onLoginFailed()
             return
@@ -66,7 +64,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onBackPressed() {
         moveTaskToBack(true)
     }
@@ -80,7 +77,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun onLoginFailed() {
-        Toast.makeText(baseContext, "Login Failed", Toast.LENGTH_LONG).show()
+        Toast.makeText(baseContext, getString(R.string.message_login_failed), Toast.LENGTH_LONG).show()
         this.loginButton.isEnabled = true
     }
 
@@ -90,14 +87,14 @@ class LoginActivity : AppCompatActivity() {
         val password = this.passwordEditText.text.toString()
 
         if (email.isEmpty()) {
-            this.emailEditText.error = "Please enter username"
+            this.emailEditText.error = getString(R.string.message_invalid_email_address)
             valid = false
         } else {
             this.emailEditText.error = null
         }
 
-        if (password.isEmpty() || password.length < 4 || password.length > 10) {
-            this.passwordEditText.error = "Please enter password"
+        if (password.isEmpty()) {
+            this.passwordEditText.error = getString(R.string.message_invalid_password)
             valid = false
         } else {
             this.passwordEditText.error = null
@@ -106,7 +103,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     companion object {
-        private val TAG = "LoginActivity"
         private val REQUEST_SIGNUP = 0
         private val REQUEST_LOGIN = 0
     }
