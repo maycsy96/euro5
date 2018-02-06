@@ -1,5 +1,6 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -19,7 +20,7 @@ class RegisterActivity : AppCompatActivity() {
 
     companion object {
         private val TAG = "RegisterActivity"
-        private val ARG_USER_LIST = "user_list"
+        val ARG_USER_LIST = "user_list"
 
         fun newLaunchIntent(context: Context, userList: ArrayList<User>): Intent {
             val intent = Intent(context, RegisterActivity::class.java)
@@ -72,6 +73,7 @@ class RegisterActivity : AppCompatActivity() {
     fun onRegisterSuccess() {
         Toast.makeText(baseContext, getString(R.string.message_register_success), Toast.LENGTH_LONG).show()
         this.registerButton.isEnabled = true
+        setResult(Activity.RESULT_OK, intent.putExtra(ARG_USER_LIST, userList))
         finish()
     }
 
