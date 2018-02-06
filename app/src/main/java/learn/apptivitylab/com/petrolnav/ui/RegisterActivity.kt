@@ -36,7 +36,7 @@ class RegisterActivity : AppCompatActivity() {
 
         this.userList = intent.getParcelableArrayListExtra(ARG_USER_LIST)
 
-        this.registerButton.setOnClickListener { register() }
+        this.registerButton.setOnClickListener { registerAccount() }
 
         this.loginTextView.setOnClickListener {
             setResult(Activity.RESULT_CANCELED, intent)
@@ -50,9 +50,9 @@ class RegisterActivity : AppCompatActivity() {
         finish()
     }
 
-    fun register() {
-        if (!validateTextInput()) {
-            onRegisterFailed()
+    fun registerAccount() {
+        if (!this.validateTextInput()) {
+            this.onRegisterFailed()
             return
         }
         this.registerButton.isEnabled = false
@@ -61,15 +61,15 @@ class RegisterActivity : AppCompatActivity() {
         this.user.userPassword = this.passwordEditText.text.toString()
 
         this.userList.add(this.user)
-        var id = 0
-        for (user in userList) {
+
+        userList.forEachIndexed { id, user ->
             if (user.userId == null) {
                 user.userId = id.toString()
             }
-            id++
         }
+
         UserController.writeToJSONUserList(this, userList)
-        onRegisterSuccess()
+        this.onRegisterSuccess()
     }
 
     fun onRegisterSuccess() {
