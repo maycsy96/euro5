@@ -3,22 +3,70 @@
     {
       "petrol_id": "P0001",
       "petrol_name": "RON95",
-      "petrol_price": "1.05"
+      "petrol_price": "1.05",
+      "petrol_price_history": [
+        {
+          "price": "2.04",
+          "date_from": "22/01/2018",
+          "date_to": "28/01/2018"
+        },
+        {
+          "price": "1.04",
+          "date_from": "15/01/2018",
+          "date_to": "21/01/2018"
+        }
+      ]
     },
     {
       "petrol_id": "P0002",
       "petrol_name": "RON97",
-      "petrol_price": "1.15"
+      "petrol_price": "1.15",
+      "petrol_price_history": [
+        {
+          "price": "1.10",
+          "date_from": "22/01/2018",
+          "date_to": "28/01/2018"
+        },
+        {
+          "price": "1.04",
+          "date_from": "15/01/2018",
+          "date_to": "21/01/2018"
+        }
+      ]
     },
     {
       "petrol_id": "P0003",
       "petrol_name": "Diesel",
-      "petrol_price": "1.00"
+      "petrol_price": "1.00",
+      "petrol_price_history": [
+        {
+          "price": "1.01",
+          "date_from": "22/01/2018",
+          "date_to": "28/01/2018"
+        },
+        {
+          "price": "1.04",
+          "date_from": "15/01/2018",
+          "date_to": "21/01/2018"
+        }
+      ]
     },
     {
       "petrol_id": "P0004",
       "petrol_name": "EURO5",
-      "petrol_price": "0.95"
+      "petrol_price": "0.95",
+      "petrol_price_history": [
+        {
+          "price": "0.95",
+          "date_from": "22/01/2018",
+          "date_to": "28/01/2018"
+        },
+        {
+          "price": "0.80",
+          "date_from": "15/01/2018",
+          "date_to": "21/01/2018"
+        }
+      ]
     }
   ]
 }
