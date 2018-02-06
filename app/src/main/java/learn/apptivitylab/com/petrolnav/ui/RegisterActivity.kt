@@ -90,7 +90,7 @@ class RegisterActivity : AppCompatActivity() {
         val name = this.nameEditText.text.toString()
         val email = this.emailEditText.text.toString()
         val password = this.passwordEditText.text.toString()
-        var confirmPassword = this.confirmPasswordEditText.text.toString()
+        val confirmPassword = this.confirmPasswordEditText.text.toString()
 
         if (name.isEmpty() || name.length < 3) {
             this.nameEditText.error = getString(R.string.message_invalid_name)
@@ -99,7 +99,7 @@ class RegisterActivity : AppCompatActivity() {
             this.nameEditText.error = null
         }
 
-        var userEmail = this.userList.firstOrNull { it.userEmail == email }
+        val userEmail = this.userList.firstOrNull { it.userEmail == email }
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             this.emailEditText.error = getString(R.string.message_invalid_email_address)
             valid = false
@@ -117,10 +117,10 @@ class RegisterActivity : AppCompatActivity() {
             this.passwordEditText.error = null
         }
 
-        when {
-            confirmPassword.isEmpty() -> this.confirmPasswordEditText.error = getString(R.string.message_invalid_confirm_password)
-            confirmPassword != password -> this.confirmPasswordEditText.error = getString(R.string.message_mismatch_confirm_password)
-            else -> this.confirmPasswordEditText.error = null
+        this.confirmPasswordEditText.error = when {
+            confirmPassword.isEmpty() -> getString(R.string.message_invalid_confirm_password)
+            confirmPassword != password -> getString(R.string.message_mismatch_confirm_password)
+            else -> null
         }
 
         return valid
