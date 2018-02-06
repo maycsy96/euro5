@@ -1,12 +1,12 @@
 package learn.apptivitylab.com.petrolnav.controller
 
 import android.content.Context
-import android.util.Log
 import learn.apptivitylab.com.petrolnav.model.User
 import org.json.JSONArray
 import org.json.JSONException
-import org.json.JSONObject
-import java.io.*
+import java.io.BufferedInputStream
+import java.io.FileNotFoundException
+import java.io.IOException
 
 /**
  * Created by apptivitylab on 24/01/2018.
@@ -16,7 +16,7 @@ class UserController {
     companion object {
         private val TAG = "UserController"
 
-        fun loadJSONUserList(context:Context): ArrayList<User>{
+        fun loadJSONUserList(context: Context): ArrayList<User> {
             val fileName = "userlist.json"
             try {
                 val inputStream = BufferedInputStream(context.openFileInput(fileName))
@@ -27,11 +27,11 @@ class UserController {
                 val jsonArrayString = String(data)
                 val jsonArray = JSONArray(jsonArrayString)
                 val userList: ArrayList<User> = ArrayList<User>()
-                for(i in 0..jsonArray.length()-1){
-                    try{
+                for (i in 0..jsonArray.length() - 1) {
+                    try {
                         var user = User(jsonArray.getJSONObject(i))
                         userList.add(user)
-                    }catch(e: JSONException){
+                    } catch (e: JSONException) {
                         e.printStackTrace()
                     }
                 }
@@ -47,7 +47,7 @@ class UserController {
             return ArrayList<User>()
         }
 
-        fun writeToJSONUserList(context:Context, userList: ArrayList<User>){
+        fun writeToJSONUserList(context: Context, userList: ArrayList<User>) {
             var userListJsonArray = JSONArray()
             val fileName = "userlist.json"
             for (user in userList) {
