@@ -1,7 +1,5 @@
 package learn.apptivitylab.com.petrolnav.ui
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -27,7 +25,7 @@ class LoginActivity : AppCompatActivity() {
         this.loginButton.setOnClickListener { login() }
         this.registerTextView.setOnClickListener {
 
-            UserController.loadJSONUserList(this)?.let{
+            UserController.loadJSONUserList(this)?.let {
                 this.userList = it
             }
 
