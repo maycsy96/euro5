@@ -25,7 +25,6 @@ class LoginActivity : AppCompatActivity() {
 
         this.loginButton.setOnClickListener { login() }
         this.registerTextView.setOnClickListener {
-
             UserController.loadJSONUserList(this)?.let {
                 this.userList = it
             }
