@@ -21,11 +21,11 @@ import learn.apptivitylab.com.petrolnav.model.User
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     companion object {
-        const val ARG_USER_DETAIL = "user_detail"
+        const val EXTRA_USER_DETAIL = "user_detail"
 
         fun newLaunchIntent(context: Context, user: User): Intent {
             val intent = Intent(context, MainActivity::class.java)
-            intent.putExtra(ARG_USER_DETAIL, user)
+            intent.putExtra(EXTRA_USER_DETAIL, user)
             return intent
         }
     }
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.navigationView.inflateMenu(R.menu.navigation_drawer_menu)
         this.navigationView.setNavigationItemSelectedListener(this)
 
-        this.user = intent.getParcelableExtra<User>(ARG_USER_DETAIL)
+        this.user = intent.getParcelableExtra<User>(EXTRA_USER_DETAIL)
 
         this.supportFragmentManager
                 .beginTransaction()

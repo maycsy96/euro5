@@ -42,7 +42,7 @@ class LoginActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_SIGNUP) {
             if (resultCode == Activity.RESULT_OK) {
-                this.userList = data.getParcelableArrayListExtra(RegisterActivity.ARG_USER_LIST)
+                this.userList = data.getParcelableArrayListExtra(RegisterActivity.EXTRA_USER_LIST)
             }
         }
     }
@@ -96,7 +96,7 @@ class LoginActivity : AppCompatActivity() {
         if (valid) {
             valid = (this.userList.firstOrNull { it.userEmail == email && it.userPassword == password }) != null
         }
-        
+
         return valid
     }
 }
