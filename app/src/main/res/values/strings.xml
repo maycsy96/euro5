@@ -37,6 +37,7 @@
     <string name="user_confirm_password">Confirm Password</string>
     <string name="register">Register</string>
     <string name="if_a_member_login">Already a member? Login</string>
-    <string name="message_login_failed">Login Failed</string>
+    <string name="message_login_failed">Login failed</string>
+    <string name="message_login_success">Login successful!</string>
     <string name="message_invalid_password">Please enter a password</string>
 </resources>

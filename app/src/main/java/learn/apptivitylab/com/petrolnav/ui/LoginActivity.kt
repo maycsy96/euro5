@@ -16,6 +16,10 @@ import learn.apptivitylab.com.petrolnav.model.User
 
 class LoginActivity : AppCompatActivity() {
 
+    companion object {
+        private val REQUEST_SIGNUP = 0
+    }
+
     private var user = User()
     private var userList = ArrayList<User>()
 
@@ -23,35 +27,15 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        this.loginButton.setOnClickListener { login() }
+        UserController.loadJSONUserList(this)?.let {
+            this.userList = it
+        }
+
+        this.loginButton.setOnClickListener { this.loginAccount() }
         this.registerTextView.setOnClickListener {
-            UserController.loadJSONUserList(this)?.let {
-                this.userList = it
-            }
-
-            val launchIntent = RegisterActivity.newLaunchIntent(this, userList)
-            startActivityForResult(launchIntent, REQUEST_SIGNUP)
+            val launchIntent = RegisterActivity.newLaunchIntent(this, this.userList)
+            this.startActivityForResult(launchIntent, REQUEST_SIGNUP)
         }
-    }
-
-    fun login() {
-        if (!validate()) {
-            onLoginFailed()
-            return
-        }
-
-        this.loginButton.isEnabled = false
-
-        val email = emailEditText.text.toString()
-        val password = passwordEditText.text.toString()
-
-        //TODO Authentication Logic
-
-        android.os.Handler().postDelayed(
-                {
-                    onLoginSuccess()
-                }, 3000
-        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
@@ -63,16 +47,26 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        moveTaskToBack(true)
+    fun loginAccount() {
+        if (!this.validateTextInput()) {
+            this.onLoginFailed()
+            return
+        }
+
+        this.loginButton.isEnabled = false
+
+        val email = emailEditText.text.toString()
+        this.user = this.userList.first { user -> user.userEmail == email }
+
+        this.onLoginSuccess()
     }
 
     fun onLoginSuccess() {
         this.loginButton.isEnabled = true
-
+        Toast.makeText(baseContext, getString(R.string.message_login_success), Toast.LENGTH_LONG).show()
         val launchIntent = MainActivity.newLaunchIntent(this, this.user)
-        startActivityForResult(launchIntent, REQUEST_LOGIN)
-        finish()
+        this.startActivity(launchIntent)
+        this.finish()
     }
 
     fun onLoginFailed() {
@@ -80,7 +74,7 @@ class LoginActivity : AppCompatActivity() {
         this.loginButton.isEnabled = true
     }
 
-    fun validate(): Boolean {
+    fun validateTextInput(): Boolean {
         var valid = true
         val email = this.emailEditText.text.toString()
         val password = this.passwordEditText.text.toString()
@@ -98,12 +92,12 @@ class LoginActivity : AppCompatActivity() {
         } else {
             this.passwordEditText.error = null
         }
-        return valid
-    }
 
-    companion object {
-        private val REQUEST_SIGNUP = 0
-        private val REQUEST_LOGIN = 0
+        if (valid) {
+            valid = (this.userList.firstOrNull { it.userEmail == email && it.userPassword == password }) != null
+        }
+        
+        return valid
     }
 }
 
