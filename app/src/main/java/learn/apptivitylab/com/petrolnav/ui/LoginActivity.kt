@@ -14,7 +14,7 @@ import learn.apptivitylab.com.petrolnav.model.User
  * Created by apptivitylab on 08/01/2018.
  */
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity(), ResetPasswordFragment.onUserListListener {
 
     companion object {
         private val REQUEST_SIGNUP = 0
@@ -35,6 +35,14 @@ class LoginActivity : AppCompatActivity() {
         this.registerTextView.setOnClickListener {
             val launchIntent = RegisterActivity.newLaunchIntent(this, this.userList)
             this.startActivityForResult(launchIntent, REQUEST_SIGNUP)
+        }
+
+        this.forgotPasswordTextView.setOnClickListener {
+            this.supportFragmentManager
+                    .beginTransaction()
+                    .add(R.id.loginViewgroupContainer, ForgotPasswordFragment.newInstance(this.userList))
+                    .addToBackStack(null)
+                    .commit()
         }
     }
 
@@ -98,6 +106,10 @@ class LoginActivity : AppCompatActivity() {
         }
 
         return valid
+    }
+
+    override fun onPassUserList(userList: ArrayList<User>) {
+        this.userList = userList
     }
 }
 
