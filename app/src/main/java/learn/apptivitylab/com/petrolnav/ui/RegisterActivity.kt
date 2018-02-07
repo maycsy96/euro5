@@ -18,11 +18,11 @@ import learn.apptivitylab.com.petrolnav.model.User
 class RegisterActivity : AppCompatActivity() {
 
     companion object {
-        val ARG_USER_LIST = "user_list"
+        val EXTRA_USER_LIST = "user_list"
 
         fun newLaunchIntent(context: Context, userList: ArrayList<User>): Intent {
             val intent = Intent(context, RegisterActivity::class.java)
-            intent.putExtra(ARG_USER_LIST, userList)
+            intent.putExtra(EXTRA_USER_LIST, userList)
             return intent
         }
     }
@@ -34,7 +34,7 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_register)
 
-        this.userList = intent.getParcelableArrayListExtra(ARG_USER_LIST)
+        this.userList = intent.getParcelableArrayListExtra(EXTRA_USER_LIST)
 
         this.registerButton.setOnClickListener { this.registerAccount() }
 
@@ -75,7 +75,7 @@ class RegisterActivity : AppCompatActivity() {
     fun onRegisterSuccess() {
         Toast.makeText(baseContext, getString(R.string.message_register_success), Toast.LENGTH_LONG).show()
         this.registerButton.isEnabled = true
-        setResult(Activity.RESULT_OK, intent.putExtra(ARG_USER_LIST, this.userList))
+        setResult(Activity.RESULT_OK, intent.putExtra(EXTRA_USER_LIST, this.userList))
         finish()
     }
 
