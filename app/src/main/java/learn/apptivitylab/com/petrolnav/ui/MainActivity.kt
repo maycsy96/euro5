@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_main)
 
-        this.setSupportActionBar(toolbar)
+        this.setSupportActionBar(this.toolbar)
 
         val drawerToggle = ActionBarDrawerToggle(this, this.drawer_layout, this.toolbar, R.string.openDrawer, R.string.closeDrawer)
         this.drawer_layout.addDrawerListener(drawerToggle)
