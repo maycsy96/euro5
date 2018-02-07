@@ -44,4 +44,7 @@
     <string name="message_confirm_log_out">Confirm to log out?</string>
     <string name="button_yes">Yes</string>
     <string name="button_no">No</string>
+    <string name="message_email_do_not_exist">This email address does not exist!</string>
+    <string name="message_send_email_success">Email and name is successfully verified! Moving to Reset Password!</string>
+    <string name="message_reset_password_success">Reset password successful!</string>
 </resources>
