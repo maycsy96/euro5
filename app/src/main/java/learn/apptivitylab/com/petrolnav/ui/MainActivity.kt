@@ -54,8 +54,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        this.navigateTo(id)
+        this.navigateTo(item.itemId)
         this.drawer_layout?.closeDrawers()
         return true
     }
