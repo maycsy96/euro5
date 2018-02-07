@@ -47,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    fun loginAccount() {
+    private fun loginAccount() {
         if (!this.validateTextInput()) {
             this.onLoginFailed()
             return
@@ -61,7 +61,7 @@ class LoginActivity : AppCompatActivity() {
         this.onLoginSuccess()
     }
 
-    fun onLoginSuccess() {
+    private fun onLoginSuccess() {
         this.loginButton.isEnabled = true
         Toast.makeText(baseContext, getString(R.string.message_login_success), Toast.LENGTH_LONG).show()
         val launchIntent = MainActivity.newLaunchIntent(this, this.user)
@@ -69,12 +69,12 @@ class LoginActivity : AppCompatActivity() {
         this.finish()
     }
 
-    fun onLoginFailed() {
+    private fun onLoginFailed() {
         Toast.makeText(baseContext, getString(R.string.message_login_failed), Toast.LENGTH_LONG).show()
         this.loginButton.isEnabled = true
     }
 
-    fun validateTextInput(): Boolean {
+    private fun validateTextInput(): Boolean {
         var valid = true
         val email = this.emailEditText.text.toString()
         val password = this.passwordEditText.text.toString()
