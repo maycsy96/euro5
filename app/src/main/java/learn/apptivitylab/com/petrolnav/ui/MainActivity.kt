@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        this.setContentView(R.layout.activity_main)
 
         this.setSupportActionBar(toolbar)
 
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         this.user = intent.getParcelableExtra<User>(ARG_USER_DETAIL)
 
-        supportFragmentManager
+        this.supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.mainViewgroupContainer, MapDisplayFragment.newInstance(this.user))
                 .commit()
