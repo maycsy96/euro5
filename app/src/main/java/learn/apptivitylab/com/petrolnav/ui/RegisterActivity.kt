@@ -1,12 +1,15 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_register.*
 import learn.apptivitylab.com.petrolnav.R
+import learn.apptivitylab.com.petrolnav.controller.UserController
+import learn.apptivitylab.com.petrolnav.model.User
 
 /**
  * Created by apptivitylab on 08/01/2018.
@@ -14,77 +17,112 @@ import learn.apptivitylab.com.petrolnav.R
 
 class RegisterActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register)
+    companion object {
+        val ARG_USER_LIST = "user_list"
 
-        this.registerButton.setOnClickListener { register() }
-        this.loginTextView.setOnClickListener {
-            val intent = Intent(applicationContext, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
+        fun newLaunchIntent(context: Context, userList: ArrayList<User>): Intent {
+            val intent = Intent(context, RegisterActivity::class.java)
+            intent.putExtra(ARG_USER_LIST, userList)
+            return intent
         }
     }
 
-    fun register() {
-        Log.d(TAG, "Register")
-        if (!validate()) {
-            onRegisterFailed()
+    private var userList = ArrayList<User>()
+    private var user = User()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        this.setContentView(R.layout.activity_register)
+
+        this.userList = intent.getParcelableArrayListExtra(ARG_USER_LIST)
+
+        this.registerButton.setOnClickListener { this.registerAccount() }
+
+        this.loginTextView.setOnClickListener {
+            this.setResult(Activity.RESULT_CANCELED, intent)
+            this.finish()
+        }
+    }
+
+    override fun onBackPressed() {
+        setResult(Activity.RESULT_CANCELED, intent)
+        super.onBackPressed()
+        finish()
+    }
+
+    fun registerAccount() {
+        if (!this.validateTextInput()) {
+            this.onRegisterFailed()
             return
         }
         this.registerButton.isEnabled = false
-        val name = this.registerNameEditText.text.toString()
-        val email = this.registerEmailEditText.text.toString()
-        val password = this.registerPasswordEditText.text.toString()
+        this.user.userName = this.nameEditText.text.toString()
+        this.user.userEmail = this.emailEditText.text.toString()
+        this.user.userPassword = this.passwordEditText.text.toString()
 
-        //registration logic
+        this.userList.add(this.user)
 
-        onRegisterSuccess()
+        this.userList.forEachIndexed { id, user ->
+            if (user.userId == null) {
+                user.userId = id.toString()
+            }
+        }
+
+        UserController.writeToJSONUserList(this, this.userList)
+        this.onRegisterSuccess()
     }
 
     fun onRegisterSuccess() {
+        Toast.makeText(baseContext, getString(R.string.message_register_success), Toast.LENGTH_LONG).show()
         this.registerButton.isEnabled = true
+        setResult(Activity.RESULT_OK, intent.putExtra(ARG_USER_LIST, this.userList))
         finish()
     }
 
     fun onRegisterFailed() {
-        Toast.makeText(baseContext, "Register failed", Toast.LENGTH_LONG).show()
-
+        Toast.makeText(baseContext, getString(R.string.message_register_failed), Toast.LENGTH_LONG).show()
         this.registerButton.isEnabled = true
     }
 
-    fun validate(): Boolean {
+    fun validateTextInput(): Boolean {
         var valid = true
 
-        val name = this.registerNameEditText.text.toString()
-        val email = this.registerEmailEditText.text.toString()
-        val password = this.registerPasswordEditText.text.toString()
+        val name = this.nameEditText.text.toString()
+        val email = this.emailEditText.text.toString()
+        val password = this.passwordEditText.text.toString()
+        val confirmPassword = this.confirmPasswordEditText.text.toString()
 
         if (name.isEmpty() || name.length < 3) {
-            this.registerNameEditText.error = "at least 3 characters"
+            this.nameEditText.error = getString(R.string.message_invalid_name)
             valid = false
         } else {
-            this.registerNameEditText.error = null
+            this.nameEditText.error = null
         }
 
+        val userEmail = this.userList.firstOrNull { it.userEmail == email }
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            this.registerEmailEditText.error = "enter a valid email address"
+            this.emailEditText.error = getString(R.string.message_invalid_email_address)
+            valid = false
+        } else if (userEmail != null) {
+            this.emailEditText.error = getString(R.string.message_unavailable_email)
             valid = false
         } else {
-            this.registerEmailEditText.error = null
+            this.emailEditText.error = null
         }
 
-        if (password.isEmpty() || password.length < 4 || password.length > 10) {
-            this.registerPasswordEditText.error = "between 4 and 10 alphanumeric characters"
+        if (password.isEmpty() || password.length < 4) {
+            this.passwordEditText.error = getString(R.string.message_invalid_length_password)
             valid = false
         } else {
-            this.registerPasswordEditText.error = null
+            this.passwordEditText.error = null
+        }
+
+        this.confirmPasswordEditText.error = when {
+            confirmPassword.isEmpty() -> getString(R.string.message_invalid_confirm_password)
+            confirmPassword != password -> getString(R.string.message_mismatch_confirm_password)
+            else -> null
         }
 
         return valid
-    }
-
-    companion object {
-        private val TAG = "RegisterActivity"
     }
 }

@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_login.*
 import learn.apptivitylab.com.petrolnav.R
@@ -18,6 +17,7 @@ import learn.apptivitylab.com.petrolnav.model.User
 class LoginActivity : AppCompatActivity() {
 
     private var user = User()
+    private var userList = ArrayList<User>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,14 +25,16 @@ class LoginActivity : AppCompatActivity() {
 
         this.loginButton.setOnClickListener { login() }
         this.registerTextView.setOnClickListener {
-            val intent = Intent(applicationContext, RegisterActivity::class.java)
-            startActivityForResult(intent, REQUEST_SIGNUP)
-            finish()
+            UserController.loadJSONUserList(this)?.let {
+                this.userList = it
+            }
+
+            val launchIntent = RegisterActivity.newLaunchIntent(this, userList)
+            startActivityForResult(launchIntent, REQUEST_SIGNUP)
         }
     }
 
     fun login() {
-        Log.d(TAG, "Login")
         if (!validate()) {
             onLoginFailed()
             return
@@ -54,10 +56,10 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUEST_SIGNUP && resultCode == Activity.RESULT_OK) {
-            //implement signup logic here
-            this.finish()
+        if (requestCode == REQUEST_SIGNUP) {
+            if (resultCode == Activity.RESULT_OK) {
+                this.userList = data.getParcelableArrayListExtra(RegisterActivity.ARG_USER_LIST)
+            }
         }
     }
 
@@ -68,17 +70,13 @@ class LoginActivity : AppCompatActivity() {
     fun onLoginSuccess() {
         this.loginButton.isEnabled = true
 
-        UserController.loadJSONUser(this)?.let {
-            this.user = it
-        }
-
         val launchIntent = MainActivity.newLaunchIntent(this, this.user)
         startActivityForResult(launchIntent, REQUEST_LOGIN)
         finish()
     }
 
     fun onLoginFailed() {
-        Toast.makeText(baseContext, "Login Failed", Toast.LENGTH_LONG).show()
+        Toast.makeText(baseContext, getString(R.string.message_login_failed), Toast.LENGTH_LONG).show()
         this.loginButton.isEnabled = true
     }
 
@@ -88,14 +86,14 @@ class LoginActivity : AppCompatActivity() {
         val password = this.passwordEditText.text.toString()
 
         if (email.isEmpty()) {
-            this.emailEditText.error = "Please enter username"
+            this.emailEditText.error = getString(R.string.message_invalid_email_address)
             valid = false
         } else {
             this.emailEditText.error = null
         }
 
-        if (password.isEmpty() || password.length < 4 || password.length > 10) {
-            this.passwordEditText.error = "Please enter password"
+        if (password.isEmpty()) {
+            this.passwordEditText.error = getString(R.string.message_invalid_password)
             valid = false
         } else {
             this.passwordEditText.error = null
@@ -104,7 +102,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     companion object {
-        private val TAG = "LoginActivity"
         private val REQUEST_SIGNUP = 0
         private val REQUEST_LOGIN = 0
     }
