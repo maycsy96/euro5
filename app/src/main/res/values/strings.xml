@@ -40,4 +40,8 @@
     <string name="message_login_failed">Login failed</string>
     <string name="message_login_success">Login successful!</string>
     <string name="message_invalid_password">Please enter a password</string>
+    <string name="title_log_out">Log Out</string>
+    <string name="message_confirm_log_out">Confirm to log out?</string>
+    <string name="button_yes">Yes</string>
+    <string name="button_no">No</string>
 </resources>
