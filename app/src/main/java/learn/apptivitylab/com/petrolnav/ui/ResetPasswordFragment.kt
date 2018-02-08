@@ -85,7 +85,7 @@ class ResetPasswordFragment : Fragment() {
         var password = this.passwordEditText.text.toString()
         var confirmPassword = this.confirmPasswordEditText.text.toString()
 
-        if (password.isEmpty() || password.length <4) {
+        if (password.isEmpty() || password.length < 4) {
             this.passwordEditText.error = getString(R.string.message_invalid_length_password)
         } else {
             this.passwordEditText.error = null

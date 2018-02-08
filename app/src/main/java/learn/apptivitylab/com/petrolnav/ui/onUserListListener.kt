@@ -1,6 +1,5 @@
 package learn.apptivitylab.com.petrolnav.ui
 
-import learn.apptivitylab.com.petrolnav.model.PetrolStation
 import learn.apptivitylab.com.petrolnav.model.User
 
 /**
