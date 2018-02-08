@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,13 +17,11 @@ import learn.apptivitylab.com.petrolnav.model.User
  * Created by apptivitylab on 07/02/2018.
  */
 class ResetPasswordFragment : Fragment() {
-
     companion object {
-        const val TAG = "ResetPasswordFragment"
         const val ARG_USER_DETAIL = "user_detail"
         const val ARG_USER_LIST = "user_list"
-        fun newInstance(user: User, userList: ArrayList<User>): SearchFragment {
-            val fragment = SearchFragment()
+        fun newInstance(user: User, userList: ArrayList<User>): ResetPasswordFragment {
+            val fragment = ResetPasswordFragment()
             val args: Bundle = Bundle()
             args.putParcelable(ARG_USER_DETAIL, user)
             args.putParcelableArrayList(ARG_USER_LIST, userList)
@@ -33,26 +30,21 @@ class ResetPasswordFragment : Fragment() {
         }
     }
 
-    interface onUserListListener {
-        fun onPassUserList(userList: ArrayList<User>)
-    }
-
     private var userList = ArrayList<User>()
     private var user = User()
-    private lateinit var listener: onUserListListener
+    private lateinit var userListListener: onUserListListener
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         try {
-            listener = context as onUserListListener
+            this.userListListener = context as onUserListListener
         } catch (e: Exception) {
-            Log.e(TAG, this.activity.toString() + " must implement onUserListListener")
+            e.printStackTrace()
         }
-
     }
 
     fun passUpdatedUserList(userList: ArrayList<User>) {
-        listener.onPassUserList(this.userList)
+        this.userListListener.onPassUserList(userList)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -93,8 +85,8 @@ class ResetPasswordFragment : Fragment() {
         var password = this.passwordEditText.text.toString()
         var confirmPassword = this.confirmPasswordEditText.text.toString()
 
-        if (password.isEmpty()) {
-            this.passwordEditText.error = getString(R.string.message_invalid_password)
+        if (password.isEmpty() || password.length <4) {
+            this.passwordEditText.error = getString(R.string.message_invalid_length_password)
         } else {
             this.passwordEditText.error = null
         }
@@ -103,6 +95,10 @@ class ResetPasswordFragment : Fragment() {
             confirmPassword.isEmpty() -> getString(R.string.message_invalid_confirm_password)
             confirmPassword != password -> getString(R.string.message_mismatch_confirm_password)
             else -> null
+        }
+
+        if (confirmPasswordEditText.error != null) {
+            valid = false
         }
 
         return valid
