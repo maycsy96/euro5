@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,6 +41,8 @@ class LoginFragment : Fragment() {
         arguments?.let {
             this.userList = it.getParcelableArrayList(ARG_USER_LIST)
         }
+
+        Log.d("LoginFragment",this.userList.toString())
 
         this.loginButton.setOnClickListener {
             val isValid = this.validateTextInput()
@@ -86,9 +89,20 @@ class LoginFragment : Fragment() {
     private fun onLoginSuccess() {
         this.loginButton.isEnabled = true
         Toast.makeText(this.context, getString(R.string.message_login_success), Toast.LENGTH_LONG).show()
-        val launchIntent = MainActivity.newLaunchIntent(this.context!!, this.user)
-        this.startActivity(launchIntent)
-        this.activity!!.finish()
+
+        this.user.userPreferredPetrolStationBrandList?.let {
+            if (this.user.userPreferredPetrol == null && it.isEmpty()) {
+                this.activity!!.supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.loginViewgroupContainer, PreferencesFragment.newInstance(this.user))
+                        .addToBackStack(null)
+                        .commit()
+            } else {
+                val launchIntent = MainActivity.newLaunchIntent(this.context!!, this.user)
+                this.startActivity(launchIntent)
+                this.activity!!.finish()
+            }
+        }
     }
 
     private fun onLoginFailed() {
