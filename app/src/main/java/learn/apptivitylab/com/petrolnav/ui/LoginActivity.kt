@@ -14,7 +14,7 @@ import learn.apptivitylab.com.petrolnav.model.User
  * Created by apptivitylab on 08/01/2018.
  */
 
-class LoginActivity : AppCompatActivity(), ResetPasswordFragment.onUserListListener {
+class LoginActivity : AppCompatActivity(), onUserListListener {
 
     companion object {
         private val REQUEST_SIGNUP = 0
@@ -25,7 +25,7 @@ class LoginActivity : AppCompatActivity(), ResetPasswordFragment.onUserListListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        this.setContentView(R.layout.activity_login)
 
         UserController.loadJSONUserList(this)?.let {
             this.userList = it
