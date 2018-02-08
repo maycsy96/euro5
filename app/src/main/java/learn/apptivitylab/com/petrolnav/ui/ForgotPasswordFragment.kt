@@ -84,7 +84,7 @@ class ForgotPasswordFragment : Fragment() {
         Toast.makeText(this.context, getString(R.string.message_send_email_success), Toast.LENGTH_LONG).show()
         this.activity!!.supportFragmentManager
                 .beginTransaction()
-                .add(R.id.forgotPasswordViewGroupContainer, ResetPasswordFragment.newInstance(this.user, this.userList))
+                .replace(R.id.forgotPasswordViewGroupContainer, ResetPasswordFragment.newInstance(this.user, this.userList))
                 .addToBackStack(null)
                 .commit()
     }
