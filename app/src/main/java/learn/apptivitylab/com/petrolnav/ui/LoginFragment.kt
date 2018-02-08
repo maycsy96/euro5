@@ -1,5 +1,7 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -58,6 +60,17 @@ class LoginFragment : Fragment() {
                     .replace(R.id.loginViewgroupContainer, ForgotPasswordFragment.newInstance(this.userList))
                     .addToBackStack(null)
                     .commit()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == LoginActivity.REQUEST_SIGNUP) {
+            if (resultCode == Activity.RESULT_OK) {
+                data?.let{
+                    this.userList = it.getParcelableArrayListExtra(RegisterActivity.EXTRA_USER_LIST)
+                }
+            }
         }
     }
 

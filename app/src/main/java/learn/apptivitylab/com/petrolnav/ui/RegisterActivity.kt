@@ -78,8 +78,8 @@ class RegisterActivity : AppCompatActivity() {
     fun onRegisterSuccess() {
         Toast.makeText(baseContext, getString(R.string.message_register_success), Toast.LENGTH_LONG).show()
         this.registerButton.isEnabled = true
-        setResult(Activity.RESULT_OK, intent.putExtra(EXTRA_USER_LIST, this.userList))
-        finish()
+        this.setResult(Activity.RESULT_OK, intent.putExtra(EXTRA_USER_LIST, this.userList))
+        this.finish()
     }
 
     fun onRegisterFailed() {
