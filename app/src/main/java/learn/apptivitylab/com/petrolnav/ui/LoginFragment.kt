@@ -67,7 +67,7 @@ class LoginFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == LoginActivity.REQUEST_SIGNUP) {
             if (resultCode == Activity.RESULT_OK) {
-                data?.let{
+                data?.let {
                     this.userList = it.getParcelableArrayListExtra(RegisterActivity.EXTRA_USER_LIST)
                 }
             }

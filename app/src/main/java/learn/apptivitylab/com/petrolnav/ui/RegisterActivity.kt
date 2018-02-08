@@ -38,9 +38,9 @@ class RegisterActivity : AppCompatActivity() {
 
         this.registerButton.setOnClickListener {
             val isValid = this.validateTextInput()
-            if(isValid){
+            if (isValid) {
                 this.registerAccount()
-            }else{
+            } else {
                 this.onRegisterFailed()
             }
         }
