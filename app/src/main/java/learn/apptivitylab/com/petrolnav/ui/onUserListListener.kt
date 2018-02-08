@@ -6,5 +6,5 @@ import learn.apptivitylab.com.petrolnav.model.User
  * Created by apptivitylab on 08/02/2018.
  */
 interface onUserListListener {
-    fun updateUserList(userList: ArrayList<User>)
+    fun onUpdateUserList(userList: ArrayList<User>)
 }

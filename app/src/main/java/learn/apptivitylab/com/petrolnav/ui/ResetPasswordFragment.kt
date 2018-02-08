@@ -44,7 +44,7 @@ class ResetPasswordFragment : Fragment() {
     }
 
     fun updateUserList(userList: ArrayList<User>) {
-        this.userListListener.updateUserList(userList)
+        this.userListListener.onUpdateUserList(userList)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
