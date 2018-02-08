@@ -2,7 +2,6 @@ package learn.apptivitylab.com.petrolnav.ui
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,6 +42,7 @@ class ForgotPasswordFragment : Fragment() {
         this.sendEmailButton.setOnClickListener {
             this.sendEmail()
         }
+
         this.cancelButton.setOnClickListener {
             this.activity!!.supportFragmentManager
                     .popBackStackImmediate()
@@ -56,12 +56,11 @@ class ForgotPasswordFragment : Fragment() {
         if (email.isEmpty()) {
             this.emailEditText.error = getString(R.string.message_invalid_email_address)
             valid = false
+        } else if ((this.userList.firstOrNull { it.userEmail == email }) == null) {
+            this.emailEditText.error = getString(R.string.message_email_do_not_exist)
+            valid = false
         } else {
             this.emailEditText.error = null
-        }
-
-        if (valid) {
-            valid = (this.userList.firstOrNull { it.userEmail == email }) != null
         }
 
         return valid
@@ -69,20 +68,15 @@ class ForgotPasswordFragment : Fragment() {
 
     private fun sendEmail() {
         if (!this.validateTextInput()) {
-            this.onSendEmailFail()
             return
         }
+
         this.sendEmailButton.isEnabled = false
 
         val email = this.emailEditText.text.toString()
         this.user = this.userList.first { it.userEmail == email }
 
         this.onSendEmailSuccess()
-    }
-
-    private fun onSendEmailFail() {
-        Toast.makeText(this.context, getString(R.string.message_email_do_not_exist), Toast.LENGTH_LONG).show()
-        this.sendEmailButton.isEnabled = true
     }
 
     private fun onSendEmailSuccess() {
