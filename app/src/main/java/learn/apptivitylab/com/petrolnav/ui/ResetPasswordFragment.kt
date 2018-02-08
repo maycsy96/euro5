@@ -97,7 +97,7 @@ class ResetPasswordFragment : Fragment() {
             else -> null
         }
 
-        if (confirmPasswordEditText.error != null) {
+        if (this.confirmPasswordEditText.error != null) {
             valid = false
         }
 

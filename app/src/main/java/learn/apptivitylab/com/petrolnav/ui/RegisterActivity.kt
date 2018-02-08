@@ -122,7 +122,8 @@ class RegisterActivity : AppCompatActivity() {
             confirmPassword != password -> getString(R.string.message_mismatch_confirm_password)
             else -> null
         }
-        if (confirmPasswordEditText.error != null) {
+
+        if (this.confirmPasswordEditText.error != null) {
             valid = false
         }
 
