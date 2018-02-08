@@ -39,7 +39,14 @@ class LoginFragment : Fragment() {
             this.userList = it.getParcelableArrayList(ARG_USER_LIST)
         }
 
-        this.loginButton.setOnClickListener { this.loginAccount() }
+        this.loginButton.setOnClickListener {
+            val isValid = this.validateTextInput()
+            if (isValid) {
+                this.loginAccount()
+            } else {
+                this.onLoginFailed()
+            }
+        }
         this.registerTextView.setOnClickListener {
             val launchIntent = RegisterActivity.newLaunchIntent(this.context!!, this.userList)
             this.startActivityForResult(launchIntent, LoginActivity.REQUEST_SIGNUP)
@@ -55,15 +62,10 @@ class LoginFragment : Fragment() {
     }
 
     private fun loginAccount() {
-        if (!this.validateTextInput()) {
-            this.onLoginFailed()
-            return
-        }
-
         this.loginButton.isEnabled = false
 
-        val email = emailEditText.text.toString()
-        this.user = this.userList.first { user -> user.userEmail == email }
+        val emailText = emailEditText.text.toString()
+        this.user = this.userList.first { user -> user.userEmail == emailText }
 
         this.onLoginSuccess()
     }
@@ -82,28 +84,28 @@ class LoginFragment : Fragment() {
     }
 
     private fun validateTextInput(): Boolean {
-        var valid = true
-        val email = this.emailEditText.text.toString()
-        val password = this.passwordEditText.text.toString()
+        var isValid = true
+        val emailText = this.emailEditText.text.toString()
+        val passwordText = this.passwordEditText.text.toString()
 
-        if (email.isEmpty()) {
+        if (emailText.isEmpty()) {
             this.emailEditText.error = getString(R.string.message_invalid_email_address)
-            valid = false
+            isValid = false
         } else {
             this.emailEditText.error = null
         }
 
-        if (password.isEmpty()) {
+        if (passwordText.isEmpty()) {
             this.passwordEditText.error = getString(R.string.message_invalid_password)
-            valid = false
+            isValid = false
         } else {
             this.passwordEditText.error = null
         }
 
-        if (valid) {
-            valid = (this.userList.firstOrNull { it.userEmail == email && it.userPassword == password }) != null
+        if (isValid) {
+            isValid = (this.userList.firstOrNull { it.userEmail == emailText && it.userPassword == passwordText }) != null
         }
 
-        return valid
+        return isValid
     }
 }

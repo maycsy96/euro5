@@ -43,7 +43,7 @@ class ResetPasswordFragment : Fragment() {
         }
     }
 
-    fun passUpdatedUserList(userList: ArrayList<User>) {
+    fun updateUserList(userList: ArrayList<User>) {
         this.userListListener.onPassUserList(userList)
     }
 
@@ -60,14 +60,38 @@ class ResetPasswordFragment : Fragment() {
         }
 
         this.resetButton.setOnClickListener {
-            this.resetPassword()
+            val isValid = this.validateTextInput()
+            if (isValid) {
+                this.resetPassword()
+            }
         }
     }
 
-    private fun resetPassword() {
-        if (!this.validateTextInput()) {
-            return
+    private fun validateTextInput(): Boolean {
+        var isValid = true
+        var passwordText = this.passwordEditText.text.toString()
+        var confirmPasswordText = this.confirmPasswordEditText.text.toString()
+
+        if (passwordText.isEmpty() || passwordText.length < 4) {
+            this.passwordEditText.error = getString(R.string.message_invalid_length_password)
+        } else {
+            this.passwordEditText.error = null
         }
+
+        this.confirmPasswordEditText.error = when {
+            confirmPasswordText.isEmpty() -> getString(R.string.message_invalid_confirm_password)
+            confirmPasswordText != passwordText -> getString(R.string.message_mismatch_confirm_password)
+            else -> null
+        }
+
+        if (this.confirmPasswordEditText.error != null) {
+            isValid = false
+        }
+
+        return isValid
+    }
+
+    private fun resetPassword() {
         this.user.userPassword = this.passwordEditText.text.toString()
 
         this.userList.forEach { user ->
@@ -76,32 +100,8 @@ class ResetPasswordFragment : Fragment() {
             }
         }
         UserController.writeToJSONUserList(this.activity!!.applicationContext, this.userList)
-        this.passUpdatedUserList(this.userList)
+        this.updateUserList(this.userList)
         this.resetPasswordSuccess()
-    }
-
-    private fun validateTextInput(): Boolean {
-        var valid = true
-        var password = this.passwordEditText.text.toString()
-        var confirmPassword = this.confirmPasswordEditText.text.toString()
-
-        if (password.isEmpty() || password.length < 4) {
-            this.passwordEditText.error = getString(R.string.message_invalid_length_password)
-        } else {
-            this.passwordEditText.error = null
-        }
-
-        this.confirmPasswordEditText.error = when {
-            confirmPassword.isEmpty() -> getString(R.string.message_invalid_confirm_password)
-            confirmPassword != password -> getString(R.string.message_mismatch_confirm_password)
-            else -> null
-        }
-
-        if (this.confirmPasswordEditText.error != null) {
-            valid = false
-        }
-
-        return valid
     }
 
     private fun resetPasswordSuccess() {

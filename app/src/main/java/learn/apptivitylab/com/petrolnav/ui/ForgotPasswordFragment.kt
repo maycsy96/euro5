@@ -40,7 +40,10 @@ class ForgotPasswordFragment : Fragment() {
         }
 
         this.sendEmailButton.setOnClickListener {
-            this.sendEmail()
+            val isValid = this.validateTextInput()
+            if (isValid) {
+                this.sendEmail()
+            }
         }
 
         this.cancelButton.setOnClickListener {
@@ -50,37 +53,30 @@ class ForgotPasswordFragment : Fragment() {
     }
 
     private fun validateTextInput(): Boolean {
-        var valid = true
-        val email = this.emailEditText.text.toString()
+        var isValid = true
+        val emailText = this.emailEditText.text.toString()
 
-        if (email.isEmpty()) {
+        if (emailText.isEmpty()) {
             this.emailEditText.error = getString(R.string.message_invalid_email_address)
-            valid = false
-        } else if ((this.userList.firstOrNull { it.userEmail == email }) == null) {
+            isValid = false
+        } else if ((this.userList.firstOrNull { it.userEmail == emailText }) == null) {
             this.emailEditText.error = getString(R.string.message_email_do_not_exist)
-            valid = false
+            isValid = false
         } else {
             this.emailEditText.error = null
         }
 
-        return valid
+        return isValid
     }
 
     private fun sendEmail() {
-        if (!this.validateTextInput()) {
-            return
-        }
-
-        this.sendEmailButton.isEnabled = false
-
-        val email = this.emailEditText.text.toString()
-        this.user = this.userList.first { it.userEmail == email }
+        val emailText = this.emailEditText.text.toString()
+        this.user = this.userList.first { it.userEmail == emailText }
 
         this.onSendEmailSuccess()
     }
 
     private fun onSendEmailSuccess() {
-        this.sendEmailButton.isEnabled = true
         Toast.makeText(this.context, getString(R.string.message_send_email_success), Toast.LENGTH_LONG).show()
         this.activity!!.supportFragmentManager
                 .beginTransaction()

@@ -18,7 +18,6 @@ class LoginActivity : AppCompatActivity(), onUserListListener {
         val REQUEST_SIGNUP = 0
     }
 
-    private var user = User()
     private var userList = ArrayList<User>()
 
     override fun onCreate(savedInstanceState: Bundle?) {

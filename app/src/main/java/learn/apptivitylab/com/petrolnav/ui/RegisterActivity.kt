@@ -36,7 +36,14 @@ class RegisterActivity : AppCompatActivity() {
 
         this.userList = intent.getParcelableArrayListExtra(EXTRA_USER_LIST)
 
-        this.registerButton.setOnClickListener { this.registerAccount() }
+        this.registerButton.setOnClickListener {
+            val isValid = this.validateTextInput()
+            if(isValid){
+                this.registerAccount()
+            }else{
+                this.onRegisterFailed()
+            }
+        }
 
         this.loginTextView.setOnClickListener {
             this.setResult(Activity.RESULT_CANCELED, intent)
@@ -51,10 +58,6 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     fun registerAccount() {
-        if (!this.validateTextInput()) {
-            this.onRegisterFailed()
-            return
-        }
         this.registerButton.isEnabled = false
         this.user.userName = this.nameEditText.text.toString()
         this.user.userEmail = this.emailEditText.text.toString()
@@ -85,48 +88,48 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     fun validateTextInput(): Boolean {
-        var valid = true
+        var isValid = true
 
-        val name = this.nameEditText.text.toString()
-        val email = this.emailEditText.text.toString()
-        val password = this.passwordEditText.text.toString()
-        val confirmPassword = this.confirmPasswordEditText.text.toString()
+        val nameText = this.nameEditText.text.toString()
+        val emailText = this.emailEditText.text.toString()
+        val passwordText = this.passwordEditText.text.toString()
+        val confirmPasswordText = this.confirmPasswordEditText.text.toString()
 
-        if (name.isEmpty() || name.length < 3) {
+        if (nameText.isEmpty() || nameText.length < 3) {
             this.nameEditText.error = getString(R.string.message_invalid_name)
-            valid = false
+            isValid = false
         } else {
             this.nameEditText.error = null
         }
 
-        val userEmail = this.userList.firstOrNull { it.userEmail == email }
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        val userEmail = this.userList.firstOrNull { it.userEmail == emailText }
+        if (emailText.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(emailText).matches()) {
             this.emailEditText.error = getString(R.string.message_invalid_email_address)
-            valid = false
+            isValid = false
         } else if (userEmail != null) {
             this.emailEditText.error = getString(R.string.message_unavailable_email)
-            valid = false
+            isValid = false
         } else {
             this.emailEditText.error = null
         }
 
-        if (password.isEmpty() || password.length < 4) {
+        if (passwordText.isEmpty() || passwordText.length < 4) {
             this.passwordEditText.error = getString(R.string.message_invalid_length_password)
-            valid = false
+            isValid = false
         } else {
             this.passwordEditText.error = null
         }
 
         this.confirmPasswordEditText.error = when {
-            confirmPassword.isEmpty() -> getString(R.string.message_invalid_confirm_password)
-            confirmPassword != password -> getString(R.string.message_mismatch_confirm_password)
+            confirmPasswordText.isEmpty() -> getString(R.string.message_invalid_confirm_password)
+            confirmPasswordText != passwordText -> getString(R.string.message_mismatch_confirm_password)
             else -> null
         }
 
         if (this.confirmPasswordEditText.error != null) {
-            valid = false
+            isValid = false
         }
 
-        return valid
+        return isValid
     }
 }
