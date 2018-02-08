@@ -12,7 +12,7 @@ import learn.apptivitylab.com.petrolnav.model.User
  * Created by apptivitylab on 08/01/2018.
  */
 
-class LoginActivity : AppCompatActivity(), onUserListListener {
+class LoginActivity : AppCompatActivity(), UserListListener {
 
     companion object {
         val REQUEST_SIGNUP = 0

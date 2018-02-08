@@ -32,12 +32,12 @@ class ResetPasswordFragment : Fragment() {
 
     private var userList = ArrayList<User>()
     private var user = User()
-    private lateinit var userListListener: onUserListListener
+    private lateinit var userListListener: UserListListener
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         try {
-            this.userListListener = context as onUserListListener
+            this.userListListener = context as UserListListener
         } catch (e: Exception) {
             e.printStackTrace()
         }
