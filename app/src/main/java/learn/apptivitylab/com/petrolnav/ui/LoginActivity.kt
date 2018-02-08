@@ -43,7 +43,7 @@ class LoginActivity : AppCompatActivity(), onUserListListener {
         }
     }
 
-    override fun onPassUserList(userList: ArrayList<User>) {
+    override fun updateUserList(userList: ArrayList<User>) {
         this.userList = userList
     }
 }
