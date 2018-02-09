@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -89,6 +90,7 @@ class LoginFragment : Fragment() {
 
         this.user.userPreferredPetrolStationBrandList?.let {
             if (this.user.userPreferredPetrol == null && it.isEmpty()) {
+                this.showWelcomeDialog()
                 this.activity!!.supportFragmentManager
                         .beginTransaction()
                         .replace(R.id.loginViewgroupContainer, PreferencesFragment.newInstance(this.user))
@@ -131,5 +133,13 @@ class LoginFragment : Fragment() {
         }
 
         return isValid
+    }
+
+    private fun showWelcomeDialog() {
+        AlertDialog.Builder(this.context!!)
+                .setTitle(getString(R.string.title_welcome_to_petrolnav))
+                .setMessage(getString(R.string.message_welcome_to_petrolnav))
+                .setNeutralButton(getString(R.string.button_ok), null)
+                .show()
     }
 }
