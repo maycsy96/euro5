@@ -1,6 +1,5 @@
 package learn.apptivitylab.com.petrolnav.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -8,16 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.RadioButton
-import learn.apptivitylab.com.petrolnav.R
 import kotlinx.android.synthetic.main.fragment_preferences.*
+import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.controller.PetrolLoader
 import learn.apptivitylab.com.petrolnav.controller.PetrolStationBrandLoader
 import learn.apptivitylab.com.petrolnav.controller.UserController
 import learn.apptivitylab.com.petrolnav.model.Petrol
 import learn.apptivitylab.com.petrolnav.model.PetrolStationBrand
 import learn.apptivitylab.com.petrolnav.model.User
-import android.content.Context.MODE_PRIVATE
-import java.io.*
 
 
 /**
@@ -53,9 +50,9 @@ class PreferencesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        this.petrolStationBrandList = PetrolStationBrandLoader.loadJSONPetrolStationBrands(context!!)
-        this.petrolList = PetrolLoader.loadJSONPetrols(context!!)
-        this.userList = UserController.loadJSONUserList(context!!)
+        this.petrolStationBrandList = PetrolStationBrandLoader.loadJSONPetrolStationBrands(this.context!!)
+        this.petrolList = PetrolLoader.loadJSONPetrols(this.context!!)
+        this.userList = UserController.loadJSONUserList(this.context!!)
 
         arguments?.let {
             this.user = it.getParcelable(ARG_USER_DETAIL)
@@ -121,12 +118,12 @@ class PreferencesFragment : Fragment() {
     }
 
     private fun savePreference(user: User, preferredPetrolStationBrandList: ArrayList<PetrolStationBrand>, preferredPetrol: Petrol) {
+        user.userPreferredPetrol = preferredPetrol
         user.userPreferredPetrolStationBrandList = preferredPetrolStationBrandList
-
 
         this.userList.forEach {
             if (it.userEmail == user.userEmail) {
-                //it.userPreferredPetrol = preferredPetrol
+                it.userPreferredPetrol = preferredPetrol
                 it.userPreferredPetrolStationBrandList?.clear()
                 it.userPreferredPetrolStationBrandList?.addAll(preferredPetrolStationBrandList)
             }
@@ -144,6 +141,4 @@ class PreferencesFragment : Fragment() {
                     .commit()
         }
     }
-
-
 }
