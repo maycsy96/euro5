@@ -1,6 +1,5 @@
 package learn.apptivitylab.com.petrolnav.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -8,16 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.RadioButton
-import learn.apptivitylab.com.petrolnav.R
 import kotlinx.android.synthetic.main.fragment_preferences.*
+import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.controller.PetrolLoader
 import learn.apptivitylab.com.petrolnav.controller.PetrolStationBrandLoader
 import learn.apptivitylab.com.petrolnav.controller.UserController
 import learn.apptivitylab.com.petrolnav.model.Petrol
 import learn.apptivitylab.com.petrolnav.model.PetrolStationBrand
 import learn.apptivitylab.com.petrolnav.model.User
-import android.content.Context.MODE_PRIVATE
-import java.io.*
 
 
 /**
@@ -26,8 +23,6 @@ import java.io.*
 class PreferencesFragment : Fragment() {
 
     companion object {
-        private val TAG = "PreferencesFragment"
-
         const val ARG_USER_DETAIL = "user_detail"
         fun newInstance(user: User): PreferencesFragment {
             val fragment = PreferencesFragment()
@@ -41,6 +36,7 @@ class PreferencesFragment : Fragment() {
     private var petrolStationBrandList = ArrayList<PetrolStationBrand>()
     private var petrolList = ArrayList<Petrol>()
     private var user = User()
+    private var userList = ArrayList<User>()
 
     private var checkBoxByPetrolStationBrand: LinkedHashMap<PetrolStationBrand, CheckBox> = LinkedHashMap()
     private var radioButtonByPetrol: LinkedHashMap<Petrol, RadioButton> = LinkedHashMap()
@@ -54,8 +50,9 @@ class PreferencesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        this.petrolStationBrandList = PetrolStationBrandLoader.loadJSONPetrolStationBrands(context!!)
-        this.petrolList = PetrolLoader.loadJSONPetrols(context!!)
+        this.petrolStationBrandList = PetrolStationBrandLoader.loadJSONPetrolStationBrands(this.context!!)
+        this.petrolList = PetrolLoader.loadJSONPetrols(this.context!!)
+        this.userList = UserController.loadJSONUserList(this.context!!)
 
         arguments?.let {
             this.user = it.getParcelable(ARG_USER_DETAIL)
@@ -63,23 +60,23 @@ class PreferencesFragment : Fragment() {
 
         for (petrolStationBrand in this.petrolStationBrandList) {
             when (petrolStationBrand.petrolStationBrandName) {
-                "Shell" -> this.checkBoxByPetrolStationBrand.put(petrolStationBrand, shellCheckbox)
-                "Petronas" -> this.checkBoxByPetrolStationBrand.put(petrolStationBrand, petronasCheckbox)
-                "BHPetrol" -> this.checkBoxByPetrolStationBrand.put(petrolStationBrand, bhpetrolCheckbox)
-                "Caltex" -> this.checkBoxByPetrolStationBrand.put(petrolStationBrand, caltexCheckbox)
+                "Shell" -> this.checkBoxByPetrolStationBrand.put(petrolStationBrand, this.shellCheckbox)
+                "Petronas" -> this.checkBoxByPetrolStationBrand.put(petrolStationBrand, this.petronasCheckbox)
+                "BHPetrol" -> this.checkBoxByPetrolStationBrand.put(petrolStationBrand, this.bhpetrolCheckbox)
+                "Caltex" -> this.checkBoxByPetrolStationBrand.put(petrolStationBrand, this.caltexCheckbox)
             }
         }
 
         for (petrol in this.petrolList) {
             when (petrol.petrolName) {
-                "RON95" -> this.radioButtonByPetrol.put(petrol, ron95RadioButton)
-                "RON97" -> this.radioButtonByPetrol.put(petrol, ron97RadioButton)
-                "Diesel" -> this.radioButtonByPetrol.put(petrol, dieselRadioButton)
-                "EURO5" -> this.radioButtonByPetrol.put(petrol, euro5RadioButton)
+                "RON95" -> this.radioButtonByPetrol.put(petrol, this.ron95RadioButton)
+                "RON97" -> this.radioButtonByPetrol.put(petrol, this.ron97RadioButton)
+                "Diesel" -> this.radioButtonByPetrol.put(petrol, this.dieselRadioButton)
+                "EURO5" -> this.radioButtonByPetrol.put(petrol, this.euro5RadioButton)
             }
         }
 
-        presetPreference(this.user, this.checkBoxByPetrolStationBrand, this.radioButtonByPetrol)
+        this.presetPreference(this.user, this.checkBoxByPetrolStationBrand, this.radioButtonByPetrol)
 
         this.saveButton.setOnClickListener {
             for ((petrolStationBrand, checkBox) in this.checkBoxByPetrolStationBrand) {
@@ -93,7 +90,7 @@ class PreferencesFragment : Fragment() {
                     this.preferredPetrol = petrol
                 }
             }
-            savePreference(this.user, this.preferredPetrolStationBrandList, this.preferredPetrol)
+            this.savePreference(this.user, this.preferredPetrolStationBrandList, this.preferredPetrol)
         }
     }
 
@@ -116,31 +113,32 @@ class PreferencesFragment : Fragment() {
             }
         }
         if (petrolRadioButtonisChecked != true) {
-            ron95RadioButton.isChecked = true
+            this.ron95RadioButton.isChecked = true
         }
     }
 
     private fun savePreference(user: User, preferredPetrolStationBrandList: ArrayList<PetrolStationBrand>, preferredPetrol: Petrol) {
-        user.userPreferredPetrolStationBrandList = preferredPetrolStationBrandList
         user.userPreferredPetrol = preferredPetrol
+        user.userPreferredPetrolStationBrandList = preferredPetrolStationBrandList
 
-        var userJsonObject = user.toJsonObject()
-
-        try {
-            val outputStream = context?.openFileOutput("user.txt", Context.MODE_PRIVATE)
-            outputStream?.write(userJsonObject.toString().toByteArray())
-            outputStream?.close()
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
+        this.userList.forEach {
+            if (it.userEmail == user.userEmail) {
+                it.userPreferredPetrol = preferredPetrol
+                it.userPreferredPetrolStationBrandList?.clear()
+                it.userPreferredPetrolStationBrandList?.addAll(preferredPetrolStationBrandList)
+            }
         }
+        UserController.writeToJSONUserList(this.context!!, this.userList)
 
-        activity!!.supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.mainViewgroupContainer, MapDisplayFragment.newInstance(user))
-                .commit()
+        if (this.activity is LoginActivity) {
+            val launchIntent = MainActivity.newLaunchIntent(this.context!!, user)
+            this.startActivity(launchIntent)
+            this.activity!!.finish()
+        } else {
+            this.activity!!.supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.mainViewgroupContainer, MapDisplayFragment.newInstance(user))
+                    .commit()
+        }
     }
-
-
 }

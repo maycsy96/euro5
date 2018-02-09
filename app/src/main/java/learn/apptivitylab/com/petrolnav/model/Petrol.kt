@@ -16,11 +16,13 @@ data class Petrol(
         var petrolPriceHistoryList: ArrayList<PriceHistory> = ArrayList<PriceHistory>()) : Parcelable {
 
     constructor(parcel: Parcel) : this() {
-        petrolId = parcel.readString()
-        petrolName = parcel.readString()
-        petrolPrice = parcel.readDouble()
-        petrolPriceChange = parcel.readDouble()
-        petrolPriceHistoryList = parcel.readArrayList(PriceHistory::class.java.classLoader) as ArrayList<PriceHistory>
+        with(parcel) {
+            this@Petrol.petrolId = readString()
+            this@Petrol.petrolName = readString()
+            this@Petrol.petrolPrice = readDouble()
+            this@Petrol.petrolPriceChange = readDouble()
+            this@Petrol.petrolPriceHistoryList = readArrayList(PriceHistory::class.java.classLoader) as ArrayList<PriceHistory>
+        }
     }
 
     constructor(jsonObject: JSONObject?) : this() {
@@ -29,7 +31,7 @@ data class Petrol(
         this.petrolPrice = jsonObject?.optDouble("petrol_price")
 
         var petrolPriceHistory: PriceHistory
-        var petrolPriceHistoryListJsonArray = jsonObject?.optJSONArray("petrol_price_history")
+        val petrolPriceHistoryListJsonArray = jsonObject?.optJSONArray("petrol_price_history")
         this.petrolPriceHistoryList = ArrayList<PriceHistory>()
 
         petrolPriceHistoryListJsonArray?.let {
@@ -44,16 +46,22 @@ data class Petrol(
         }
     }
 
-    override fun writeToParcel(parcel: Parcel?, flags: Int) {
-        parcel?.writeString(petrolId)
-        parcel?.writeString(petrolName)
-        petrolPrice?.let {
-            parcel?.writeDouble(it)
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        with(parcel) {
+            writeString(this@Petrol.petrolId)
+            writeString(this@Petrol.petrolName)
+            this@Petrol.petrolPrice?.let {
+                writeDouble(it)
+            }
+            if (this@Petrol.petrolPriceChange == null) {
+                writeDouble(0.0)
+            } else {
+                this@Petrol.petrolPriceChange?.let {
+                    writeDouble(it)
+                }
+            }
+            writeList(this@Petrol.petrolPriceHistoryList)
         }
-        petrolPriceChange?.let {
-            parcel?.writeDouble(it)
-        }
-        parcel?.writeList(petrolPriceHistoryList)
     }
 
     companion object CREATOR : Parcelable.Creator<Petrol> {

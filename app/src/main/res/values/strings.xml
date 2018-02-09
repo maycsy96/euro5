@@ -50,4 +50,7 @@
     <string name="user_new_password">New password</string>
     <string name="button_reset">Reset</string>
     <string name="message_reset_password">Please reset your password here:</string>
+    <string name="title_welcome_to_petrolnav">Welcome to PetrolNav App</string>
+    <string name="message_welcome_to_petrolnav">This is your first time using this app. To begin, please select the petrol and petrol station brands you prefer and save it. You can change them again later at the preferences setting</string>
+    <string name="button_ok">OK</string>
 </resources>
