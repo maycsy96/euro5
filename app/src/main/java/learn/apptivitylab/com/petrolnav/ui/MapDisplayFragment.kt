@@ -2,6 +2,7 @@ package learn.apptivitylab.com.petrolnav.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -13,20 +14,19 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import android.view.*
-
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import kotlinx.android.synthetic.main.fragment_map_display.*
 import learn.apptivitylab.com.petrolnav.R
-import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
 import learn.apptivitylab.com.petrolnav.model.PetrolStation
 import learn.apptivitylab.com.petrolnav.model.User
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Created by apptivitylab on 09/01/2018.
@@ -36,14 +36,14 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
 
     companion object {
         val LOCATION_REQUEST_CODE = 100
-        val TAG = "MapDisplayFragment"
+        private const val ARG_USER_DETAIL = "user_detail"
+        private const val ARG_PETROL_STATION_LIST = "petrol_station_list"
 
-        private val ARG_USER_DETAIL = "user_detail"
-
-        fun newInstance(user: User): MapDisplayFragment {
+        fun newInstance(user: User, petrolStationList: ArrayList<PetrolStation>): MapDisplayFragment {
             val fragment = MapDisplayFragment()
             val args: Bundle = Bundle()
             args.putParcelable(ARG_USER_DETAIL, user)
+            args.putParcelableArrayList(ARG_PETROL_STATION_LIST, petrolStationList)
             fragment.arguments = args
             return fragment
         }
@@ -60,6 +60,20 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
     private var petrolStationList = ArrayList<PetrolStation>()
     private var filteredListByPreferredPetrol = ArrayList<PetrolStation>()
     private var user = User()
+    private lateinit var petrolStationListListener: PetrolStationListListener
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        try {
+            this.petrolStationListListener = context as PetrolStationListListener
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun updatePetrolStationList(petrolStationList: ArrayList<PetrolStation>) {
+        this.petrolStationListListener.onUpdatePetrolStationList(petrolStationList)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var rootView = inflater.inflate(R.layout.fragment_map_display, container, false)
@@ -67,7 +81,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         if (savedInstanceState == null) {
             setupGoogleMapsFragment();
         } else {
-            this.mapFragment = activity!!.supportFragmentManager.findFragmentById(R.id.mapViewgroupContainer) as SupportMapFragment
+            this.mapFragment = this.activity!!.supportFragmentManager.findFragmentById(R.id.mapViewgroupContainer) as SupportMapFragment
         }
         return rootView
     }
@@ -78,28 +92,26 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         this.context?.let {
             this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(it)
         }
-
         arguments?.let {
             this.user = it.getParcelable(ARG_USER_DETAIL)
+            this.petrolStationList = it.getParcelableArrayList(ARG_PETROL_STATION_LIST)
         }
-
-        this.petrolStationList = PetrolStationLoader.loadJSONStations(context!!)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!)
-        startLocationUpdates()
+        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!)
+        this.startLocationUpdates()
     }
 
     override fun onInfoWindowClick(marker: Marker?) {
         val petrolStation = this.petrolStationList.firstOrNull { it.petrolStationId.equals(marker?.snippet) }
         petrolStation?.let {
             val launchIntent = PetrolStationDetailActivity.newLaunchIntent(this.context!!, it)
-            startActivity(launchIntent)
+            this.startActivity(launchIntent)
         }
     }
 
     private fun setupGoogleMapsFragment() {
         this.mapFragment = SupportMapFragment.newInstance()
 
-        activity!!.supportFragmentManager
+        this.activity!!.supportFragmentManager
                 .beginTransaction()
                 .add(R.id.mapViewgroupContainer, mapFragment)
                 .commit()
@@ -115,7 +127,8 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             if (this.filteredListByPreferredPetrol.isEmpty()) {
                 this.filteredListByPreferredPetrol = petrolStationList
             }
-            createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
+            this.updatePetrolStationList(this.filteredListByPreferredPetrol)
+            this.createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
         }
     }
 
@@ -131,11 +144,13 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         }
 
         val locationRequest = LocationRequest()
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.interval = 5000
-        locationRequest.fastestInterval = 3000
+        with(locationRequest){
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            interval = 5000
+            fastestInterval = 3000
+        }
 
-        locationCallBack = object : LocationCallback() {
+        this.locationCallBack = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 super.onLocationResult(locationResult)
 
@@ -144,7 +159,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
                 }
             }
         }
-        fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallBack, Looper.myLooper())
+        this.fusedLocationClient?.requestLocationUpdates(locationRequest, this.locationCallBack, Looper.myLooper())
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -155,7 +170,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
                     this.context?.let {
                         if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                             this.googleMap?.isMyLocationEnabled = true
-                            startLocationUpdates()
+                            this.startLocationUpdates()
                         }
                     }
                 } else {
@@ -181,11 +196,12 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
                 this.locationMarker = googleMap?.addMarker(markerOptions)
             }
 
-            setStationsDistanceFromUser(this.userLatLng, this.petrolStationList)
+            this.setStationsDistanceFromUser(this.userLatLng, this.petrolStationList)
 
             this.filteredListByPreferredPetrol.sortBy { petrolStation ->
                 petrolStation.distanceFromUser
             }
+            this.updatePetrolStationList(this.filteredListByPreferredPetrol)
 
             var boundsBuilder = LatLngBounds.Builder()
             var nearestStationsCount = 5
