@@ -1,6 +1,7 @@
 package learn.apptivitylab.com.petrolnav.ui
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,9 +21,9 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     private var petrolStationsList: ArrayList<Any> = ArrayList()
-    private lateinit var petrolStationListener: StationViewHolder.onSelectStationListener
+    private lateinit var petrolStationListener: StationViewHolder.SelectStationListener
 
-    fun setStationListener(petrolStationListener: StationViewHolder.onSelectStationListener) {
+    fun setStationListener(petrolStationListener: StationViewHolder.SelectStationListener) {
         this.petrolStationListener = petrolStationListener
     }
 
@@ -74,10 +75,10 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         this.notifyDataSetChanged()
     }
 
-    class StationViewHolder(itemView: View, handler: onSelectStationListener)
+    class StationViewHolder(itemView: View, handler: SelectStationListener)
         : RecyclerView.ViewHolder(itemView) {
 
-        interface onSelectStationListener {
+        interface SelectStationListener {
             fun onStationSelected(petrolStation: PetrolStation)
         }
 
