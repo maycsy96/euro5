@@ -16,11 +16,13 @@ data class Petrol(
         var petrolPriceHistoryList: ArrayList<PriceHistory> = ArrayList<PriceHistory>()) : Parcelable {
 
     constructor(parcel: Parcel) : this() {
-        this.petrolId = parcel.readString()
-        this.petrolName = parcel.readString()
-        this.petrolPrice = parcel.readDouble()
-        this.petrolPriceChange = parcel.readDouble()
-        this.petrolPriceHistoryList = parcel.readArrayList(PriceHistory::class.java.classLoader) as ArrayList<PriceHistory>
+        with(parcel) {
+            this@Petrol.petrolId = readString()
+            this@Petrol.petrolName = readString()
+            this@Petrol.petrolPrice = readDouble()
+            this@Petrol.petrolPriceChange = readDouble()
+            this@Petrol.petrolPriceHistoryList = readArrayList(PriceHistory::class.java.classLoader) as ArrayList<PriceHistory>
+        }
     }
 
     constructor(jsonObject: JSONObject?) : this() {
@@ -45,19 +47,21 @@ data class Petrol(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(this.petrolId)
-        parcel.writeString(this.petrolName)
-        this.petrolPrice?.let {
-            parcel.writeDouble(it)
-        }
-        if (this.petrolPriceChange == null) {
-            parcel.writeDouble(0.0)
-        } else {
-            this.petrolPriceChange?.let {
-                parcel.writeDouble(it)
+        with(parcel) {
+            writeString(this@Petrol.petrolId)
+            writeString(this@Petrol.petrolName)
+            this@Petrol.petrolPrice?.let {
+                writeDouble(it)
             }
+            if (this@Petrol.petrolPriceChange == null) {
+                writeDouble(0.0)
+            } else {
+                this@Petrol.petrolPriceChange?.let {
+                    writeDouble(it)
+                }
+            }
+            writeList(this@Petrol.petrolPriceHistoryList)
         }
-        parcel.writeList(this.petrolPriceHistoryList)
     }
 
     companion object CREATOR : Parcelable.Creator<Petrol> {
