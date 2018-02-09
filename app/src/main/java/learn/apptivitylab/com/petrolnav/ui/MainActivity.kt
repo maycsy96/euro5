@@ -12,13 +12,15 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import learn.apptivitylab.com.petrolnav.R
+import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
+import learn.apptivitylab.com.petrolnav.model.PetrolStation
 import learn.apptivitylab.com.petrolnav.model.User
 
 /**
  * Created by apptivitylab on 09/01/2018.
  */
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, PetrolStationListListener, UserListener {
 
     companion object {
         const val EXTRA_USER_DETAIL = "user_detail"
@@ -31,6 +33,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private var user = User()
+    private var petrolStationList = ArrayList<PetrolStation>()
+    private var filteredPetrolStationList = ArrayList<PetrolStation>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,10 +50,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.navigationView.setNavigationItemSelectedListener(this)
 
         this.user = intent.getParcelableExtra<User>(EXTRA_USER_DETAIL)
+        this.petrolStationList = PetrolStationLoader.loadJSONStations(this)
 
         this.supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.mainViewgroupContainer, MapDisplayFragment.newInstance(this.user))
+                .replace(R.id.mainViewgroupContainer, MapDisplayFragment.newInstance(this.user, this.petrolStationList))
                 .commit()
     }
 
@@ -91,10 +96,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if (currentFragment is MapDisplayFragment) {
                     return
                 }
-                displayFragment = MapDisplayFragment.newInstance(this.user)
+                displayFragment = MapDisplayFragment.newInstance(this.user, this.petrolStationList)
             }
             R.id.nav_search -> {
-                displayFragment = SearchFragment.newInstance(this.user)
+                displayFragment = SearchFragment.newInstance(this.user, this.filteredPetrolStationList)
             }
             R.id.nav_petrol_price -> {
                 val launchIntent = PetrolPriceActivity.newLaunchIntent(this)
@@ -115,6 +120,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .addToBackStack(null)
                     .commit()
         }
+    }
+
+    override fun onUpdatePetrolStationList(petrolStationList: ArrayList<PetrolStation>) {
+        this.filteredPetrolStationList = petrolStationList
+    }
+
+    override fun onUpdateUser(user: User) {
+        this.user = user
     }
 }
 
