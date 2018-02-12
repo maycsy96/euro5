@@ -20,7 +20,7 @@ import learn.apptivitylab.com.petrolnav.model.User
  * Created by apptivitylab on 09/01/2018.
  */
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, PetrolStationListListener, UserListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, UserListener {
 
     companion object {
         const val EXTRA_USER_DETAIL = "user_detail"
@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private var user = User()
     private var petrolStationList = ArrayList<PetrolStation>()
-    private var filteredPetrolStationList = ArrayList<PetrolStation>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,7 +98,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 displayFragment = MapDisplayFragment.newInstance(this.user, this.petrolStationList)
             }
             R.id.nav_search -> {
-                displayFragment = SearchFragment.newInstance(this.user, this.filteredPetrolStationList)
+                displayFragment = SearchFragment.newInstance(this.user, this.petrolStationList)
             }
             R.id.nav_petrol_price -> {
                 val launchIntent = PetrolPriceActivity.newLaunchIntent(this)
@@ -120,10 +119,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .addToBackStack(null)
                     .commit()
         }
-    }
-
-    override fun onUpdatePetrolStationList(petrolStationList: ArrayList<PetrolStation>) {
-        this.filteredPetrolStationList = petrolStationList
     }
 
     override fun onUpdateUser(user: User) {

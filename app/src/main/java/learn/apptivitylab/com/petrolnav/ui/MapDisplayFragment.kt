@@ -2,7 +2,6 @@ package learn.apptivitylab.com.petrolnav.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -60,20 +59,6 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
     private var petrolStationList = ArrayList<PetrolStation>()
     private var filteredListByPreferredPetrol = ArrayList<PetrolStation>()
     private var user = User()
-    private lateinit var petrolStationListListener: PetrolStationListListener
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        try {
-            this.petrolStationListListener = context as PetrolStationListListener
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    fun updatePetrolStationList(petrolStationList: ArrayList<PetrolStation>) {
-        this.petrolStationListListener.onUpdatePetrolStationList(petrolStationList)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var rootView = inflater.inflate(R.layout.fragment_map_display, container, false)
@@ -89,9 +74,6 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        this.context?.let {
-            this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(it)
-        }
         arguments?.let {
             this.user = it.getParcelable(ARG_USER_DETAIL)
             this.petrolStationList = it.getParcelableArrayList(ARG_PETROL_STATION_LIST)
