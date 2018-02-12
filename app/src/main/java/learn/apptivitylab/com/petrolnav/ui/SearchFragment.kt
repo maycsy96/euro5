@@ -164,7 +164,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
         super.onStop()
     }
 
-    fun setStationsDistanceFromUser(userLatlng: LatLng?, petrolStationList: ArrayList<PetrolStation>) {
+    private fun setStationsDistanceFromUser(userLatlng: LatLng?, petrolStationList: ArrayList<PetrolStation>) {
         val userLocation = Location(getString(R.string.user_location))
         userLatlng?.let {
             userLocation.latitude = it.latitude
@@ -187,7 +187,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
         this.startActivity(launchIntent)
     }
 
-    fun filterByPreferredPetrol(petrolStationList: java.util.ArrayList<PetrolStation>, user: User): java.util.ArrayList<PetrolStation> {
+    private fun filterByPreferredPetrol(petrolStationList: java.util.ArrayList<PetrolStation>, user: User): java.util.ArrayList<PetrolStation> {
         var preferredPetrolStationList = java.util.ArrayList<PetrolStation>()
 
         petrolStationList.forEach { petrolStation ->

@@ -197,7 +197,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         }
     }
 
-    fun setStationsDistanceFromUser(userLatlng: LatLng?, petrolStationList: ArrayList<PetrolStation>) {
+    private fun setStationsDistanceFromUser(userLatlng: LatLng?, petrolStationList: ArrayList<PetrolStation>) {
         val userLocation = Location(getString(R.string.user_location))
         userLatlng?.let {
             userLocation.latitude = it.latitude
@@ -215,7 +215,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         }
     }
 
-    fun filterByPreferredPetrol(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<PetrolStation> {
+    private fun filterByPreferredPetrol(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<PetrolStation> {
         var preferredPetrolStationList = ArrayList<PetrolStation>()
 
         petrolStationList.forEach { petrolStation ->
@@ -228,7 +228,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         return preferredPetrolStationList
     }
 
-    fun createPetrolStationMarker(petrolStationList: List<PetrolStation>, user: User) {
+    private fun createPetrolStationMarker(petrolStationList: List<PetrolStation>, user: User) {
         var bitmapImage: Bitmap
         var resizedBitmapImage: Bitmap
         var petrolStationLocationMarker: Marker?
