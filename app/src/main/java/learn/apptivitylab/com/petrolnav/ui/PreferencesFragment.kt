@@ -3,6 +3,7 @@ package learn.apptivitylab.com.petrolnav.ui
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -153,7 +154,7 @@ class PreferencesFragment : Fragment() {
         } else {
             this.updateUser(user)
             this.activity!!.supportFragmentManager
-                    .popBackStack()
+                    .popBackStack(null, POP_BACK_STACK_INCLUSIVE)
         }
     }
 }
