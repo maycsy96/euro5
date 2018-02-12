@@ -126,14 +126,12 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
 
     private fun onLocationChanged(location: Location) {
         if (location.latitude != this.userLatLng?.latitude || location.longitude != this.userLatLng?.longitude) {
-            this.fusedLocationClient?.removeLocationUpdates(this.locationCallBack)
-            this.petrolStationListSwipeRefresh.isRefreshing = false
             this.updateUserLocation()
         } else {
-            this.fusedLocationClient?.removeLocationUpdates(this.locationCallBack)
-            this.petrolStationListSwipeRefresh.isRefreshing = false
             Toast.makeText(this.context!!, getString(R.string.message_location_did_not_change), Toast.LENGTH_SHORT).show()
         }
+        this.fusedLocationClient?.removeLocationUpdates(this.locationCallBack)
+        this.petrolStationListSwipeRefresh.isRefreshing = false
     }
 
     @SuppressLint("MissingPermission")
