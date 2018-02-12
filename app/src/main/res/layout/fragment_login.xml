@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@drawable/gradient_light_green_to_blue"
     android:orientation="vertical"
     android:paddingLeft="24dp"
     android:paddingRight="24dp"
@@ -10,74 +10,79 @@
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/petrolnavLogo"
+        style="@style/RoundedLogoImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="24dp"
-        android:adjustViewBounds="true"
         android:maxHeight="192dp"
         android:maxWidth="192dp"
+        android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         android:src="@drawable/petrol_nav_launcher" />
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/emailTextInput"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp">
+        android:orientation="vertical"
+        android:padding="10dp">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/emailEditText"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/emailTextInput"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Email"
-            android:inputType="textEmailAddress" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_height="wrap_content">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/passwordTextInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp">
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/emailEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:textColorHint="@android:color/white"
+                />
+        </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/passwordEditText"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/passwordTextInput"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/passwordEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:textColorHint="@android:color/white" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/forgotPasswordTextView"
+            style="@style/Hyperlink"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:hint="Password"
-            android:inputType="textPassword" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_gravity="right"
+            android:clickable="true"
+            android:text="Forgot Password?" />
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/forgotPasswordTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginBottom="15dp"
-        android:clickable="true"
-        android:text="Forgot Password?" />
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/loginButton"
+            style="@style/RoundedButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="LOGIN" />
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/loginButton"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/holo_green_light"
-        android:padding="12dp"
-        android:text="LOGIN"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/registerTextView"
+            style="@style/Hyperlink"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="Do not have an account yet? Register"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+    </LinearLayout>
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/registerTextView"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:clickable="true"
-        android:gravity="center"
-        android:padding="12dp"
-        android:text="Do not have an account yet? Register"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
 </LinearLayout>
