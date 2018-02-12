@@ -64,7 +64,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         var rootView = inflater.inflate(R.layout.fragment_map_display, container, false)
 
         if (savedInstanceState == null) {
-            setupGoogleMapsFragment();
+            this.setupGoogleMapsFragment();
         } else {
             this.mapFragment = this.activity!!.supportFragmentManager.findFragmentById(R.id.mapViewgroupContainer) as SupportMapFragment
         }
@@ -105,11 +105,10 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(officeLatLng, 6f)
             this.googleMap?.moveCamera(cameraUpdate)
 
-            this.filteredListByPreferredPetrol = filterByPreferredPetrol(this.petrolStationList, this.user)
+            this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
             if (this.filteredListByPreferredPetrol.isEmpty()) {
-                this.filteredListByPreferredPetrol = petrolStationList
+                this.filteredListByPreferredPetrol = this.petrolStationList
             }
-            this.updatePetrolStationList(this.filteredListByPreferredPetrol)
             this.createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
         }
     }
@@ -126,7 +125,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         }
 
         val locationRequest = LocationRequest()
-        with(locationRequest){
+        with(locationRequest) {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             interval = 5000
             fastestInterval = 3000
@@ -135,7 +134,6 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         this.locationCallBack = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 super.onLocationResult(locationResult)
-
                 locationResult?.let {
                     onLocationChanged(it.lastLocation)
                 }
@@ -183,11 +181,10 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             this.filteredListByPreferredPetrol.sortBy { petrolStation ->
                 petrolStation.distanceFromUser
             }
-            this.updatePetrolStationList(this.filteredListByPreferredPetrol)
 
             var boundsBuilder = LatLngBounds.Builder()
-            var nearestStationsCount = 5
-            var nearestStationList = this.filteredListByPreferredPetrol.take(nearestStationsCount)
+            val nearestStationsCount = 5
+            val nearestStationList = this.filteredListByPreferredPetrol.take(nearestStationsCount)
             nearestStationList.forEach { nearestStation ->
                 boundsBuilder.include(nearestStation.petrolStationLatLng)
             }
@@ -253,14 +250,14 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
                             .title(nearestStation.petrolStationName)
                             .snippet(nearestStation.petrolStationId)
                             .icon(BitmapDescriptorFactory.fromBitmap(resizedBitmapImage))
-                    petrolStationLocationMarker = googleMap?.addMarker(preferredStationMarkerOptions)
+                    petrolStationLocationMarker = this.googleMap?.addMarker(preferredStationMarkerOptions)
                 }
             }
         }
     }
 
     override fun onStop() {
-        fusedLocationClient?.removeLocationUpdates(locationCallBack)
+        this.fusedLocationClient?.removeLocationUpdates(locationCallBack)
         super.onStop()
     }
 }

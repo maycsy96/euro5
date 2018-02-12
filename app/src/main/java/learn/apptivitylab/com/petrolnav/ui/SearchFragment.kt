@@ -46,9 +46,9 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
     private var userLatLng: LatLng? = null
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var locationCallBack: LocationCallback? = null
-    private var filteredListByPreferredPetrol = ArrayList<PetrolStation>()
-    private val petrolStationListAdapter = SearchAdapter()
 
+    private var petrolStationList = ArrayList<PetrolStation>()
+    private val petrolStationListAdapter = SearchAdapter()
     private var user = User()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -60,7 +60,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
 
         arguments?.let {
             this.user = it.getParcelable(ARG_USER_DETAIL)
-            this.filteredListByPreferredPetrol = it.getParcelableArrayList(ARG_PETROL_STATION_LIST)
+            this.petrolStationList = it.getParcelableArrayList(ARG_PETROL_STATION_LIST)
         }
 
         this.petrolStationListSwipeRefresh.setOnRefreshListener(this)
@@ -86,11 +86,13 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
         }
 
         val locationRequest = LocationRequest()
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.interval = 15000
-        locationRequest.fastestInterval = 10000
+        with(locationRequest) {
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            interval = 15000
+            fastestInterval = 10000
+        }
 
-        locationCallBack = object : LocationCallback() {
+        this.locationCallBack = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 super.onLocationResult(locationResult)
                 locationResult?.let {
@@ -99,7 +101,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
             }
         }
 
-        fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallBack, Looper.myLooper())
+        this.fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallBack, Looper.myLooper())
         this.updateUserLocation()
     }
 
@@ -123,14 +125,14 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
     }
 
     private fun onLocationChanged(location: Location) {
-        if(location.latitude != this.userLatLng?.latitude || location.longitude != this.userLatLng?.longitude){
+        if (location.latitude != this.userLatLng?.latitude || location.longitude != this.userLatLng?.longitude) {
             this.fusedLocationClient?.removeLocationUpdates(this.locationCallBack)
             this.petrolStationListSwipeRefresh.isRefreshing = false
             this.updateUserLocation()
-        }else{
+        } else {
             this.fusedLocationClient?.removeLocationUpdates(this.locationCallBack)
             this.petrolStationListSwipeRefresh.isRefreshing = false
-            Toast.makeText(this.context!!,getString(R.string.message_location_did_not_change), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this.context!!, getString(R.string.message_location_did_not_change), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -141,18 +143,20 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
                 this.userLatLng = LatLng(location.latitude, location.longitude)
             }
         }
-        this.updateStationsAdapterDataSet(this.userLatLng, this.filteredListByPreferredPetrol, this.petrolStationListAdapter)
+        this.updateStationsAdapterDataSet(this.userLatLng, this.petrolStationList, this.petrolStationListAdapter)
     }
 
     private fun updateStationsAdapterDataSet(userLatLng: LatLng?, petrolStationList: ArrayList<PetrolStation>, petrolStationListAdapter: SearchAdapter) {
-        if(userLatLng != null){
+        if (userLatLng != null) {
             this.setStationsDistanceFromUser(userLatLng, petrolStationList)
         }
         petrolStationList.sortBy { petrolStation ->
             petrolStation.distanceFromUser
         }
-        var filteredListByPreferredBrand = filterByPreferredBrand(petrolStationList, this.user)
-        petrolStationListAdapter.updateDataSet(filteredListByPreferredBrand)
+
+        val filteredListByPreferredPetrol = filterByPreferredPetrol(petrolStationList, this.user)
+        val filteredListByPreferredBrand = filterByPreferredBrand(filteredListByPreferredPetrol, this.user)
+        this.petrolStationListAdapter.updateDataSet(filteredListByPreferredBrand)
     }
 
     override fun onStop() {
@@ -180,7 +184,20 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
 
     override fun onStationSelected(petrolStation: PetrolStation) {
         val launchIntent = PetrolStationDetailActivity.newLaunchIntent(this.context!!, petrolStation)
-        startActivity(launchIntent)
+        this.startActivity(launchIntent)
+    }
+
+    fun filterByPreferredPetrol(petrolStationList: java.util.ArrayList<PetrolStation>, user: User): java.util.ArrayList<PetrolStation> {
+        var preferredPetrolStationList = java.util.ArrayList<PetrolStation>()
+
+        petrolStationList.forEach { petrolStation ->
+            petrolStation.petrolList?.forEach { petrol ->
+                if (petrol.petrolId == user.userPreferredPetrol?.petrolId) {
+                    preferredPetrolStationList.add(petrolStation)
+                }
+            }
+        }
+        return preferredPetrolStationList
     }
 
     private fun filterByPreferredBrand(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<Any> {
