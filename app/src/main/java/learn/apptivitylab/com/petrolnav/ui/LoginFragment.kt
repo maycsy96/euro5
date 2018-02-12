@@ -58,6 +58,7 @@ class LoginFragment : Fragment() {
         this.forgotPasswordTextView.setOnClickListener {
             this.activity!!.supportFragmentManager
                     .beginTransaction()
+                    .setCustomAnimations(R.anim.fragment_slide_right_enter, R.anim.fragment_slide_right_exit, R.anim.fragment_slide_left_enter, R.anim.fragment_slide_left_exit)
                     .replace(R.id.loginViewgroupContainer, ForgotPasswordFragment.newInstance(this.userList))
                     .addToBackStack(null)
                     .commit()
