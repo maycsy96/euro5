@@ -48,6 +48,8 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         }
     }
 
+
+    private val NEAREST_STATION_COUNT = 5
     private var mapFragment: SupportMapFragment? = null
     private var googleMap: GoogleMap? = null
     private var fusedLocationClient: FusedLocationProviderClient? = null
@@ -183,8 +185,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             }
 
             var boundsBuilder = LatLngBounds.Builder()
-            val nearestStationsCount = 5
-            val nearestStationList = this.filteredListByPreferredPetrol.take(nearestStationsCount)
+            val nearestStationList = this.filteredListByPreferredPetrol.take(this.NEAREST_STATION_COUNT)
             nearestStationList.forEach { nearestStation ->
                 boundsBuilder.include(nearestStation.petrolStationLatLng)
             }
