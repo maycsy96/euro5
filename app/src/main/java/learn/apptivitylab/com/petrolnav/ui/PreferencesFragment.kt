@@ -1,7 +1,9 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,6 +45,21 @@ class PreferencesFragment : Fragment() {
 
     private var preferredPetrolStationBrandList = ArrayList<PetrolStationBrand>()
     private var preferredPetrol = Petrol()
+
+    private lateinit var userListener: UserListener
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        try {
+            this.userListener = context as UserListener
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun updateUser(user: User) {
+        this.userListener.onUpdateUser(user)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_preferences, container, false)
@@ -135,10 +152,9 @@ class PreferencesFragment : Fragment() {
             this.startActivity(launchIntent)
             this.activity!!.finish()
         } else {
+            this.updateUser(user)
             this.activity!!.supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.mainViewgroupContainer, MapDisplayFragment.newInstance(user))
-                    .commit()
+                    .popBackStack(null, POP_BACK_STACK_INCLUSIVE)
         }
     }
 }
