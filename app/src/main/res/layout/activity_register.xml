@@ -4,7 +4,7 @@
     android:id="@+id/registerViewgroupContainer"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/gradient_light_green_to_blue"
+    android:background="@drawable/gradient_dark_green_to_light_green"
     android:fitsSystemWindows="true"
     android:gravity="center"
     android:orientation="vertical">
