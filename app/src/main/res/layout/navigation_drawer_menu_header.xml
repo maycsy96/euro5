@@ -1,19 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_vertical"
-    android:padding="16dp">
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
+    android:paddingTop="30dp"
+    android:background="@drawable/gradient_dark_green_to_light_green">
 
-    <android.support.v7.widget.AppCompatImageButton
-        android:id="@+id/nav_header"
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/navigationHeaderImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:adjustViewBounds="true"
         android:maxHeight="192dp"
         android:maxWidth="192dp"
         android:scaleType="fitCenter"
-        android:layout_gravity="center"
-        android:src="@drawable/petrol_nav_launcher"
-        />
+        android:layout_marginTop="12dp"
+        android:src="@drawable/petrol_nav_logo" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom">
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/navigationHeaderNameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/white"
+            android:text="@string/user_name"
+            android:layout_marginTop="30dp"
+            android:padding="5dp"/>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/navigationHeaderEmailTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+            android:textColor="@android:color/white"
+            android:text="@string/user_email"
+            android:padding="5dp"
+            android:layout_marginBottom="12dp"/>
+    </LinearLayout>
+
 </LinearLayout>

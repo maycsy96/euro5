@@ -13,7 +13,7 @@
     </style>
 
     <style name="CustomAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:colorPrimary">@color/darkGreen</item>
+        <item name="android:colorPrimary">@android:color/transparent</item>
         <item name="android:colorPrimaryDark">@android:color/holo_green_dark</item>
         <item name="android:colorAccent">@color/lightGreen</item>
     </style>
