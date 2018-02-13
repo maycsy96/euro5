@@ -10,7 +10,9 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.navigation_drawer_menu_header.view.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
 import learn.apptivitylab.com.petrolnav.model.PetrolStation
@@ -50,6 +52,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         this.user = intent.getParcelableExtra<User>(EXTRA_USER_DETAIL)
         this.petrolStationList = PetrolStationLoader.loadJSONStations(this)
+
+        val navigationViewHeader = this.navigationView.getHeaderView(0)
+        navigationViewHeader.navigationHeaderNameTextView.text = this.user.userName
+        navigationViewHeader.navigationHeaderEmailTextView.text = this.user.userEmail
 
         this.supportFragmentManager
                 .beginTransaction()
@@ -92,6 +98,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var currentFragment: Fragment? = this.supportFragmentManager.findFragmentById(R.id.mainViewgroupContainer)
         when (id) {
             R.id.nav_map -> {
+                this.locationSearchView.visibility = View.VISIBLE
                 if (currentFragment is MapDisplayFragment) {
                     return
                 }
@@ -112,6 +119,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
+        this.locationSearchView.visibility = View.INVISIBLE
         if (displayFragment != null) {
             this.supportFragmentManager
                     .beginTransaction()
