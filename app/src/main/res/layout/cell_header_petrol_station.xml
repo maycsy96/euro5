@@ -8,7 +8,7 @@
         android:id="@+id/headerTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/holo_green_dark"
+        android:background="@color/teaGreen"
         android:padding="8dp"
         android:textAllCaps="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"

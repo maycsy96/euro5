@@ -80,6 +80,7 @@ class ForgotPasswordFragment : Fragment() {
         Toast.makeText(this.context, getString(R.string.message_send_email_success), Toast.LENGTH_LONG).show()
         this.activity!!.supportFragmentManager
                 .beginTransaction()
+                .setCustomAnimations(R.anim.fragment_slide_right_enter, R.anim.fragment_slide_right_exit, R.anim.fragment_slide_left_enter, R.anim.fragment_slide_left_exit)
                 .replace(R.id.forgotPasswordViewGroupContainer, ResetPasswordFragment.newInstance(this.user, this.userList))
                 .addToBackStack(null)
                 .commit()
