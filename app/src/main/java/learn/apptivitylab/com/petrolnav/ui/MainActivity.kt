@@ -3,14 +3,20 @@ package learn.apptivitylab.com.petrolnav.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.AppBarLayout
+import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
+import android.view.Gravity
 import android.view.MenuItem
+import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.navigation_drawer_menu_header.view.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
 import learn.apptivitylab.com.petrolnav.model.PetrolStation
@@ -45,11 +51,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.drawer_layout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
 
-        this.navigationView.inflateMenu(R.menu.navigation_drawer_menu)
-        this.navigationView.setNavigationItemSelectedListener(this)
+        with(this.navigationView) {
+            inflateMenu(R.menu.navigation_drawer_menu)
+            setNavigationItemSelectedListener(this@MainActivity)
+        }
 
         this.user = intent.getParcelableExtra<User>(EXTRA_USER_DETAIL)
         this.petrolStationList = PetrolStationLoader.loadJSONStations(this)
+
+        val navigationViewHeader = this.navigationView.getHeaderView(0)
+        with(navigationViewHeader) {
+            navigationHeaderNameTextView.text = this@MainActivity.user.userName
+            navigationHeaderEmailTextView.text = this@MainActivity.user.userEmail
+        }
+
+        this.locationSearchView.layoutParams = Toolbar.LayoutParams(Gravity.RIGHT)
+        (this.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = null
+        this.mainViewgroupContainer.requestLayout()
 
         this.supportFragmentManager
                 .beginTransaction()
@@ -69,6 +87,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (currentFragment is MapDisplayFragment) {
             this.showLogOutDialog()
         } else {
+            with(this.locationSearchView) {
+                setIconifiedByDefault(false)
+                visibility = View.VISIBLE
+            }
             this.supportFragmentManager.popBackStack(null, POP_BACK_STACK_INCLUSIVE)
         }
     }
@@ -89,15 +111,33 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun navigateTo(id: Int) {
         var displayFragment: Fragment? = null
-        var currentFragment: Fragment? = this.supportFragmentManager.findFragmentById(R.id.mainViewgroupContainer)
+        val currentFragment: Fragment? = this.supportFragmentManager.findFragmentById(R.id.mainViewgroupContainer)
+
+        with(this.locationSearchView) {
+            setIconifiedByDefault(true)
+            onActionViewCollapsed()
+            visibility = View.INVISIBLE
+        }
+
+        (this.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = AppBarLayout.ScrollingViewBehavior()
+        this.mainViewgroupContainer.requestLayout()
         when (id) {
             R.id.nav_map -> {
+                with(locationSearchView) {
+                    setIconifiedByDefault(false)
+                    visibility = View.VISIBLE
+                }
+
+                (this.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = null
+                this.mainViewgroupContainer.requestLayout()
+
                 if (currentFragment is MapDisplayFragment) {
                     return
                 }
                 displayFragment = MapDisplayFragment.newInstance(this.user, this.petrolStationList)
             }
             R.id.nav_search -> {
+                this.locationSearchView.visibility = View.VISIBLE
                 displayFragment = SearchFragment.newInstance(this.user, this.petrolStationList)
             }
             R.id.nav_petrol_price -> {
