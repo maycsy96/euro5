@@ -26,12 +26,12 @@ data class Petrol(
     }
 
     constructor(jsonObject: JSONObject?) : this() {
-        this.petrolId = jsonObject?.optString("petrol_id")
-        this.petrolName = jsonObject?.optString("petrol_name")
+        this.petrolId = jsonObject?.optString("uuid")
+        this.petrolName = jsonObject?.optString("name")
         this.petrolPrice = jsonObject?.optDouble("petrol_price")
 
         var petrolPriceHistory: PriceHistory
-        val petrolPriceHistoryListJsonArray = jsonObject?.optJSONArray("petrol_price_history")
+        val petrolPriceHistoryListJsonArray = jsonObject?.optJSONArray("price_histories_by_petrol_uuid")
         this.petrolPriceHistoryList = ArrayList<PriceHistory>()
 
         petrolPriceHistoryListJsonArray?.let {
