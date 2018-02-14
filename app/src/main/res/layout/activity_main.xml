@@ -5,9 +5,10 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_dark_green_to_light_green"
+    android:fitsSystemWindows="true"
     tools:context="learn.apptivitylab.com.petrolnav.ui.MainActivity"
-    tools:openDrawer="start"
-    android:fitsSystemWindows="true">
+    tools:openDrawer="start">
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -17,28 +18,33 @@
             android:id="@+id/mainViewgroupContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"></FrameLayout>
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:background="@drawable/gradient_dark_green_to_light_green"
-            app:elevation="0dp"
-            android:fitsSystemWindows="false">
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:fitsSystemWindows="false"
+            app:elevation="0dp">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:contentInsetStartWithNavigation="0dp">
+                android:layout_height="?attr/actionBarSize"
+                android:padding="6dp"
+                app:contentInsetStartWithNavigation="0dp"
+                app:layout_scrollFlags="scroll|enterAlways|snap">
 
                 <android.support.v7.widget.SearchView
                     android:id="@+id/locationSearchView"
-                    android:layout_width="match_parent"
+                    style="@style/RoundedSearchView"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="6dp"
-                    android:background="@android:color/white"
-                    app:queryHint="@string/query_search_your_location"/>
+                    app:iconifiedByDefault="false"
+                    app:queryHint="@string/query_search_your_location" />
+
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
     </android.support.design.widget.CoordinatorLayout>
@@ -49,6 +55,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@android:color/white"
-        app:headerLayout="@layout/navigation_drawer_menu_header"></android.support.design.widget.NavigationView>
+        app:headerLayout="@layout/navigation_drawer_menu_header" />
 
 </android.support.v4.widget.DrawerLayout>
