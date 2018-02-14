@@ -58,6 +58,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navigationViewHeader.navigationHeaderEmailTextView.text = this.user.userEmail
 
         this.locationSearchView.layoutParams = Toolbar.LayoutParams(Gravity.RIGHT)
+
+        (this.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = null
+        this.mainViewgroupContainer.requestLayout()
+
         this.supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.mainViewgroupContainer, MapDisplayFragment.newInstance(this.user, this.petrolStationList))
@@ -97,9 +101,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun navigateTo(id: Int) {
         var displayFragment: Fragment? = null
         var currentFragment: Fragment? = this.supportFragmentManager.findFragmentById(R.id.mainViewgroupContainer)
+        (this.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = AppBarLayout.ScrollingViewBehavior()
+        this.mainViewgroupContainer.requestLayout()
         when (id) {
             R.id.nav_map -> {
                 this.locationSearchView.visibility = View.VISIBLE
+                (this.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = null
+                this.mainViewgroupContainer.requestLayout()
                 if (currentFragment is MapDisplayFragment) {
                     return
                 }
