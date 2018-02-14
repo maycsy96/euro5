@@ -13,6 +13,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -103,6 +104,12 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
         this.mapFragment?.getMapAsync { googleMap ->
             this.googleMap = googleMap
             this.googleMap?.setOnInfoWindowClickListener(this)
+
+            var typedValue = TypedValue()
+            context!!.theme?.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
+            var toolbarHeight = resources.getDimensionPixelSize(typedValue.resourceId)
+            this.googleMap?.setPadding(0, toolbarHeight, 0, 0)
+
             val officeLatLng = LatLng(4.2105, 101.9758)
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(officeLatLng, 6f)
             this.googleMap?.moveCamera(cameraUpdate)
