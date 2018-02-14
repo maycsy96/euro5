@@ -80,6 +80,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (currentFragment is MapDisplayFragment) {
             this.showLogOutDialog()
         } else {
+            with(this.locationSearchView) {
+                setIconifiedByDefault(false)
+                visibility = View.VISIBLE
+            }
             this.supportFragmentManager.popBackStack(null, POP_BACK_STACK_INCLUSIVE)
         }
     }
@@ -101,6 +105,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun navigateTo(id: Int) {
         var displayFragment: Fragment? = null
         var currentFragment: Fragment? = this.supportFragmentManager.findFragmentById(R.id.mainViewgroupContainer)
+        val currentFragment: Fragment? = this.supportFragmentManager.findFragmentById(R.id.mainViewgroupContainer)
+
+        with(this.locationSearchView) {
+            setIconifiedByDefault(true)
+            onActionViewCollapsed()
+            visibility = View.INVISIBLE
+        }
+
         (this.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = AppBarLayout.ScrollingViewBehavior()
         this.mainViewgroupContainer.requestLayout()
         when (id) {
@@ -108,12 +120,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 this.locationSearchView.visibility = View.VISIBLE
                 (this.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = null
                 this.mainViewgroupContainer.requestLayout()
+
                 if (currentFragment is MapDisplayFragment) {
                     return
                 }
                 displayFragment = MapDisplayFragment.newInstance(this.user, this.petrolStationList)
             }
             R.id.nav_search -> {
+                this.locationSearchView.visibility = View.VISIBLE
                 displayFragment = SearchFragment.newInstance(this.user, this.petrolStationList)
             }
             R.id.nav_petrol_price -> {
@@ -128,7 +142,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
-        this.locationSearchView.visibility = View.INVISIBLE
         if (displayFragment != null) {
             this.supportFragmentManager
                     .beginTransaction()
