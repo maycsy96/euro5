@@ -106,7 +106,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             this.googleMap?.setOnInfoWindowClickListener(this)
 
             var typedValue = TypedValue()
-            context!!.theme?.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
+            this.context!!.theme?.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
             var toolbarHeight = resources.getDimensionPixelSize(typedValue.resourceId)
             this.googleMap?.setPadding(0, toolbarHeight, 0, 0)
 
