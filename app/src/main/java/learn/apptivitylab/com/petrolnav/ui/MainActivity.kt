@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navigationViewHeader.navigationHeaderNameTextView.text = this.user.userName
         navigationViewHeader.navigationHeaderEmailTextView.text = this.user.userEmail
 
+        this.locationSearchView.layoutParams = Toolbar.LayoutParams(Gravity.RIGHT)
         this.supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.mainViewgroupContainer, MapDisplayFragment.newInstance(this.user, this.petrolStationList))
