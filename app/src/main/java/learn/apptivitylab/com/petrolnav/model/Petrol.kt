@@ -41,8 +41,8 @@ data class Petrol(
                     e.printStackTrace()
                 }
             }
+            this.petrolPrice = this.petrolPriceHistoryList.first().price
         }
-        this.petrolPrice = this.petrolPriceHistoryList.first().price
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
