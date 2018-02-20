@@ -9,7 +9,8 @@ import org.json.JSONObject
  */
 data class PetrolStationBrand(
         var petrolStationBrandId: String? = null,
-        var petrolStationBrandName: String? = null) : Parcelable {
+        var petrolStationBrandName: String? = null,
+        var websiteURL: String? = null) : Parcelable {
 
     companion object CREATOR : Parcelable.Creator<PetrolStationBrand> {
         override fun createFromParcel(parcel: Parcel): PetrolStationBrand {
@@ -22,13 +23,15 @@ data class PetrolStationBrand(
     }
 
     constructor(parcel: Parcel) : this() {
-        petrolStationBrandId = parcel.readString()
-        petrolStationBrandName = parcel.readString()
+        this.petrolStationBrandId = parcel.readString()
+        this.petrolStationBrandName = parcel.readString()
+        this.websiteURL = parcel.readString()
     }
 
     constructor(jsonObject: JSONObject?) : this() {
-        this.petrolStationBrandId = jsonObject?.optString("brand_id")
-        this.petrolStationBrandName = jsonObject?.optString("brand_name")
+        this.petrolStationBrandId = jsonObject?.optString("uuid")
+        this.petrolStationBrandName = jsonObject?.optString("name")
+        this.websiteURL = jsonObject?.optString("website")
     }
 
     override fun describeContents(): Int {
@@ -38,5 +41,6 @@ data class PetrolStationBrand(
     override fun writeToParcel(parcel: Parcel?, flags: Int) {
         parcel?.writeString(petrolStationBrandId)
         parcel?.writeString(petrolStationBrandName)
+        parcel?.writeString(websiteURL)
     }
 }
