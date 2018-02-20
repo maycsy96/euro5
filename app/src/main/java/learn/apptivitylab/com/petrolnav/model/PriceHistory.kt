@@ -11,8 +11,8 @@ import java.util.*
  * Created by apptivitylab on 01/02/2018.
  */
 data class PriceHistory(var price: Double? = null,
-                        var dateFrom: Date? = null,
-                        var dateTo: Date? = null) : Parcelable {
+                        var dateCreated: Date? = null
+) : Parcelable {
 
     companion object CREATOR : Parcelable.Creator<PriceHistory> {
         override fun createFromParcel(parcel: Parcel): PriceHistory {
@@ -26,15 +26,13 @@ data class PriceHistory(var price: Double? = null,
 
     constructor(parcel: Parcel) : this() {
         price = parcel.readDouble()
-        dateFrom = parcel.readDate()
-        dateTo = parcel.readDate()
+        dateCreated = parcel.readDate()
     }
 
     constructor(jsonObject: JSONObject) : this() {
-        this.price = jsonObject.optDouble("price")
+        this.price = jsonObject.optDouble("price_cent")
         val dateFormatter = SimpleDateFormat("dd/MM/yyyy")
-        this.dateFrom = dateFormatter.parse(jsonObject.optString("date_from"))
-        this.dateTo = dateFormatter.parse(jsonObject.optString("date_to"))
+        this.dateCreated = dateFormatter.parse(jsonObject.optString("created_at"))
     }
 
     override fun describeContents(): Int {
@@ -45,9 +43,7 @@ data class PriceHistory(var price: Double? = null,
         price?.let {
             parcel?.writeDouble(it)
         }
-        parcel?.writeDate(dateFrom)
-        parcel?.writeDate(dateTo)
-
+        parcel?.writeDate(dateCreated)
     }
 
     fun Parcel.writeDate(date: Date?) {

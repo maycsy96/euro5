@@ -41,9 +41,6 @@ data class PetrolStation(var petrolStationId: String? = null,
         this.petrolStationId = jsonObject.optString("uuid")
         this.petrolStationName = jsonObject.optString("name")
         this.petrolStationBrand = jsonObject.optJSONObject("companies_by_company_uuid").optString("name")
-
-        //TODO no address
-        this.petrolStationAddress = jsonObject.optString("petrol_station_address")
         this.petrolStationLatLng = LatLng(jsonObject.optDouble("latitude"), jsonObject.optDouble("longitude"))
 
         var petrol: Petrol

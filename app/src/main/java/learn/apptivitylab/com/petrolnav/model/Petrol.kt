@@ -28,8 +28,6 @@ data class Petrol(
     constructor(jsonObject: JSONObject?) : this() {
         this.petrolId = jsonObject?.optString("uuid")
         this.petrolName = jsonObject?.optString("name")
-        this.petrolPrice = jsonObject?.optDouble("petrol_price")
-
         var petrolPriceHistory: PriceHistory
         val petrolPriceHistoryListJsonArray = jsonObject?.optJSONArray("price_histories_by_petrol_uuid")
         this.petrolPriceHistoryList = ArrayList<PriceHistory>()
@@ -44,14 +42,19 @@ data class Petrol(
                 }
             }
         }
+        this.petrolPrice = this.petrolPriceHistoryList.first().price
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         with(parcel) {
             writeString(this@Petrol.petrolId)
             writeString(this@Petrol.petrolName)
-            this@Petrol.petrolPrice?.let {
-                writeDouble(it)
+            if (this@Petrol.petrolPrice == null) {
+                writeDouble(0.0)
+            } else {
+                this@Petrol.petrolPrice?.let {
+                    writeDouble(it)
+                }
             }
             if (this@Petrol.petrolPriceChange == null) {
                 writeDouble(0.0)
