@@ -116,7 +116,7 @@ class PetrolPriceRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         fun setPriceHistory(priceHistory: PriceHistory) {
             this.priceHistory = priceHistory
-            itemView.dateTextView.text = itemView.context?.getString(R.string.petrol_price_date, dateFormatter.format(this.priceHistory?.dateFrom), dateFormatter.format(this.priceHistory?.dateTo))
+            itemView.dateTextView.text = dateFormatter.format(this.priceHistory?.dateCreated)
             itemView.priceTextView.text = itemView.context?.getString(R.string.petrol_price_value, this.priceHistory?.price)
         }
     }
