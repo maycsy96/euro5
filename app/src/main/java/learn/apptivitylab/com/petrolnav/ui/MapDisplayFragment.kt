@@ -81,7 +81,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             this.user = it.getParcelable(ARG_USER_DETAIL)
             this.petrolStationList = it.getParcelableArrayList(ARG_PETROL_STATION_LIST)
         }
-        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!)
+        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
         this.startLocationUpdates()
     }
 
