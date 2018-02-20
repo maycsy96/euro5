@@ -1,14 +1,11 @@
 package learn.apptivitylab.com.petrolnav.controller
 
 import android.content.Context
-import android.util.Log
-import learn.apptivitylab.com.petrolnav.R
+import com.android.volley.VolleyError
+import learn.apptivitylab.com.petrolnav.api.RestAPIClient
 import learn.apptivitylab.com.petrolnav.model.Petrol
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStream
-import java.io.InputStreamReader
 
 /**
  * Created by apptivitylab on 24/01/2018.
@@ -16,26 +13,27 @@ import java.io.InputStreamReader
 class PetrolLoader {
     companion object {
         private val TAG = "PetrolLoader"
+        const val PETROL_URL = "data/petrols?related=*"
+        private var petrolList = ArrayList<Petrol>()
 
         fun loadJSONPetrols(context: Context): ArrayList<Petrol> {
+            var path = PETROL_URL
             val petrolList: ArrayList<Petrol> = ArrayList()
-            val inputStream: InputStream = context.resources.openRawResource(R.raw.petrols)
-            val reader = BufferedReader(InputStreamReader(inputStream))
-            var jsonObject: JSONObject
-            var petrol: Petrol
-
-            try {
-                var jsonFile = reader.readText()
-                jsonObject = JSONObject(jsonFile.substring(jsonFile.indexOf("{"), jsonFile.lastIndexOf("}") + 1))
-                val jsonArray: JSONArray = jsonObject.optJSONArray("petrols")
-                for (i in 0..jsonArray?.length() - 1) {
-                    petrol = Petrol(jsonArray.getJSONObject(i))
-                    petrolList.add(petrol)
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "LoadJSONPetrols exception" + e.toString())
-            }
-            return petrolList
+            RestAPIClient.shared(context).loadResource(path,
+                    object : RestAPIClient.getResourceCompleteListener {
+                        override fun onComplete(jsonObject: JSONObject?, error: VolleyError?) {
+                            if (jsonObject != null) {
+                                var petrol: Petrol
+                                val jsonArray: JSONArray = jsonObject.optJSONArray("resource")
+                                for (i in 0..jsonArray?.length() - 1) {
+                                    petrol = Petrol(jsonArray.getJSONObject(i))
+                                    petrolList.add(petrol)
+                                }
+                                this@Companion.petrolList = petrolList
+                            }
+                        }
+                    })
+            return this@Companion.petrolList
         }
     }
 }
