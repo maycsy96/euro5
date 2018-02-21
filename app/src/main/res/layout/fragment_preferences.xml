@@ -3,7 +3,72 @@
     android:id="@+id/preferencesViewgroupContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@drawable/gradient_dark_green_to_light_green"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="34dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="12dp">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/petrolStationBrandsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Petrol Station Brands:"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/white" />
+
+        <View style="@style/Divider" />
+
+        <CheckBox
+            android:id="@+id/shellCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@android:color/white"
+            android:layoutDirection="rtl"
+            android:text="Shell"
+            android:textColor="@android:color/white" />
+
+        <CheckBox
+            android:id="@+id/petronasCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@android:color/white"
+            android:layoutDirection="rtl"
+            android:text="Petronas"
+            android:textColor="@android:color/white" />
+
+        <CheckBox
+            android:id="@+id/bhpetrolCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@android:color/white"
+            android:layoutDirection="rtl"
+            android:text="BHPetrol"
+            android:textColor="@android:color/white" />
+
+        <CheckBox
+            android:id="@+id/caltexCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@android:color/white"
+            android:layoutDirection="rtl"
+            android:text="Caltex"
+            android:textColor="@android:color/white" />
+        <CheckBox
+            android:id="@+id/petronCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@android:color/white"
+            android:layoutDirection="rtl"
+            android:text="Petron"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,65 +76,21 @@
         android:orientation="vertical">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/holo_green_dark"
-            android:padding="12dp"
-            android:text="Please select your preferred petrol station brand and petrol type:"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/white" />
-
-        <TextView
-            android:id="@+id/petrolStationBrandsTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/holo_green_light"
-            android:padding="12dp"
-            android:text="Petrol Station Brands:"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/black" />
-
-        <CheckBox
-            android:id="@+id/shellCheckbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Shell" />
-
-        <CheckBox
-            android:id="@+id/petronasCheckbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Petronas" />
-
-        <CheckBox
-            android:id="@+id/bhpetrolCheckbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="BHPetrol" />
-
-        <CheckBox
-            android:id="@+id/caltexCheckbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Caltex" />
-
-        <TextView
             android:id="@+id/petrolTypeTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/holo_green_light"
-            android:padding="12dp"
+            android:layout_marginBottom="8dp"
             android:text="Petrol Type:"
-            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/white" />
+
+        <View style="@style/Divider" />
 
         <RadioGroup
             android:id="@+id/petrolTypeRadioGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layoutDirection="rtl"
             android:paddingLeft="4dp"
             android:paddingTop="4dp">
 
@@ -77,25 +98,33 @@
                 android:id="@+id/ron95RadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="RON 95" />
+                android:buttonTint="@android:color/white"
+                android:text="RON 95"
+                android:textColor="@android:color/white" />
 
             <RadioButton
                 android:id="@+id/ron97RadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ron 97" />
+                android:buttonTint="@android:color/white"
+                android:text="Ron 97"
+                android:textColor="@android:color/white" />
 
             <RadioButton
                 android:id="@+id/dieselRadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Diesel" />
+                android:buttonTint="@android:color/white"
+                android:text="Diesel"
+                android:textColor="@android:color/white" />
 
             <RadioButton
                 android:id="@+id/euro5RadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Diesel EURO5" />
+                android:buttonTint="@android:color/white"
+                android:text="Diesel EURO5"
+                android:textColor="@android:color/white" />
         </RadioGroup>
 
     </LinearLayout>
@@ -108,10 +137,10 @@
 
         <Button
             android:id="@+id/saveButton"
+            style="@style/RoundedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@android:color/holo_green_light"
             android:text="SAVE" />
     </LinearLayout>
 
