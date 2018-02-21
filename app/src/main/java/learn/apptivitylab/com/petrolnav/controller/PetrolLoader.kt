@@ -14,12 +14,12 @@ class PetrolLoader {
     companion object {
         private val TAG = "PetrolLoader"
         const val PETROL_URL = "data/petrols?related=*"
-        private var petrolList = ArrayList<Petrol>()
+        var petrolList = ArrayList<Petrol>()
 
-        fun loadJSONPetrols(context: Context): ArrayList<Petrol> {
+        fun loadJSONPetrols(context: Context) {
             var path = PETROL_URL
             val petrolList: ArrayList<Petrol> = ArrayList()
-            RestAPIClient.shared(context).loadResource(path,
+            RestAPIClient.shared(context).loadResource(path, null,
                     object : RestAPIClient.getResourceCompleteListener {
                         override fun onComplete(jsonObject: JSONObject?, error: VolleyError?) {
                             if (jsonObject != null) {
@@ -33,7 +33,6 @@ class PetrolLoader {
                             }
                         }
                     })
-            return this@Companion.petrolList
         }
     }
 }

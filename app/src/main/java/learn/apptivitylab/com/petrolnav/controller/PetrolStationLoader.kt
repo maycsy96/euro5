@@ -15,12 +15,12 @@ class PetrolStationLoader {
     companion object {
         private val TAG = "PetrolStationLoader"
         const val PETROL_STATION_URL = "data/stations?related=*"
-        private var petrolStationList = ArrayList<PetrolStation>()
+        var petrolStationList = ArrayList<PetrolStation>()
 
-        fun loadJSONStations(context: Context): ArrayList<PetrolStation> {
+        fun loadJSONStations(context: Context, fullDataReceivedListener: RestAPIClient.receiveCompleteDataListener) {
             var path = PETROL_STATION_URL
             val petrolStationList = ArrayList<PetrolStation>()
-            RestAPIClient.shared(context).loadResource(path,
+            RestAPIClient.shared(context).loadResource(path, 100,
                     object : RestAPIClient.getResourceCompleteListener {
                         override fun onComplete(jsonObject: JSONObject?, error: VolleyError?) {
                             if (jsonObject != null) {
@@ -31,10 +31,12 @@ class PetrolStationLoader {
                                     petrolStationList.add(petrolStation)
                                 }
                                 this@Companion.petrolStationList = petrolStationList
+                                fullDataReceivedListener.onCompleteDataReceived(true, null)
+                            } else {
+                                fullDataReceivedListener.onCompleteDataReceived(false, error)
                             }
                         }
                     })
-            return this@Companion.petrolStationList
         }
     }
 }
