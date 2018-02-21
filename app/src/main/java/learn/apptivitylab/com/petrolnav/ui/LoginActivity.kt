@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import learn.apptivitylab.com.petrolnav.R
+import learn.apptivitylab.com.petrolnav.controller.PetrolLoader
+import learn.apptivitylab.com.petrolnav.controller.PetrolStationBrandLoader
 import learn.apptivitylab.com.petrolnav.controller.UserController
 import learn.apptivitylab.com.petrolnav.model.User
 
@@ -27,6 +29,8 @@ class LoginActivity : AppCompatActivity(), UserListListener {
         UserController.loadJSONUserList(this)?.let {
             this.userList = it
         }
+        PetrolLoader.loadJSONPetrols(this)
+        PetrolStationBrandLoader.loadJSONPetrolStationBrands(this)
 
         this.supportFragmentManager
                 .beginTransaction()
