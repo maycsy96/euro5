@@ -2,6 +2,7 @@ package learn.apptivitylab.com.petrolnav.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.support.design.widget.CoordinatorLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.view.LayoutInflater
@@ -9,8 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.RadioButton
+import android.widget.Toast
+import com.android.volley.VolleyError
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_preferences.*
 import learn.apptivitylab.com.petrolnav.R
+import learn.apptivitylab.com.petrolnav.api.RestAPIClient
 import learn.apptivitylab.com.petrolnav.controller.PetrolLoader
 import learn.apptivitylab.com.petrolnav.controller.PetrolStationBrandLoader
 import learn.apptivitylab.com.petrolnav.controller.UserController
@@ -23,7 +28,6 @@ import learn.apptivitylab.com.petrolnav.model.User
  * Created by apptivitylab on 12/01/2018.
  */
 class PreferencesFragment : Fragment() {
-
     companion object {
         const val ARG_USER_DETAIL = "user_detail"
         fun newInstance(user: User): PreferencesFragment {
@@ -67,8 +71,8 @@ class PreferencesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        this.petrolStationBrandList = PetrolStationBrandLoader.loadJSONPetrolStationBrands(this.context!!)
-        this.petrolList = PetrolLoader.loadJSONPetrols(this.context!!)
+        this.petrolStationBrandList = PetrolStationBrandLoader.petrolStationBrandList
+        this.petrolList = PetrolLoader.petrolList
         this.userList = UserController.loadJSONUserList(this.context!!)
 
         arguments?.let {
@@ -81,6 +85,7 @@ class PreferencesFragment : Fragment() {
                 "Petronas" -> this.checkBoxByPetrolStationBrand.put(petrolStationBrand, this.petronasCheckbox)
                 "BHPetrol" -> this.checkBoxByPetrolStationBrand.put(petrolStationBrand, this.bhpetrolCheckbox)
                 "Caltex" -> this.checkBoxByPetrolStationBrand.put(petrolStationBrand, this.caltexCheckbox)
+                "Petron" -> this.checkBoxByPetrolStationBrand.put(petrolStationBrand, this.petronCheckbox)
             }
         }
 
@@ -155,6 +160,7 @@ class PreferencesFragment : Fragment() {
             this.updateUser(user)
             this.activity!!.supportFragmentManager
                     .popBackStack(null, POP_BACK_STACK_INCLUSIVE)
+            (this.activity!!.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = null
         }
     }
 }

@@ -32,23 +32,19 @@ import java.util.*
  * Created by apptivitylab on 09/01/2018.
  */
 
-class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
+class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.receiveCompleteDataListener {
 
     companion object {
         val LOCATION_REQUEST_CODE = 100
         private const val ARG_USER_DETAIL = "user_detail"
-        private const val ARG_PETROL_STATION_LIST = "petrol_station_list"
-
-        fun newInstance(user: User, petrolStationList: ArrayList<PetrolStation>): MapDisplayFragment {
+        fun newInstance(user: User): MapDisplayFragment {
             val fragment = MapDisplayFragment()
             val args: Bundle = Bundle()
             args.putParcelable(ARG_USER_DETAIL, user)
-            args.putParcelableArrayList(ARG_PETROL_STATION_LIST, petrolStationList)
             fragment.arguments = args
             return fragment
         }
     }
-
 
     private val NEAREST_STATION_COUNT = 5
     private var mapFragment: SupportMapFragment? = null

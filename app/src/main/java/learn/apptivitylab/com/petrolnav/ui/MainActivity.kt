@@ -18,8 +18,6 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.navigation_drawer_menu_header.view.*
 import learn.apptivitylab.com.petrolnav.R
-import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
-import learn.apptivitylab.com.petrolnav.model.PetrolStation
 import learn.apptivitylab.com.petrolnav.model.User
 
 /**
@@ -39,7 +37,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private var user = User()
-    private var petrolStationList = ArrayList<PetrolStation>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +54,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         this.user = intent.getParcelableExtra<User>(EXTRA_USER_DETAIL)
-        this.petrolStationList = PetrolStationLoader.loadJSONStations(this)
-
         val navigationViewHeader = this.navigationView.getHeaderView(0)
         with(navigationViewHeader) {
             navigationHeaderNameTextView.text = this@MainActivity.user.userName
@@ -71,7 +66,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         this.supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.mainViewgroupContainer, MapDisplayFragment.newInstance(this.user, this.petrolStationList))
+                .replace(R.id.mainViewgroupContainer, MapDisplayFragment.newInstance(this.user))
                 .commit()
     }
 
@@ -83,7 +78,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onBackPressed() {
         var currentFragment: Fragment? = this.supportFragmentManager.findFragmentById(R.id.mainViewgroupContainer)
-
+        (this.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = null
         if (currentFragment is MapDisplayFragment) {
             this.showLogOutDialog()
         } else {
@@ -134,11 +129,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if (currentFragment is MapDisplayFragment) {
                     return
                 }
-                displayFragment = MapDisplayFragment.newInstance(this.user, this.petrolStationList)
+                displayFragment = MapDisplayFragment.newInstance(this.user)
             }
             R.id.nav_search -> {
                 this.locationSearchView.visibility = View.VISIBLE
-                displayFragment = SearchFragment.newInstance(this.user, this.petrolStationList)
+                displayFragment = SearchFragment.newInstance(this.user)
             }
             R.id.nav_petrol_price -> {
                 val launchIntent = PetrolPriceActivity.newLaunchIntent(this)

@@ -21,6 +21,7 @@ import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.fragment_search.*
 import learn.apptivitylab.com.petrolnav.R
+import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
 import learn.apptivitylab.com.petrolnav.model.PetrolStation
 import learn.apptivitylab.com.petrolnav.model.User
 
@@ -32,12 +33,10 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
 
     companion object {
         private const val ARG_USER_DETAIL = "user_detail"
-        private const val ARG_PETROL_STATION_LIST = "petrol_station_list"
-        fun newInstance(user: User, petrolStationList: ArrayList<PetrolStation>): SearchFragment {
+        fun newInstance(user: User): SearchFragment {
             val fragment = SearchFragment()
             val args: Bundle = Bundle()
             args.putParcelable(ARG_USER_DETAIL, user)
-            args.putParcelableArrayList(ARG_PETROL_STATION_LIST, petrolStationList)
             fragment.arguments = args
             return fragment
         }
@@ -60,13 +59,12 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
 
         arguments?.let {
             this.user = it.getParcelable(ARG_USER_DETAIL)
-            this.petrolStationList = it.getParcelableArrayList(ARG_PETROL_STATION_LIST)
         }
 
+        this.petrolStationList = PetrolStationLoader.petrolStationList
         this.petrolStationListSwipeRefresh.setOnRefreshListener(this)
         val layoutManager = LinearLayoutManager(this.activity, LinearLayoutManager.VERTICAL, false)
         petrolStationListRecyclerView.layoutManager = layoutManager
-
         this.petrolStationListAdapter.setStationListener(this)
         petrolStationListRecyclerView.adapter = petrolStationListAdapter
 
