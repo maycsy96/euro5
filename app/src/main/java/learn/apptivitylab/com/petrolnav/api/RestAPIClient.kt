@@ -20,17 +20,17 @@ class RestAPIClient(val context: Context) {
         private var singleton: RestAPIClient? = null
 
         fun shared(context: Context): RestAPIClient {
-            if (singleton == null) {
-                singleton = RestAPIClient(context)
+            if (this.singleton == null) {
+                this.singleton = RestAPIClient(context)
             }
-            return singleton!!
+            return this.singleton!!
         }
     }
 
     private var requestQueue: RequestQueue
 
     init {
-        requestQueue = Volley.newRequestQueue(this.context)
+        this.requestQueue = Volley.newRequestQueue(this.context)
     }
 
     interface getResourceCompleteListener {
