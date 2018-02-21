@@ -26,12 +26,10 @@ data class Petrol(
     }
 
     constructor(jsonObject: JSONObject?) : this() {
-        this.petrolId = jsonObject?.optString("petrol_id")
-        this.petrolName = jsonObject?.optString("petrol_name")
-        this.petrolPrice = jsonObject?.optDouble("petrol_price")
-
+        this.petrolId = jsonObject?.optString("uuid")
+        this.petrolName = jsonObject?.optString("name")
         var petrolPriceHistory: PriceHistory
-        val petrolPriceHistoryListJsonArray = jsonObject?.optJSONArray("petrol_price_history")
+        val petrolPriceHistoryListJsonArray = jsonObject?.optJSONArray("price_histories_by_petrol_uuid")
         this.petrolPriceHistoryList = ArrayList<PriceHistory>()
 
         petrolPriceHistoryListJsonArray?.let {
@@ -43,6 +41,7 @@ data class Petrol(
                     e.printStackTrace()
                 }
             }
+            this.petrolPrice = this.petrolPriceHistoryList.first().price
         }
     }
 
@@ -50,8 +49,12 @@ data class Petrol(
         with(parcel) {
             writeString(this@Petrol.petrolId)
             writeString(this@Petrol.petrolName)
-            this@Petrol.petrolPrice?.let {
-                writeDouble(it)
+            if (this@Petrol.petrolPrice == null) {
+                writeDouble(0.0)
+            } else {
+                this@Petrol.petrolPrice?.let {
+                    writeDouble(it)
+                }
             }
             if (this@Petrol.petrolPriceChange == null) {
                 writeDouble(0.0)

@@ -38,14 +38,13 @@ data class PetrolStation(var petrolStationId: String? = null,
     }
 
     constructor(jsonObject: JSONObject) : this() {
-        this.petrolStationId = jsonObject.optString("petrol_station_id")
-        this.petrolStationName = jsonObject.optString("petrol_station_name")
-        this.petrolStationBrand = jsonObject.optString("petrol_station_brand")
-        this.petrolStationAddress = jsonObject.optString("petrol_station_address")
-        this.petrolStationLatLng = LatLng(jsonObject.optDouble("petrol_station_latitude"), jsonObject.optDouble("petrol_station_longitude"))
+        this.petrolStationId = jsonObject.optString("uuid")
+        this.petrolStationName = jsonObject.optString("name")
+        this.petrolStationBrand = jsonObject.optJSONObject("companies_by_company_uuid").optString("name")
+        this.petrolStationLatLng = LatLng(jsonObject.optDouble("latitude"), jsonObject.optDouble("longitude"))
 
         var petrol: Petrol
-        var petrolListJsonArray = jsonObject.optJSONArray("petrols")
+        var petrolListJsonArray = jsonObject.optJSONArray("petrols_by_station_petrols")
         this.petrolList = ArrayList<Petrol>()
         for (i in 0..petrolListJsonArray.length() - 1) {
             try {

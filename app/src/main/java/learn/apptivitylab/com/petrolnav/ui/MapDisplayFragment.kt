@@ -17,6 +17,8 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import com.android.volley.VolleyError
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -24,6 +26,8 @@ import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import learn.apptivitylab.com.petrolnav.R
+import learn.apptivitylab.com.petrolnav.api.RestAPIClient
+import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
 import learn.apptivitylab.com.petrolnav.model.PetrolStation
 import learn.apptivitylab.com.petrolnav.model.User
 import java.util.*
@@ -32,23 +36,19 @@ import java.util.*
  * Created by apptivitylab on 09/01/2018.
  */
 
-class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
+class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.receiveCompleteDataListener {
 
     companion object {
         val LOCATION_REQUEST_CODE = 100
         private const val ARG_USER_DETAIL = "user_detail"
-        private const val ARG_PETROL_STATION_LIST = "petrol_station_list"
-
-        fun newInstance(user: User, petrolStationList: ArrayList<PetrolStation>): MapDisplayFragment {
+        fun newInstance(user: User): MapDisplayFragment {
             val fragment = MapDisplayFragment()
             val args: Bundle = Bundle()
             args.putParcelable(ARG_USER_DETAIL, user)
-            args.putParcelableArrayList(ARG_PETROL_STATION_LIST, petrolStationList)
             fragment.arguments = args
             return fragment
         }
     }
-
 
     private val NEAREST_STATION_COUNT = 5
     private var mapFragment: SupportMapFragment? = null
@@ -79,9 +79,10 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
 
         arguments?.let {
             this.user = it.getParcelable(ARG_USER_DETAIL)
-            this.petrolStationList = it.getParcelableArrayList(ARG_PETROL_STATION_LIST)
         }
-        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!)
+        PetrolStationLoader.loadJSONStations(this.context!!, this)
+        Toast.makeText(this.context, getString(R.string.message_loading_data), Toast.LENGTH_LONG)
+        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
         this.startLocationUpdates()
     }
 
@@ -106,19 +107,13 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             this.googleMap?.setOnInfoWindowClickListener(this)
 
             var typedValue = TypedValue()
-            context!!.theme?.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
+            this.context!!.theme?.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
             var toolbarHeight = resources.getDimensionPixelSize(typedValue.resourceId)
             this.googleMap?.setPadding(0, toolbarHeight, 0, 0)
 
             val officeLatLng = LatLng(4.2105, 101.9758)
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(officeLatLng, 6f)
             this.googleMap?.moveCamera(cameraUpdate)
-
-            this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
-            if (this.filteredListByPreferredPetrol.isEmpty()) {
-                this.filteredListByPreferredPetrol = this.petrolStationList
-            }
-            this.createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
         }
     }
 
@@ -267,5 +262,19 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
     override fun onStop() {
         this.fusedLocationClient?.removeLocationUpdates(locationCallBack)
         super.onStop()
+    }
+
+    override fun onCompleteDataReceived(dataReceived: Boolean, error: VolleyError?) {
+        if (!dataReceived || error != null) {
+            Toast.makeText(this.context, getString(R.string.message_retrieval_data_fail), Toast.LENGTH_LONG).show()
+        } else {
+            Toast.makeText(this.context, "SUCCESS", Toast.LENGTH_LONG).show()
+            this.petrolStationList = PetrolStationLoader.petrolStationList
+            this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
+            if (this.filteredListByPreferredPetrol.isEmpty()) {
+                this.filteredListByPreferredPetrol = this.petrolStationList
+            }
+            this.createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
+        }
     }
 }

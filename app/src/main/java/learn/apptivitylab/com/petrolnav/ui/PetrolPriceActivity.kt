@@ -35,7 +35,7 @@ class PetrolPriceActivity : AppCompatActivity() {
             finish()
         })
 
-        this.petrolList = PetrolLoader.loadJSONPetrols(this)
+        this.petrolList = PetrolLoader.petrolList
 
         this.pagerAdapter = PetrolPricePagerAdapter(this.supportFragmentManager, this.petrolList)
         this.petrolPriceViewPagerContainer.adapter = this.pagerAdapter

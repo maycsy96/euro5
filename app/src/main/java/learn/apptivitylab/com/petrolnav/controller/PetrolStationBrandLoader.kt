@@ -1,14 +1,11 @@
 package learn.apptivitylab.com.petrolnav.controller
 
 import android.content.Context
-import android.util.Log
-import learn.apptivitylab.com.petrolnav.R
+import com.android.volley.VolleyError
+import learn.apptivitylab.com.petrolnav.api.RestAPIClient
 import learn.apptivitylab.com.petrolnav.model.PetrolStationBrand
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStream
-import java.io.InputStreamReader
 
 /**
  * Created by apptivitylab on 24/01/2018.
@@ -16,26 +13,26 @@ import java.io.InputStreamReader
 class PetrolStationBrandLoader {
     companion object {
         private val TAG = "StationBrandLoader"
+        private const val PETROL_STATION_BRAND_URL = "data/companies"
+        var petrolStationBrandList = ArrayList<PetrolStationBrand>()
 
-        fun loadJSONPetrolStationBrands(context: Context): ArrayList<PetrolStationBrand> {
-            val petrolList: ArrayList<PetrolStationBrand> = ArrayList()
-            val inputStream: InputStream = context.resources.openRawResource(R.raw.brands)
-            val reader = BufferedReader(InputStreamReader(inputStream))
-            var jsonObject: JSONObject
-            var petrolStationBrand: PetrolStationBrand
-
-            try {
-                var jsonFile = reader.readText()
-                jsonObject = JSONObject(jsonFile.substring(jsonFile.indexOf("{"), jsonFile.lastIndexOf("}") + 1))
-                val jsonArray: JSONArray = jsonObject.optJSONArray("brands")
-                for (i in 0..jsonArray?.length() - 1) {
-                    petrolStationBrand = PetrolStationBrand(jsonArray.getJSONObject(i))
-                    petrolList.add(petrolStationBrand)
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "LoadJSONStationBrands exception" + e.toString())
-            }
-            return petrolList
+        fun loadJSONPetrolStationBrands(context: Context) {
+            var path = PETROL_STATION_BRAND_URL
+            val petrolStationBrandList: ArrayList<PetrolStationBrand> = ArrayList()
+            RestAPIClient.shared(context).loadResource(path, null,
+                    object : RestAPIClient.getResourceCompleteListener {
+                        override fun onComplete(jsonObject: JSONObject?, error: VolleyError?) {
+                            if (jsonObject != null) {
+                                var petrolStationBrand: PetrolStationBrand
+                                val jsonArray: JSONArray = jsonObject.optJSONArray("resource")
+                                for (i in 0..jsonArray?.length() - 1) {
+                                    petrolStationBrand = PetrolStationBrand(jsonArray.getJSONObject(i))
+                                    petrolStationBrandList.add(petrolStationBrand)
+                                }
+                                this@Companion.petrolStationBrandList = petrolStationBrandList
+                            }
+                        }
+                    })
         }
     }
 }
