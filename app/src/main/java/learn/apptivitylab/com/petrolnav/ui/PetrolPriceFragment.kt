@@ -1,5 +1,6 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -38,23 +39,37 @@ class PetrolPriceFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.let {
-            petrol = it.getParcelable(ARG_PETROL_DETAIL)
+            this.petrol = it.getParcelable(ARG_PETROL_DETAIL)
         }
 
         val layoutManager = LinearLayoutManager(this.activity, LinearLayoutManager.VERTICAL, false)
         this.petrolListRecyclerView.layoutManager = layoutManager
-        this.petrolListRecyclerView.adapter = petrolAdapter
+        this.petrolListRecyclerView.adapter = this.petrolAdapter
 
-        setPetrolPriceChange(this.petrol)
-        this.petrolAdapter.updateDataSet(this.petrol)
+        this.setPetrolPriceChange(this.petrol)
+        this.petrolNameTextView.text = this.petrol.petrolName
+        this.petrolPriceTextView.text = getString(R.string.petrol_price_value, this.petrol?.petrolPrice)
+
+        this.petrol.petrolPriceChange?.let {
+            if (it != null) {
+                this.petrolPriceChangeTextView.text = String.format("%.2f", it)
+            } else {
+                this.petrolPriceChangeTextView.text = getString(R.string.message_unavailable_price_change)
+            }
+
+            this.petrolPriceChangeTextView.setTextColor(when {
+                it < 0.0f -> Color.RED
+                it > 0.0f -> Color.GREEN
+                else -> Color.BLACK
+            })
+        }
+        this.petrolAdapter.updateDataSet(this.petrol.petrolPriceHistoryList)
     }
 
     fun setPetrolPriceChange(petrol: Petrol) {
         var previousPrice = petrol.petrolPriceHistoryList.first().price
-
         previousPrice?.let {
             petrol.petrolPriceChange = petrol.petrolPrice?.minus(it)
         }
-
     }
 }
