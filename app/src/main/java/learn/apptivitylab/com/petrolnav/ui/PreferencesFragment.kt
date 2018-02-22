@@ -10,12 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.RadioButton
-import android.widget.Toast
-import com.android.volley.VolleyError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_preferences.*
 import learn.apptivitylab.com.petrolnav.R
-import learn.apptivitylab.com.petrolnav.api.RestAPIClient
 import learn.apptivitylab.com.petrolnav.controller.PetrolLoader
 import learn.apptivitylab.com.petrolnav.controller.PetrolStationBrandLoader
 import learn.apptivitylab.com.petrolnav.controller.UserController
@@ -161,6 +158,11 @@ class PreferencesFragment : Fragment() {
             this.activity!!.supportFragmentManager
                     .popBackStack(null, POP_BACK_STACK_INCLUSIVE)
             (this.activity!!.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = null
+            with(this.activity!!.locationSearchView) {
+                setIconifiedByDefault(false)
+                visibility = View.VISIBLE
+            }
+            this.activity!!.toolbar.title = ""
         }
     }
 }
