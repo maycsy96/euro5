@@ -30,7 +30,7 @@ data class PriceHistory(var price: Double? = null,
     }
 
     constructor(jsonObject: JSONObject) : this() {
-        this.price = jsonObject.optDouble("price_cents")
+        this.price = jsonObject.optDouble("price_cents") / 100
         val dateFormatter = SimpleDateFormat("yyyy-MM-dd kk:mm:ss")
         this.dateCreated = dateFormatter.parse(jsonObject.optString("created_at"))
     }

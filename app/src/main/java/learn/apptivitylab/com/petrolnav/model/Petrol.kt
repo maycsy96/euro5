@@ -41,6 +41,7 @@ data class Petrol(
                     e.printStackTrace()
                 }
             }
+            this.petrolPriceHistoryList.sortByDescending { it.dateCreated }
             this.petrolPrice = this.petrolPriceHistoryList.first().price
             this.petrolPriceHistoryList.removeAt(0)
         }
