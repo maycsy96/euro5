@@ -2,6 +2,7 @@ package learn.apptivitylab.com.petrolnav.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CoordinatorLayout
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.setContentView(R.layout.activity_main)
 
         this.setSupportActionBar(this.toolbar)
-
+        this.toolbar.setTitleTextColor(Color.WHITE)
         val drawerToggle = ActionBarDrawerToggle(this, this.drawer_layout, this.toolbar, R.string.openDrawer, R.string.closeDrawer)
         this.drawer_layout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
@@ -77,6 +78,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onBackPressed() {
+        this.toolbar.title = ""
         var currentFragment: Fragment? = this.supportFragmentManager.findFragmentById(R.id.mainViewgroupContainer)
         (this.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = null
         if (currentFragment is MapDisplayFragment) {
@@ -118,6 +120,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.mainViewgroupContainer.requestLayout()
         when (id) {
             R.id.nav_map -> {
+                this.toolbar.title = ""
                 with(locationSearchView) {
                     setIconifiedByDefault(false)
                     visibility = View.VISIBLE
@@ -132,7 +135,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 displayFragment = MapDisplayFragment.newInstance(this.user)
             }
             R.id.nav_search -> {
-                this.locationSearchView.visibility = View.VISIBLE
+                this.toolbar.title = "Station List"
                 displayFragment = SearchFragment.newInstance(this.user)
             }
             R.id.nav_petrol_price -> {
@@ -140,6 +143,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 this.startActivity(launchIntent)
             }
             R.id.nav_preference -> {
+                this.toolbar.title = "Preference"
                 displayFragment = PreferencesFragment.newInstance(this.user)
             }
             R.id.nav_log_out -> {
