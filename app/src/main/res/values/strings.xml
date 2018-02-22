@@ -19,7 +19,7 @@
     <string name="petrol_station_petrol">Petrol List : </string>
     <string name="petrol">Petrol</string>
     <string name="message_unavailable_app">Navigation applications not found</string>
-    <string name="message_unavailable_price_change">No price change due to no price history</string>
+    <string name="message_unavailable_price_change">xx.xx</string>
     <string name="petrol_price_history">Petrol Price History</string>
     <string name="petrol_price_date">Date : %1$s - %2$s</string>
     <string name="petrol_price_value">RM %1$.2f</string>
@@ -73,4 +73,9 @@
     <string name="checkbox_deselect_all">Deselect All</string>
     <string name="title_station_list">Station List</string>
     <string name="title_preference">Preference</string>
+    <string name="title_petrol_price_history">Petrol Price History</string>
+    <string name="price_change_positive_value">+%1$.2f</string>
+    <string name="price_date_text">Date</string>
+    <string name="price_text">Price</string>
+    <string name="price_change_text">Change</string>
 </resources>

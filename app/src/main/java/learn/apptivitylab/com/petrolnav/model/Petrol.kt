@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import org.json.JSONException
 import org.json.JSONObject
+import java.util.*
 
 /**
  * Created by apptivitylab on 12/01/2018.
@@ -14,6 +15,20 @@ data class Petrol(
         var petrolPrice: Double? = null,
         var petrolPriceChange: Double? = null,
         var petrolPriceHistoryList: ArrayList<PriceHistory> = ArrayList<PriceHistory>()) : Parcelable {
+
+    companion object CREATOR : Parcelable.Creator<Petrol> {
+        override fun createFromParcel(parcel: Parcel): Petrol {
+            return Petrol(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Petrol?> {
+            return arrayOfNulls(size)
+        }
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
 
     constructor(parcel: Parcel) : this() {
         with(parcel) {
@@ -41,6 +56,7 @@ data class Petrol(
                     e.printStackTrace()
                 }
             }
+            this.petrolPriceHistoryList.sortByDescending { it.dateCreated }
             this.petrolPrice = this.petrolPriceHistoryList.first().price
         }
     }
@@ -67,17 +83,4 @@ data class Petrol(
         }
     }
 
-    companion object CREATOR : Parcelable.Creator<Petrol> {
-        override fun createFromParcel(parcel: Parcel): Petrol {
-            return Petrol(parcel)
-        }
-
-        override fun newArray(size: Int): Array<Petrol?> {
-            return arrayOfNulls(size)
-        }
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
 }

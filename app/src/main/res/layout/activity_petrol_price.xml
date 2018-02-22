@@ -4,6 +4,7 @@
     android:id="@+id/petrolPriceLinearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_dark_green_to_light_green"
     android:orientation="vertical">
 
     <android.support.design.widget.CoordinatorLayout
@@ -12,28 +13,43 @@
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:elevation="0dp">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/holo_green_dark"></android.support.v7.widget.Toolbar>
+                android:background="@android:color/transparent"
+                app:title="@string/title_petrol_price_history"
+                app:titleTextColor="@android:color/white" />
+
+            <View
+                style="@style/Divider"
+                android:layout_marginBottom="2dp" />
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/petrolPriceTabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                app:tabIndicatorColor="@color/lightGreen"
                 app:tabSelectedTextColor="@android:color/white"
-                android:background="@android:color/holo_green_light">
+                app:tabTextColor="@color/lightGreen">
 
             </android.support.design.widget.TabLayout>
+
+            <View
+                style="@style/Divider"
+                android:layout_marginBottom="2dp" />
+
         </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.view.ViewPager
             android:id="@+id/petrolPriceViewPagerContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"></android.support.v4.view.ViewPager>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </android.support.design.widget.CoordinatorLayout>
 </LinearLayout>
