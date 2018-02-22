@@ -44,7 +44,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.setContentView(R.layout.activity_main)
 
         this.setSupportActionBar(this.toolbar)
-        this.toolbar.setTitleTextColor(Color.WHITE)
         val drawerToggle = ActionBarDrawerToggle(this, this.drawer_layout, this.toolbar, R.string.openDrawer, R.string.closeDrawer)
         this.drawer_layout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()

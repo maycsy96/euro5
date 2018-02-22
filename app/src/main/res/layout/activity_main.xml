@@ -35,7 +35,8 @@
                 android:layout_height="wrap_content"
                 android:padding="6dp"
                 app:contentInsetStartWithNavigation="0dp"
-                app:layout_scrollFlags="scroll|enterAlways|snap">
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                app:titleTextColor="@android:color/white">
 
                 <android.support.v7.widget.SearchView
                     android:id="@+id/locationSearchView"
