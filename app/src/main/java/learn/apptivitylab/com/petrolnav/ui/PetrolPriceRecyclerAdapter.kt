@@ -35,6 +35,7 @@ class PetrolPriceRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>
     fun updateDataSet(priceHistoryList: ArrayList<PriceHistory>) {
         this.priceHistoryList.clear()
         this.priceHistoryList.addAll(priceHistoryList)
+        this.priceHistoryList.removeAt(0)
         this.notifyDataSetChanged()
     }
 
@@ -49,20 +50,25 @@ class PetrolPriceRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>
             this.itemView.priceChangeTextView.text
 
             val position = priceHistoryList.indexOf(priceHistory)
-            val previousPrice = priceHistoryList[position].price
-            previousPrice?.let {
-                val priceChange = priceHistoryList[position + 1].price?.minus(it)
-                priceChange?.let {
-                    if (it != null) {
-                        this.itemView.priceChangeTextView.text = String.format("%.2f", it)
-                    } else {
-                        this.itemView.priceChangeTextView.text = itemView.context.getString(R.string.message_unavailable_price_change)
+            val currentPrice = priceHistoryList[position].price
+
+            currentPrice?.let {
+                if ((position + 1) < priceHistoryList.size) {
+                    val priceChange = priceHistoryList[position + 1].price?.minus(it)
+                    priceChange?.let {
+                        if (it > 0.0f) {
+                            this.itemView.priceChangeTextView.text = itemView.context.getString(R.string.price_change_positive_value, it)
+                        } else {
+                            this.itemView.priceChangeTextView.text = String.format("%.2f", it)
+                        }
+                        this.itemView.priceChangeTextView.setTextColor(when {
+                            it < 0.0f -> Color.RED
+                            it > 0.0f -> Color.GREEN
+                            else -> Color.BLACK
+                        })
                     }
-                    this.itemView.priceChangeTextView.setTextColor(when {
-                        it < 0.0f -> Color.RED
-                        it > 0.0f -> Color.GREEN
-                        else -> Color.BLACK
-                    })
+                } else {
+                    this.itemView.priceChangeTextView.text = itemView.context.getString(R.string.message_unavailable_price_change)
                 }
             }
         }
