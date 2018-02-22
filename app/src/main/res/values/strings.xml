@@ -65,10 +65,12 @@
     <string name="checkbox_caltex">Caltex</string>
     <string name="checkbox_petron">Petron</string>
     <string name="title_petrol_type">Petrol Type:</string>
-    <string name="radiobutton_ron95">RON 95</string>
+    <string name="radiobutton_ron95">Ron 95</string>
     <string name="radiobutton_ron97">Ron 97</string>
     <string name="radiobutton_diesel">Diesel</string>
     <string name="radiobutton_euro5">Diesel EURO5</string>
     <string name="button_save">Save</string>
     <string name="checkbox_deselect_all">Deselect All</string>
+    <string name="title_station_list">Station List</string>
+    <string name="title_preference">Preference</string>
 </resources>

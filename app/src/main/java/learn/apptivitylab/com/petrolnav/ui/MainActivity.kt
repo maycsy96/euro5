@@ -2,7 +2,6 @@ package learn.apptivitylab.com.petrolnav.ui
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CoordinatorLayout
@@ -134,7 +133,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 displayFragment = MapDisplayFragment.newInstance(this.user)
             }
             R.id.nav_search -> {
-                this.toolbar.title = "Station List"
+                this.toolbar.title = getString(R.string.title_station_list)
                 displayFragment = SearchFragment.newInstance(this.user)
             }
             R.id.nav_petrol_price -> {
@@ -142,7 +141,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 this.startActivity(launchIntent)
             }
             R.id.nav_preference -> {
-                this.toolbar.title = "Preference"
+                this.toolbar.title = getString(R.string.title_preference)
                 displayFragment = PreferencesFragment.newInstance(this.user)
             }
             R.id.nav_log_out -> {
