@@ -73,4 +73,5 @@
     <string name="checkbox_deselect_all">Deselect All</string>
     <string name="title_station_list">Station List</string>
     <string name="title_preference">Preference</string>
+    <string name="title_petrol_price_history">Petrol Price History</string>
 </resources>
