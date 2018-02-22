@@ -46,11 +46,11 @@ data class PriceHistory(var price: Double? = null,
         parcel?.writeDate(dateCreated)
     }
 
-    fun Parcel.writeDate(date: Date?) {
+    private fun Parcel.writeDate(date: Date?) {
         writeLong(date?.time ?: -1)
     }
 
-    fun Parcel.readDate(): Date? {
+    private fun Parcel.readDate(): Date? {
         val long = readLong()
         return if (long != -1L) Date(long) else null
     }
