@@ -111,6 +111,20 @@ class PreferencesFragment : Fragment() {
             }
             this.savePreference(this.user, this.preferredPetrolStationBrandList, this.preferredPetrol)
         }
+
+        this.selectAllCheckBox.setOnClickListener {
+            if (this.selectAllCheckBox.isChecked) {
+                for (checkBox in this.checkBoxByPetrolStationBrand.values) {
+                    checkBox.isChecked = true
+                    this.selectAllCheckBox.text = getString(R.string.checkbox_deselect_all)
+                }
+            } else {
+                for (checkBox in this.checkBoxByPetrolStationBrand.values) {
+                    checkBox.isChecked = false
+                    this.selectAllCheckBox.text = getString(R.string.checkbox_select_all)
+                }
+            }
+        }
     }
 
     private fun presetPreference(user: User, checkBoxByPetrolStationBrand: HashMap<PetrolStationBrand, CheckBox>, radioButtonByPetrol: HashMap<Petrol, RadioButton>) {

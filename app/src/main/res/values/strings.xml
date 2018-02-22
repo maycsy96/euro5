@@ -57,4 +57,18 @@
     <string name="query_search_your_location">Search your location here</string>
     <string name="message_retrieval_data_fail">Retrieval of required data failed</string>
     <string name="message_loading_data">Loading required data now</string>
+    <string name="title_petrol_station_brands">Petrol Station Brands:</string>
+    <string name="checkbox_select_all">Select All</string>
+    <string name="checkbox_shell">Shell</string>
+    <string name="checkbox_petronas">Petronas</string>
+    <string name="checkbox_bhpetrol">BHPetrol</string>
+    <string name="checkbox_caltex">Caltex</string>
+    <string name="checkbox_petron">Petron</string>
+    <string name="title_petrol_type">Petrol Type:</string>
+    <string name="radiobutton_ron95">RON 95</string>
+    <string name="radiobutton_ron97">Ron 97</string>
+    <string name="radiobutton_diesel">Diesel</string>
+    <string name="radiobutton_euro5">Diesel EURO5</string>
+    <string name="button_save">Save</string>
+    <string name="checkbox_deselect_all">Deselect All</string>
 </resources>

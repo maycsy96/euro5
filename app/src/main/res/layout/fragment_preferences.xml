@@ -16,14 +16,33 @@
         android:layout_marginBottom="12dp"
         android:orientation="vertical">
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/petrolStationBrandsTextView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Petrol Station Brands:"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/white" />
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/petrolStationBrandsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/title_petrol_station_brands"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@android:color/white" />
+
+            <CheckBox
+                android:id="@+id/selectAllCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@android:color/white"
+                android:layoutDirection="rtl"
+                android:text="@string/checkbox_select_all"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+
 
         <View style="@style/Divider" />
 
@@ -32,35 +51,35 @@
             style="@style/WhiteCheckbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Shell" />
+            android:text="@string/checkbox_shell" />
 
         <CheckBox
             android:id="@+id/petronasCheckbox"
             style="@style/WhiteCheckbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Petronas" />
+            android:text="@string/checkbox_petronas" />
 
         <CheckBox
             android:id="@+id/bhpetrolCheckbox"
             style="@style/WhiteCheckbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="BHPetrol" />
+            android:text="@string/checkbox_bhpetrol" />
 
         <CheckBox
             android:id="@+id/caltexCheckbox"
             style="@style/WhiteCheckbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Caltex" />
+            android:text="@string/checkbox_caltex" />
 
         <CheckBox
             android:id="@+id/petronCheckbox"
             style="@style/WhiteCheckbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Petron" />
+            android:text="@string/checkbox_petron" />
     </LinearLayout>
 
     <LinearLayout
@@ -73,7 +92,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Petrol Type:"
+            android:text="@string/title_petrol_type"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@android:color/white" />
 
@@ -92,28 +111,28 @@
                 style="@style/WhiteRadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="RON 95" />
+                android:text="@string/radiobutton_ron95" />
 
             <RadioButton
                 android:id="@+id/ron97RadioButton"
                 style="@style/WhiteRadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ron 97" />
+                android:text="@string/radiobutton_ron97" />
 
             <RadioButton
                 android:id="@+id/dieselRadioButton"
                 style="@style/WhiteRadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Diesel" />
+                android:text="@string/radiobutton_diesel" />
 
             <RadioButton
                 android:id="@+id/euro5RadioButton"
                 style="@style/WhiteRadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Diesel EURO5" />
+                android:text="@string/radiobutton_euro5" />
         </RadioGroup>
 
     </LinearLayout>
@@ -129,7 +148,8 @@
             style="@style/RoundedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="SAVE" />
+            android:text="@string/button_save"
+            android:textAllCaps="true" />
     </LinearLayout>
 
 </LinearLayout>
