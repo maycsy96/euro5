@@ -26,13 +26,13 @@ class PetrolPriceActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_petrol_price)
+        this.setContentView(R.layout.activity_petrol_price)
 
-        setSupportActionBar(this.toolbar)
+        this.setSupportActionBar(this.toolbar)
         this.supportActionBar?.title = getString(R.string.petrol_price_history)
         this.toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp)
         this.toolbar.setNavigationOnClickListener(View.OnClickListener {
-            finish()
+            this.finish()
         })
 
         this.petrolList = PetrolLoader.petrolList
@@ -40,6 +40,5 @@ class PetrolPriceActivity : AppCompatActivity() {
         this.pagerAdapter = PetrolPricePagerAdapter(this.supportFragmentManager, this.petrolList)
         this.petrolPriceViewPagerContainer.adapter = this.pagerAdapter
         this.petrolPriceTabLayout.setupWithViewPager(this.petrolPriceViewPagerContainer)
-
     }
 }
