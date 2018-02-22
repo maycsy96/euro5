@@ -32,7 +32,7 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="wrap_content"
                 android:padding="6dp"
                 app:contentInsetStartWithNavigation="0dp"
                 app:layout_scrollFlags="scroll|enterAlways|snap">
@@ -41,7 +41,7 @@
                     android:id="@+id/locationSearchView"
                     style="@style/RoundedSearchView"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="?attr/actionBarSize"
                     app:iconifiedByDefault="false"
                     app:queryHint="@string/query_search_your_location" />
 
