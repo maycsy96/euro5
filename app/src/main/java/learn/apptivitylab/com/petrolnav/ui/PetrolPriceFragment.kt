@@ -3,6 +3,7 @@ package learn.apptivitylab.com.petrolnav.ui
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +11,12 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_petrol_price.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.model.Petrol
+import java.text.SimpleDateFormat
 
 /**
  * Created by apptivitylab on 12/01/2018.
  */
-class PetrolPriceFragment : Fragment() {
+class PetrolPriceFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     companion object {
         private val ARG_PETROL_DETAIL = "petrol_detail"
@@ -29,7 +31,8 @@ class PetrolPriceFragment : Fragment() {
     }
 
     private var petrol = Petrol()
-    val petrolAdapter = PetrolPriceRecyclerAdapter()
+    private val petrolPriceAdapter = PetrolPriceRecyclerAdapter()
+    private val dateFormatter = SimpleDateFormat("dd/MM/yyyy")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_petrol_price, container, false)
@@ -43,16 +46,22 @@ class PetrolPriceFragment : Fragment() {
         }
 
         val layoutManager = LinearLayoutManager(this.activity, LinearLayoutManager.VERTICAL, false)
-        this.petrolListRecyclerView.layoutManager = layoutManager
-        this.petrolListRecyclerView.adapter = this.petrolAdapter
+        this.priceHistoryRecyclerView.layoutManager = layoutManager
+        this.priceHistoryRecyclerView.adapter = this.petrolPriceAdapter
+        this.priceHistorySwipeRefresh.setOnRefreshListener(this)
 
         this.setPetrolPriceChange(this.petrol)
         this.petrolNameTextView.text = this.petrol.petrolName
         this.petrolPriceTextView.text = getString(R.string.petrol_price_value, this.petrol?.petrolPrice)
+        this.petrolPriceDateCreatedTextView.text = dateFormatter.format(this.petrol.petrolPriceHistoryList.first().dateCreated)
 
         this.petrol.petrolPriceChange?.let {
             if (it != null) {
-                this.petrolPriceChangeTextView.text = String.format("%.2f", it)
+                if (it > 0.0f) {
+                    this.petrolPriceChangeTextView.text = getString(R.string.price_change_positive_value, it)
+                } else {
+                    this.petrolPriceChangeTextView.text = String.format("%.2f", it)
+                }
             } else {
                 this.petrolPriceChangeTextView.text = getString(R.string.message_unavailable_price_change)
             }
@@ -63,13 +72,17 @@ class PetrolPriceFragment : Fragment() {
                 else -> Color.BLACK
             })
         }
-        this.petrolAdapter.updateDataSet(this.petrol.petrolPriceHistoryList)
+        this.petrolPriceAdapter.updateDataSet(this.petrol.petrolPriceHistoryList)
     }
 
-    fun setPetrolPriceChange(petrol: Petrol) {
-        var previousPrice = petrol.petrolPriceHistoryList.first().price
-        previousPrice?.let {
-            petrol.petrolPriceChange = petrol.petrolPrice?.minus(it)
+    private fun setPetrolPriceChange(petrol: Petrol) {
+        val previousPrice = petrol.petrolPriceHistoryList[1].price
+        petrol.petrolPrice?.let {
+            petrol.petrolPriceChange = previousPrice?.minus(it)
         }
+    }
+
+    override fun onRefresh() {
+        this.priceHistorySwipeRefresh.isRefreshing = false
     }
 }
