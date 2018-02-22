@@ -43,7 +43,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.setContentView(R.layout.activity_main)
 
         this.setSupportActionBar(this.toolbar)
-
         val drawerToggle = ActionBarDrawerToggle(this, this.drawer_layout, this.toolbar, R.string.openDrawer, R.string.closeDrawer)
         this.drawer_layout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
@@ -77,6 +76,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onBackPressed() {
+        this.toolbar.title = ""
         var currentFragment: Fragment? = this.supportFragmentManager.findFragmentById(R.id.mainViewgroupContainer)
         (this.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = null
         if (currentFragment is MapDisplayFragment) {
@@ -118,6 +118,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.mainViewgroupContainer.requestLayout()
         when (id) {
             R.id.nav_map -> {
+                this.toolbar.title = ""
                 with(locationSearchView) {
                     setIconifiedByDefault(false)
                     visibility = View.VISIBLE
@@ -132,7 +133,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 displayFragment = MapDisplayFragment.newInstance(this.user)
             }
             R.id.nav_search -> {
-                this.locationSearchView.visibility = View.VISIBLE
+                this.toolbar.title = getString(R.string.title_station_list)
                 displayFragment = SearchFragment.newInstance(this.user)
             }
             R.id.nav_petrol_price -> {
@@ -140,6 +141,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 this.startActivity(launchIntent)
             }
             R.id.nav_preference -> {
+                this.toolbar.title = getString(R.string.title_preference)
                 displayFragment = PreferencesFragment.newInstance(this.user)
             }
             R.id.nav_log_out -> {

@@ -48,7 +48,29 @@
         <item name="android:backgroundTint">@android:color/white</item>
     </style>
 
-    <style name="RoundedSearchView">
-        <item name ="android:background">@drawable/search_view_rounded</item>
+    <style name="Divider">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">2px</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
     </style>
+
+    <style name="RoundedSearchView">
+        <item name="android:background">@drawable/search_view_rounded</item>
+    </style>
+
+    <style name="WhiteCheckbox">
+        <item name="android:buttonTint">@android:color/white</item>
+        <item name="android:layoutDirection">rtl</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAlignment">textStart</item>
+    </style>
+
+    <style name="WhiteRadioButton">
+        <item name="android:buttonTint">@android:color/white</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAlignment">textStart</item>
+    </style>
+
 </resources>
