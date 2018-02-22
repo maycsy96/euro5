@@ -42,6 +42,7 @@ data class Petrol(
                 }
             }
             this.petrolPrice = this.petrolPriceHistoryList.first().price
+            this.petrolPriceHistoryList.removeAt(0)
         }
     }
 
