@@ -99,7 +99,7 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 "Petron" -> R.drawable.petron_logo
                 "Caltex" -> R.drawable.caltex_logo
                 "BHPetrol" -> R.drawable.bhpetrol_logo
-                else -> R.drawable.logo_not_available
+                else -> R.drawable.app_logo_greyed
             }, null))
 
             if (petrolStation?.distanceFromUser != null) {
