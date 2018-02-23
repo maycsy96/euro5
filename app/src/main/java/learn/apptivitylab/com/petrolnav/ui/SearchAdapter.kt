@@ -93,7 +93,14 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun setStation(station: PetrolStation) {
             this.petrolStation = station
             itemView.petrolStationNameTextView.text = this.petrolStation?.petrolStationName
-            itemView.petrolStationLogoImageView.setImageDrawable(ResourcesCompat.getDrawable(itemView.resources, R.drawable.gradient_dark_green_to_light_green, null))
+            itemView.petrolStationLogoImageView.setImageDrawable(ResourcesCompat.getDrawable(itemView.resources, when (this.petrolStation?.petrolStationBrand) {
+                "Shell" -> R.drawable.shell_logo
+                "Petronas" -> R.drawable.petronas_logo
+                "Petron" -> R.drawable.petron_logo
+                "Caltex" -> R.drawable.caltex_logo
+                "BHPetrol" -> R.drawable.bhpetrol_logo
+                else -> R.drawable.logo_not_available
+            }, null))
 
             if (petrolStation?.distanceFromUser != null) {
                 itemView.petrolStationDistanceTextView.text = itemView.context.getString(R.string.distance_value, this.petrolStation?.distanceFromUser)

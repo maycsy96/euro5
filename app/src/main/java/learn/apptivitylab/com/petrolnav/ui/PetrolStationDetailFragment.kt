@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v4.content.res.ResourcesCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,12 +41,18 @@ class PetrolStationDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.let {
-            petrolStationSelected = it.getParcelable(PETROL_STATION_DETAIL)
+            this.petrolStationSelected = it.getParcelable(PETROL_STATION_DETAIL)
         }
-        this.petrolStationIdTextView.text = petrolStationSelected.petrolStationId
         this.petrolStationNameTextView.text = petrolStationSelected.petrolStationName
         this.petrolStationBrandTextView.text = petrolStationSelected.petrolStationBrand
-        this.petrolStationAddressTextView.text = petrolStationSelected.petrolStationAddress
+        this.petrolStationImageView.setImageDrawable(ResourcesCompat.getDrawable(resources, when (this.petrolStationSelected?.petrolStationBrand) {
+            "Shell" -> R.drawable.shell_logo
+            "Petronas" -> R.drawable.petronas_logo
+            "Petron" -> R.drawable.petron_logo
+            "Caltex" -> R.drawable.caltex_logo
+            "BHPetrol" -> R.drawable.bhpetrol_logo
+            else -> R.drawable.logo_not_available
+        }, null))
 
         if (petrolStationSelected.distanceFromUser != null) {
             this.petrolStationDistanceTextView.text = "%.2f".format(petrolStationSelected.distanceFromUser)
@@ -62,7 +69,7 @@ class PetrolStationDetailFragment : Fragment() {
         }
     }
 
-    fun navigateToPetrolStation(petrolStation: PetrolStation){
+    private fun navigateToPetrolStation(petrolStation: PetrolStation){
         petrolStation.petrolStationLatLng?.let{
             val locationUri = Uri.parse("geo:0,0?q=${it.latitude},${it.longitude}")
             val navigateIntent = Intent(Intent.ACTION_VIEW, locationUri)
