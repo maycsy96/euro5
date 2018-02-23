@@ -1,33 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/RoundedButton"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/petrolStationLogoImageView"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        tools:src="@drawable/gradient_dark_green_to_light_green" />
-
-    <TextView
-        android:id="@+id/petrolStationNameTextView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_weight="1"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        tools:text="Petrol Name"
-        android:maxLines="1"/>
+        android:orientation="horizontal"
+        android:padding="8dp">
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/petrolStationLogoImageView"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            tools:src="@drawable/gradient_dark_green_to_light_green" />
 
-    <TextView
-        android:id="@+id/petrolStationDistanceTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:layout_marginLeft="4dp"
-        tools:text="12 km away" />
+        <TextView
+            android:id="@+id/petrolStationNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            tools:text="Petrol Name"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+        <TextView
+            android:id="@+id/petrolStationDistanceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_marginLeft="4dp"
+            tools:text="12 km away" />
+        
+    </LinearLayout>
+    <View style="@style/Divider"
+        android:background="@color/lightGreen"/>
 </LinearLayout>
