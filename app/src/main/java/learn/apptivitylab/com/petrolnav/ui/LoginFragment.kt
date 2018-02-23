@@ -1,5 +1,6 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.app.Dialog
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -11,6 +12,7 @@ import android.widget.Toast
 import com.android.volley.NoConnectionError
 import com.android.volley.VolleyError
 import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.progress_bar_dialog.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.api.RestAPIClient
 import learn.apptivitylab.com.petrolnav.model.User
@@ -32,6 +34,8 @@ class LoginFragment : Fragment() {
     }
 
     private var user = User()
+    private var progressBarDialog: Dialog? = null
+    private var errorSnackBar: Snackbar? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_login, container, false)
@@ -65,6 +69,7 @@ class LoginFragment : Fragment() {
 
     private fun loginAccount() {
         this.loginButton.isEnabled = false
+        this.showProgressBarDialog()
         val emailText = emailEditText.text.toString()
         val passwordText = passwordEditText.text.toString()
         this.verifyUserAccount(emailText, passwordText)
@@ -80,6 +85,7 @@ class LoginFragment : Fragment() {
         RestAPIClient.shared(this.context!!).postResources(VERIFY_PATH, jsonRequest,
                 object : RestAPIClient.PostResponseReceivedListener {
                     override fun onPostResponseReceived(jsonObject: JSONObject?, error: VolleyError?) {
+                        this@LoginFragment.hideProgressBarDialog()
                         if (jsonObject != null) {
                             if (jsonObject.has("success") && jsonObject.optString("success") == "true") {
                                 this@LoginFragment.user = User(jsonObject.optJSONObject("profile"))
@@ -89,13 +95,20 @@ class LoginFragment : Fragment() {
                             error?.let {
                                 when (it) {
                                     is NoConnectionError, is SocketException -> {
+                                        view?.let {
+                                            this@LoginFragment.errorSnackBar = Snackbar.make(it, getString(R.string.message_connection_error), Snackbar.LENGTH_INDEFINITE)
+                                            this@LoginFragment.errorSnackBar?.let {
+                                                it.show()
+                                            }
+                                        }
                                     }
                                     else -> {
-
-                                        this@LoginFragment.onLoginFailed()
+                                        this@LoginFragment.errorSnackBar?.let {
+                                            it.dismiss()
+                                        }
                                     }
-
                                 }
+                                this@LoginFragment.onLoginFailed()
                             }
                         }
                     }
@@ -154,5 +167,29 @@ class LoginFragment : Fragment() {
                 .setMessage(getString(R.string.message_welcome_to_petrolnav))
                 .setNeutralButton(getString(R.string.button_ok), null)
                 .show()
+    }
+
+    private fun showProgressBarDialog() {
+        if (this.progressBarDialog == null) {
+            this.progressBarDialog = Dialog(this.activity)
+            this.progressBarDialog?.let {
+                it.setContentView(R.layout.progress_bar_dialog)
+                it.window.setBackgroundDrawableResource(android.R.color.transparent)
+                it.progressBarTextView.text = getString(R.string.message_authenticating)
+                it.show()
+            }
+        } else {
+            this.progressBarDialog?.let {
+                it.show()
+            }
+        }
+    }
+
+    private fun hideProgressBarDialog() {
+        this.progressBarDialog?.let {
+            if (it.isShowing) {
+                it.dismiss()
+            }
+        }
     }
 }
