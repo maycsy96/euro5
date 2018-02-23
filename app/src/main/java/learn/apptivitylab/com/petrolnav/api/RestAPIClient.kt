@@ -17,6 +17,7 @@ class RestAPIClient(val context: Context) {
 
     companion object {
         const val BASE_URL = "https://kong-gateway.apptivitylab.com/euro5-api-dev/v1"
+        const val CONTENT_TYPE = "application/json; charset=utf-8"
         private var singleton: RestAPIClient? = null
 
         fun shared(context: Context): RestAPIClient {
@@ -27,25 +28,29 @@ class RestAPIClient(val context: Context) {
         }
     }
 
-    private var requestQueue: RequestQueue
+    private var requestQueue: RequestQueue = Volley.newRequestQueue(this.context)
 
-    init {
-        this.requestQueue = Volley.newRequestQueue(this.context)
+    interface PostResponseReceivedListener {
+        fun onPostResponseReceived(jsonObject: JSONObject?, error: VolleyError?)
     }
 
-    interface getResourceCompleteListener {
+    interface VerificationCompleteListener {
+        fun onVerificationCompleted(resultCode: Int)
+    }
+
+    interface GetResourceCompleteListener {
         fun onComplete(jsonObject: JSONObject?, error: VolleyError?)
     }
 
-    interface receiveDataSetListener {
+    interface ReceiveDataSetListener {
         fun onDataSetReceived(jsonObject: JSONObject?, error: VolleyError?)
     }
 
-    interface receiveCompleteDataListener {
+    interface ReceiveCompleteDataListener {
         fun onCompleteDataReceived(dataReceived: Boolean, error: VolleyError?)
     }
 
-    fun loadResource(path: String, limit: Int?, completionListener: getResourceCompleteListener) {
+    fun loadResource(path: String, limit: Int?, completionListener: GetResourceCompleteListener) {
         val url = String.format("%s/%s", BASE_URL, path)
         if (limit == null) {
             val request = BackendlessJsonObjectRequest(Request.Method.GET, url, null,
@@ -59,7 +64,7 @@ class RestAPIClient(val context: Context) {
         } else {
             var resultJSONArray = JSONArray()
             this.getNextData(url, limit, 0, resultJSONArray,
-                    object : receiveDataSetListener {
+                    object : ReceiveDataSetListener {
                         override fun onDataSetReceived(jsonObject: JSONObject?, error: VolleyError?) {
                             if (jsonObject != null) {
                                 completionListener.onComplete(jsonObject, null)
@@ -72,7 +77,7 @@ class RestAPIClient(val context: Context) {
         }
     }
 
-    fun getNextData(path: String, limit: Int = 100, offset: Int = 0, resultJSONArray: JSONArray, receiveDataSetListener: receiveDataSetListener) {
+    private fun getNextData(path: String, limit: Int = 100, offset: Int = 0, resultJSONArray: JSONArray, ReceiveDataSetListener: ReceiveDataSetListener) {
         var limitParameter = "&limit=" + limit
         var offsetParameter = "&offset=" + offset
         val url = String.format("%s%s%s", path, limitParameter, offsetParameter)
@@ -87,15 +92,28 @@ class RestAPIClient(val context: Context) {
                         if (jsonArray.length() < limit || jsonArray.length() == 0) {
                             var resultJSONObject = JSONObject()
                             resultJSONObject.put("resource", resultJSONArray)
-                            receiveDataSetListener.onDataSetReceived(resultJSONObject, null)
+                            ReceiveDataSetListener.onDataSetReceived(resultJSONObject, null)
                         } else {
-                            this@RestAPIClient.getNextData(url, limit, offset + limit, resultJSONArray, receiveDataSetListener)
+                            this@RestAPIClient.getNextData(url, limit, offset + limit, resultJSONArray, ReceiveDataSetListener)
                         }
                     }
                 },
                 Response.ErrorListener { error ->
-                    receiveDataSetListener.onDataSetReceived(null, error)
+                    ReceiveDataSetListener.onDataSetReceived(null, error)
                 })
+        this.requestQueue.add(request)
+    }
+
+    fun postResources(path: String, jsonRequest: JSONObject?, responseReceivedListener: PostResponseReceivedListener) {
+        val url = String.format("%s%s", BASE_URL,path)
+        val request = BackendlessJsonObjectRequest(Request.Method.POST, url, jsonRequest,
+                Response.Listener<JSONObject> { response ->
+                    responseReceivedListener.onPostResponseReceived(response, null)
+                },
+                Response.ErrorListener { error ->
+                    responseReceivedListener.onPostResponseReceived(null, error)
+                })
+        request.putHeader("Content-Type", CONTENT_TYPE)
         this.requestQueue.add(request)
     }
 }
