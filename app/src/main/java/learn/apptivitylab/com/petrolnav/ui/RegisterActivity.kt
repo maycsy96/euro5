@@ -100,9 +100,9 @@ class RegisterActivity : AppCompatActivity() {
                                     }
                                     else -> {
                                         this@RegisterActivity.errorSnackBar?.let {
-                                            this@RegisterActivity.emailEditText.error = getString(R.string.message_unavailable_email)
                                             it.dismiss()
                                         }
+                                        this@RegisterActivity.emailEditText.error = getString(R.string.message_unavailable_email)
                                     }
                                 }
                                 this@RegisterActivity.onRegisterFailed()
