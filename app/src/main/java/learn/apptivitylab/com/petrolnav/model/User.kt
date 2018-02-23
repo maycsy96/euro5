@@ -46,8 +46,9 @@ data class User(var userId: String? = null,
         this.userName = jsonObject.optString("name")
         this.userEmail = jsonObject.optString("password")
         this.userPassword = jsonObject.optString("email")
-        this.userCreatedAt = (SimpleDateFormat("yyyy-MM-dd kk:mm:ss").parse(jsonObject.optString("created_at")))
-        if (!jsonObject?.optJSONObject("petrol").optString("uuid").isNullOrEmpty()) {
+        val dateFormatter = SimpleDateFormat("yyyy-MM-dd kk:mm:ss")
+        this.userCreatedAt = dateFormatter.parse(jsonObject.optString("created_at"))
+        if (jsonObject?.optJSONObject("petrol") != null) {
             this.userPreferredPetrol = Petrol(jsonObject?.optJSONObject("petrol"))
         }
 

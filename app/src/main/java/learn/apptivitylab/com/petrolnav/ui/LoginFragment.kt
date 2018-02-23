@@ -1,7 +1,5 @@
 package learn.apptivitylab.com.petrolnav.ui
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -24,18 +22,15 @@ import java.net.SocketException
  */
 class LoginFragment : Fragment() {
     companion object {
-        const val ARG_USER_LIST = "user_list"
         const val VERIFY_PATH = "/identity/session"
-        fun newInstance(userList: ArrayList<User>): LoginFragment {
+        fun newInstance(): LoginFragment {
             val fragment = LoginFragment()
             val args: Bundle = Bundle()
-            args.putParcelableArrayList(ARG_USER_LIST, userList)
             fragment.arguments = args
             return fragment
         }
     }
 
-    private var userList = ArrayList<User>()
     private var user = User()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -44,10 +39,6 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        arguments?.let {
-            this.userList = it.getParcelableArrayList(ARG_USER_LIST)
-        }
 
         this.loginButton.setOnClickListener {
             val isValid = this.validateTextInput()
@@ -58,7 +49,7 @@ class LoginFragment : Fragment() {
             }
         }
         this.registerTextView.setOnClickListener {
-            val launchIntent = RegisterActivity.newLaunchIntent(this.context!!, this.userList)
+            val launchIntent = RegisterActivity.newLaunchIntent(this.context!!)
             this.startActivityForResult(launchIntent, LoginActivity.REQUEST_SIGNUP)
         }
 
@@ -66,26 +57,14 @@ class LoginFragment : Fragment() {
             this.activity!!.supportFragmentManager
                     .beginTransaction()
                     .setCustomAnimations(R.anim.fragment_slide_right_enter, R.anim.fragment_slide_right_exit, R.anim.fragment_slide_left_enter, R.anim.fragment_slide_left_exit)
-                    .replace(R.id.loginViewgroupContainer, ForgotPasswordFragment.newInstance(this.userList))
+                    .replace(R.id.loginViewgroupContainer, ForgotPasswordFragment.newInstance())
                     .addToBackStack(null)
                     .commit()
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == LoginActivity.REQUEST_SIGNUP) {
-            if (resultCode == Activity.RESULT_OK) {
-                data?.let {
-                    this.userList = it.getParcelableArrayListExtra(RegisterActivity.EXTRA_USER_LIST)
-                }
-            }
-        }
-    }
-
     private fun loginAccount() {
         this.loginButton.isEnabled = false
-
         val emailText = emailEditText.text.toString()
         val passwordText = passwordEditText.text.toString()
         this.verifyUserAccount(emailText, passwordText)
@@ -166,11 +145,6 @@ class LoginFragment : Fragment() {
         } else {
             this.passwordEditText.error = null
         }
-
-        if (isValid) {
-            isValid = (this.userList.firstOrNull { it.userEmail == emailText && it.userPassword == passwordText }) != null
-        }
-
         return isValid
     }
 

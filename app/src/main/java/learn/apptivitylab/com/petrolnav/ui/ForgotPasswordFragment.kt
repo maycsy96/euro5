@@ -15,17 +15,14 @@ import learn.apptivitylab.com.petrolnav.model.User
  */
 class ForgotPasswordFragment : Fragment() {
     companion object {
-        const val ARG_USER_LIST = "user_list"
-        fun newInstance(userList: ArrayList<User>): ForgotPasswordFragment {
+        fun newInstance(): ForgotPasswordFragment {
             val fragment = ForgotPasswordFragment()
             val args: Bundle = Bundle()
-            args.putParcelableArrayList(ARG_USER_LIST, userList)
             fragment.arguments = args
             return fragment
         }
     }
 
-    private var userList = ArrayList<User>()
     private var user = User()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -34,10 +31,6 @@ class ForgotPasswordFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        arguments?.let {
-            this.userList = it.getParcelableArrayList(ARG_USER_LIST)
-        }
 
         this.sendEmailButton.setOnClickListener {
             val isValid = this.validateTextInput()
@@ -59,9 +52,6 @@ class ForgotPasswordFragment : Fragment() {
         if (emailText.isEmpty()) {
             this.emailEditText.error = getString(R.string.message_invalid_email_address)
             isValid = false
-        } else if ((this.userList.firstOrNull { it.userEmail == emailText }) == null) {
-            this.emailEditText.error = getString(R.string.message_email_do_not_exist)
-            isValid = false
         } else {
             this.emailEditText.error = null
         }
@@ -71,7 +61,6 @@ class ForgotPasswordFragment : Fragment() {
 
     private fun sendEmail() {
         val emailText = this.emailEditText.text.toString()
-        this.user = this.userList.first { it.userEmail == emailText }
 
         this.onSendEmailSuccess()
     }
@@ -81,7 +70,7 @@ class ForgotPasswordFragment : Fragment() {
         this.activity!!.supportFragmentManager
                 .beginTransaction()
                 .setCustomAnimations(R.anim.fragment_slide_right_enter, R.anim.fragment_slide_right_exit, R.anim.fragment_slide_left_enter, R.anim.fragment_slide_left_exit)
-                .replace(R.id.forgotPasswordViewGroupContainer, ResetPasswordFragment.newInstance(this.user, this.userList))
+                .replace(R.id.forgotPasswordViewGroupContainer, ResetPasswordFragment.newInstance(this.user))
                 .addToBackStack(null)
                 .commit()
     }

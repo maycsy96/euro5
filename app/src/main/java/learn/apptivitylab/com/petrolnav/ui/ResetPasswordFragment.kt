@@ -1,6 +1,5 @@
 package learn.apptivitylab.com.petrolnav.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
@@ -10,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import kotlinx.android.synthetic.main.fragment_reset_password.*
 import learn.apptivitylab.com.petrolnav.R
-import learn.apptivitylab.com.petrolnav.controller.UserController
 import learn.apptivitylab.com.petrolnav.model.User
 
 /**
@@ -19,33 +17,16 @@ import learn.apptivitylab.com.petrolnav.model.User
 class ResetPasswordFragment : Fragment() {
     companion object {
         const val ARG_USER_DETAIL = "user_detail"
-        const val ARG_USER_LIST = "user_list"
-        fun newInstance(user: User, userList: ArrayList<User>): ResetPasswordFragment {
+        fun newInstance(user: User): ResetPasswordFragment {
             val fragment = ResetPasswordFragment()
             val args: Bundle = Bundle()
             args.putParcelable(ARG_USER_DETAIL, user)
-            args.putParcelableArrayList(ARG_USER_LIST, userList)
             fragment.arguments = args
             return fragment
         }
     }
 
-    private var userList = ArrayList<User>()
     private var user = User()
-    private lateinit var userListListener: UserListListener
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        try {
-            this.userListListener = context as UserListListener
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    fun updateUserList(userList: ArrayList<User>) {
-        this.userListListener.onUpdateUserList(userList)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_reset_password, container, false)
@@ -56,7 +37,6 @@ class ResetPasswordFragment : Fragment() {
 
         arguments?.let {
             this.user = it.getParcelable(ARG_USER_DETAIL)
-            this.userList = it.getParcelableArrayList(ARG_USER_LIST)
         }
 
         this.resetButton.setOnClickListener {
@@ -93,14 +73,6 @@ class ResetPasswordFragment : Fragment() {
 
     private fun resetPassword() {
         this.user.userPassword = this.passwordEditText.text.toString()
-
-        this.userList.forEach { user ->
-            if (user.userEmail == this.user.userEmail) {
-                user.userPassword = this.user.userPassword
-            }
-        }
-        UserController.writeToJSONUserList(this.activity!!.applicationContext, this.userList)
-        this.updateUserList(this.userList)
         this.resetPasswordSuccess()
     }
 

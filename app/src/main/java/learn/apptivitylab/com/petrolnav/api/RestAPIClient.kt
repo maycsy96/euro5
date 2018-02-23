@@ -34,10 +34,6 @@ class RestAPIClient(val context: Context) {
         fun onPostResponseReceived(jsonObject: JSONObject?, error: VolleyError?)
     }
 
-    interface VerificationCompleteListener {
-        fun onVerificationCompleted(resultCode: Int)
-    }
-
     interface GetResourceCompleteListener {
         fun onComplete(jsonObject: JSONObject?, error: VolleyError?)
     }
