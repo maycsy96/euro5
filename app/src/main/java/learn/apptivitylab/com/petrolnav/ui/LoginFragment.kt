@@ -76,7 +76,6 @@ class LoginFragment : Fragment() {
     }
 
     private fun verifyUserAccount(emailText: String, passwordText: String) {
-        //TODO post
         var jsonRequest = JSONObject()
         jsonRequest.put("identifier", emailText)
         jsonRequest.put("challenge", passwordText)
