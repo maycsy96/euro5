@@ -1,5 +1,6 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -91,13 +92,11 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun setStation(station: PetrolStation) {
             this.petrolStation = station
-            itemView.petrolStationIdTextView.text = this.petrolStation?.petrolStationId
             itemView.petrolStationNameTextView.text = this.petrolStation?.petrolStationName
-            itemView.petrolStationBrandTextView.text = this.petrolStation?.petrolStationBrand
-            itemView.petrolStationAddressTextView.text = this.petrolStation?.petrolStationAddress
+            itemView.petrolStationLogoImageView.setImageDrawable(ResourcesCompat.getDrawable(itemView.resources, R.drawable.gradient_dark_green_to_light_green, null))
 
             if (petrolStation?.distanceFromUser != null) {
-                itemView.petrolStationDistanceTextView.text = "%.2f".format(this.petrolStation?.distanceFromUser)
+                itemView.petrolStationDistanceTextView.text = itemView.context.getString(R.string.distance_value, this.petrolStation?.distanceFromUser)
             } else {
                 itemView.petrolStationDistanceTextView.text = itemView.context.getString(R.string.message_unavailable_location)
             }
