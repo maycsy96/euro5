@@ -1,5 +1,6 @@
 package learn.apptivitylab.com.petrolnav.ui
 
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -45,22 +46,22 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         when (holder.itemViewType) {
             STATION_ITEM -> {
                 val stationViewHolder: StationViewHolder = holder as StationViewHolder
-                val station: PetrolStation = petrolStationsList[position] as PetrolStation
+                val station: PetrolStation = this.petrolStationsList[position] as PetrolStation
                 stationViewHolder.setStation(station)
             }
             else -> {
                 val headerViewHolder: HeaderViewHolder = holder as HeaderViewHolder
-                val header = petrolStationsList[position] as String
+                val header = this.petrolStationsList[position] as String
                 headerViewHolder.setHeaderTitle(header)
             }
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (petrolStationsList[position] is PetrolStation) {
-            return STATION_ITEM
+        return if (petrolStationsList[position] is PetrolStation) {
+            STATION_ITEM
         } else {
-            return STATION_HEADER
+            STATION_HEADER
         }
     }
 
@@ -91,13 +92,18 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun setStation(station: PetrolStation) {
             this.petrolStation = station
-            itemView.petrolStationIdTextView.text = this.petrolStation?.petrolStationId
             itemView.petrolStationNameTextView.text = this.petrolStation?.petrolStationName
-            itemView.petrolStationBrandTextView.text = this.petrolStation?.petrolStationBrand
-            itemView.petrolStationAddressTextView.text = this.petrolStation?.petrolStationAddress
+            itemView.petrolStationLogoImageView.setImageDrawable(ResourcesCompat.getDrawable(itemView.resources, when (this.petrolStation?.petrolStationBrand) {
+                "Shell" -> R.drawable.shell_logo
+                "Petronas" -> R.drawable.petronas_logo
+                "Petron" -> R.drawable.petron_logo
+                "Caltex" -> R.drawable.caltex_logo
+                "BHPetrol" -> R.drawable.bhpetrol_logo
+                else -> R.drawable.app_logo_greyed
+            }, null))
 
             if (petrolStation?.distanceFromUser != null) {
-                itemView.petrolStationDistanceTextView.text = "%.2f".format(this.petrolStation?.distanceFromUser)
+                itemView.petrolStationDistanceTextView.text = itemView.context.getString(R.string.distance_value, this.petrolStation?.distanceFromUser)
             } else {
                 itemView.petrolStationDistanceTextView.text = itemView.context.getString(R.string.message_unavailable_location)
             }
