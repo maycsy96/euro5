@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="8dp">
+
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/petrolStationLogoImageView"
             android:layout_width="25dp"
@@ -22,20 +23,22 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_weight="1"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            tools:text="Petrol Name"
+            android:ellipsize="end"
             android:maxLines="1"
-            android:ellipsize="end"/>
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            tools:text="Petrol Name" />
 
         <TextView
             android:id="@+id/petrolStationDistanceTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_marginLeft="4dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             tools:text="12 km away" />
 
     </LinearLayout>
-    <View style="@style/Divider"
-        android:background="@color/lightGreen"/>
+
+    <View
+        style="@style/Divider"
+        android:background="@color/lightGreen" />
 </LinearLayout>

@@ -43,8 +43,8 @@ class PetrolStationDetailFragment : Fragment() {
         arguments?.let {
             this.petrolStationSelected = it.getParcelable(PETROL_STATION_DETAIL)
         }
-        this.petrolStationNameTextView.text = petrolStationSelected.petrolStationName
-        this.petrolStationBrandTextView.text = petrolStationSelected.petrolStationBrand
+        this.petrolStationNameTextView.text = this.petrolStationSelected.petrolStationName
+        this.petrolStationBrandTextView.text = this.petrolStationSelected.petrolStationBrand
         this.petrolStationImageView.setImageDrawable(ResourcesCompat.getDrawable(resources, when (this.petrolStationSelected?.petrolStationBrand) {
             "Shell" -> R.drawable.shell_logo
             "Petronas" -> R.drawable.petronas_logo
@@ -54,33 +54,33 @@ class PetrolStationDetailFragment : Fragment() {
             else -> R.drawable.logo_not_available
         }, null))
 
-        if (petrolStationSelected.distanceFromUser != null) {
-            this.petrolStationDistanceTextView.text = getString(R.string.distance_value,this.petrolStationSelected.distanceFromUser)
+        if (this.petrolStationSelected.distanceFromUser != null) {
+            this.petrolStationDistanceTextView.text = getString(R.string.distance_value, this.petrolStationSelected.distanceFromUser)
         } else {
             this.petrolStationDistanceTextView.text = context?.getString(R.string.message_unavailable_distance)
         }
 
-        this.petrolTextView.text = petrolStationSelected.petrolList
+        this.petrolTextView.text = this.petrolStationSelected.petrolList
                 ?.map { it.petrolName }
                 ?.joinToString(" , ")
 
-        this.navigationButton.setOnClickListener{
-            navigateToPetrolStation(this.petrolStationSelected)
+        this.navigationButton.setOnClickListener {
+            this.navigateToPetrolStation(this.petrolStationSelected)
         }
     }
 
-    private fun navigateToPetrolStation(petrolStation: PetrolStation){
-        petrolStation.petrolStationLatLng?.let{
+    private fun navigateToPetrolStation(petrolStation: PetrolStation) {
+        petrolStation.petrolStationLatLng?.let {
             val locationUri = Uri.parse("geo:0,0?q=${it.latitude},${it.longitude}")
             val navigateIntent = Intent(Intent.ACTION_VIEW, locationUri)
             val packageManager = context!!.packageManager
             val availableApps = packageManager.queryIntentActivities(navigateIntent, PackageManager.MATCH_DEFAULT_ONLY)
             val isIntentSafe = availableApps.size > 0
             val chooser = Intent.createChooser(navigateIntent, getString(R.string.navigate))
-            if(isIntentSafe){
-                startActivity(chooser)
-            }else{
-                this.view?.let{
+            if (isIntentSafe) {
+                this.startActivity(chooser)
+            } else {
+                this.view?.let {
                     Snackbar.make(it, getString(R.string.message_unavailable_app), Snackbar.LENGTH_LONG)
                 }
             }

@@ -46,22 +46,22 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         when (holder.itemViewType) {
             STATION_ITEM -> {
                 val stationViewHolder: StationViewHolder = holder as StationViewHolder
-                val station: PetrolStation = petrolStationsList[position] as PetrolStation
+                val station: PetrolStation = this.petrolStationsList[position] as PetrolStation
                 stationViewHolder.setStation(station)
             }
             else -> {
                 val headerViewHolder: HeaderViewHolder = holder as HeaderViewHolder
-                val header = petrolStationsList[position] as String
+                val header = this.petrolStationsList[position] as String
                 headerViewHolder.setHeaderTitle(header)
             }
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (petrolStationsList[position] is PetrolStation) {
-            return STATION_ITEM
+        return if (petrolStationsList[position] is PetrolStation) {
+            STATION_ITEM
         } else {
-            return STATION_HEADER
+            STATION_HEADER
         }
     }
 

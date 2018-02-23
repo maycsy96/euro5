@@ -66,9 +66,9 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
         val layoutManager = LinearLayoutManager(this.activity, LinearLayoutManager.VERTICAL, false)
         petrolStationListRecyclerView.layoutManager = layoutManager
         this.petrolStationListAdapter.setStationListener(this)
-        petrolStationListRecyclerView.adapter = petrolStationListAdapter
+        petrolStationListRecyclerView.adapter = this.petrolStationListAdapter
 
-        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!)
+        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
         this.startLocationUpdates()
     }
 
