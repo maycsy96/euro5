@@ -20,7 +20,7 @@ class PetrolLoader {
             var path = PETROL_URL
             val petrolList: ArrayList<Petrol> = ArrayList()
             RestAPIClient.shared(context).loadResource(path, null,
-                    object : RestAPIClient.getResourceCompleteListener {
+                    object : RestAPIClient.GetResourceCompleteListener {
                         override fun onComplete(jsonObject: JSONObject?, error: VolleyError?) {
                             if (jsonObject != null) {
                                 var petrol: Petrol

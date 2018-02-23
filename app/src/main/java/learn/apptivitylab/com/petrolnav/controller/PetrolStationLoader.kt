@@ -17,11 +17,11 @@ class PetrolStationLoader {
         const val PETROL_STATION_URL = "data/stations?related=*"
         var petrolStationList = ArrayList<PetrolStation>()
 
-        fun loadJSONStations(context: Context, fullDataReceivedListener: RestAPIClient.receiveCompleteDataListener) {
+        fun loadJSONStations(context: Context, fullDataReceivedListener: RestAPIClient.ReceiveCompleteDataListener) {
             var path = PETROL_STATION_URL
             val petrolStationList = ArrayList<PetrolStation>()
             RestAPIClient.shared(context).loadResource(path, 100,
-                    object : RestAPIClient.getResourceCompleteListener {
+                    object : RestAPIClient.GetResourceCompleteListener {
                         override fun onComplete(jsonObject: JSONObject?, error: VolleyError?) {
                             if (jsonObject != null) {
                                 var petrolStation: PetrolStation
