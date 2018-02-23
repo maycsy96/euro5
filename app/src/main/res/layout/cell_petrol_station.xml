@@ -34,7 +34,7 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_marginLeft="4dp"
             tools:text="12 km away" />
-        
+
     </LinearLayout>
     <View style="@style/Divider"
         android:background="@color/lightGreen"/>
