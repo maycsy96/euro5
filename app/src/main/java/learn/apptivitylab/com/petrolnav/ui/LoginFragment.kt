@@ -3,15 +3,21 @@ package learn.apptivitylab.com.petrolnav.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.android.volley.NoConnectionError
+import com.android.volley.VolleyError
 import kotlinx.android.synthetic.main.fragment_login.*
 import learn.apptivitylab.com.petrolnav.R
+import learn.apptivitylab.com.petrolnav.api.RestAPIClient
 import learn.apptivitylab.com.petrolnav.model.User
+import org.json.JSONObject
+import java.net.SocketException
 
 /**
  * Created by apptivitylab on 08/02/2018.
@@ -19,6 +25,7 @@ import learn.apptivitylab.com.petrolnav.model.User
 class LoginFragment : Fragment() {
     companion object {
         const val ARG_USER_LIST = "user_list"
+        const val VERIFY_PATH = "/identity/session"
         fun newInstance(userList: ArrayList<User>): LoginFragment {
             val fragment = LoginFragment()
             val args: Bundle = Bundle()
@@ -80,9 +87,40 @@ class LoginFragment : Fragment() {
         this.loginButton.isEnabled = false
 
         val emailText = emailEditText.text.toString()
-        this.user = this.userList.first { user -> user.userEmail == emailText }
+        val passwordText = passwordEditText.text.toString()
+        this.verifyUserAccount(emailText, passwordText)
+    }
 
-        this.onLoginSuccess()
+    private fun verifyUserAccount(emailText: String, passwordText: String) {
+        //TODO post
+        var jsonRequest = JSONObject()
+        jsonRequest.put("identifier", emailText)
+        jsonRequest.put("challenge", passwordText)
+        jsonRequest.put("type", "userpass")
+
+        RestAPIClient.shared(this.context!!).postResources(VERIFY_PATH, jsonRequest,
+                object : RestAPIClient.PostResponseReceivedListener {
+                    override fun onPostResponseReceived(jsonObject: JSONObject?, error: VolleyError?) {
+                        if (jsonObject != null) {
+                            if (jsonObject.has("success") && jsonObject.optString("success") == "true") {
+                                this@LoginFragment.user = User(jsonObject.optJSONObject("profile"))
+                                this@LoginFragment.onLoginSuccess()
+                            }
+                        } else {
+                            error?.let {
+                                when (it) {
+                                    is NoConnectionError, is SocketException -> {
+                                    }
+                                    else -> {
+
+                                        this@LoginFragment.onLoginFailed()
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                })
     }
 
     private fun onLoginSuccess() {
