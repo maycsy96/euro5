@@ -13,7 +13,7 @@ import org.json.JSONObject
 class PetrolStationLoader {
 
     companion object {
-        private val TAG = "PetrolStationLoader"
+        val TAG = "PetrolStationLoader"
         const val PETROL_STATION_URL = "data/stations?related=*"
         var petrolStationList = ArrayList<PetrolStation>()
 

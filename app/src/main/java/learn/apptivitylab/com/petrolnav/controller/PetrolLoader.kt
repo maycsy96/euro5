@@ -12,11 +12,11 @@ import org.json.JSONObject
  */
 class PetrolLoader {
     companion object {
-        private val TAG = "PetrolLoader"
+        val TAG = "PetrolLoader"
         const val PETROL_URL = "data/petrols?related=*"
         var petrolList = ArrayList<Petrol>()
 
-        fun loadJSONPetrols(context: Context) {
+        fun loadJSONPetrols(context: Context, fullDataReceivedListener: RestAPIClient.ReceiveCompleteDataListener) {
             var path = PETROL_URL
             val petrolList: ArrayList<Petrol> = ArrayList()
             RestAPIClient.shared(context).loadResource(path, null,
@@ -30,6 +30,9 @@ class PetrolLoader {
                                     petrolList.add(petrol)
                                 }
                                 this@Companion.petrolList = petrolList
+                                fullDataReceivedListener.onCompleteDataReceived(true, null)
+                            } else {
+                                fullDataReceivedListener.onCompleteDataReceived(false, error)
                             }
                         }
                     })

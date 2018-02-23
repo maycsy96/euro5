@@ -53,8 +53,8 @@
     <string name="button_ok">OK</string>
     <string name="message_location_did_not_change">Current location did not change</string>
     <string name="query_search_your_location">Search your location here</string>
-    <string name="message_retrieval_data_fail">Retrieval of required data failed</string>
-    <string name="message_loading_data">Loading required data now</string>
+    <string name="title_retrieval_data_fail">Retrieval of required data failed</string>
+    <string name="message_retrieval_data_fail">Retrieval of data failed due to internet problem or other issue. Please retry again.</string>
     <string name="title_petrol_station_brands">Petrol Station Brands:</string>
     <string name="checkbox_select_all">Select All</string>
     <string name="checkbox_shell">Shell</string>
@@ -83,4 +83,5 @@
     <string name="message_registering">Registering…</string>
     <string name="user_phone_number">Phone number</string>
     <string name="message_invalid_phone_number">Please enter the phone number</string>
+    <string name="message_loading_required_data">Loading required data now …</string>
 </resources>
