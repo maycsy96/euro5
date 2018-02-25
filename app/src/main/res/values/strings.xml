@@ -80,7 +80,7 @@
     <string name="title_petrol_station_detail_page">Petrol Station Detail Page</string>
     <string name="message_connection_error">Sorry, no Internet connection is detected. Please reconnect and try again</string>
     <string name="message_authenticating">Authenticating…</string>
-    <string name="message_registering">Registering …</string>
+    <string name="message_registering">Registering…</string>
     <string name="user_phone_number">Phone number</string>
     <string name="message_invalid_phone_number">Please enter the phone number</string>
 </resources>
