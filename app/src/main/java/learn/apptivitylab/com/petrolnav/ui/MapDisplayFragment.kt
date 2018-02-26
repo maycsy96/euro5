@@ -22,9 +22,9 @@ import com.android.volley.VolleyError
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.maps.android.clustering.ClusterManager
 import kotlinx.android.synthetic.main.progress_bar_dialog.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.api.RestAPIClient
@@ -37,7 +37,7 @@ import java.util.*
  * Created by apptivitylab on 09/01/2018.
  */
 
-class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.ReceiveCompleteDataListener {
+class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener {
 
     companion object {
         const val LOCATION_REQUEST_CODE = 100
@@ -65,6 +65,8 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
     private var filteredListByPreferredPetrol = ArrayList<PetrolStation>()
     private var user = User()
     private var progressBarDialog: Dialog? = null
+
+    private lateinit var clusterManager: ClusterManager<PetrolStation>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var rootView = inflater.inflate(R.layout.fragment_map_display, container, false)
@@ -100,14 +102,6 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
         this.startLocationUpdates()
     }
 
-    override fun onInfoWindowClick(marker: Marker?) {
-        val petrolStation = this.petrolStationList.firstOrNull { it.petrolStationId.equals(marker?.snippet) }
-        petrolStation?.let {
-            val launchIntent = PetrolStationDetailActivity.newLaunchIntent(this.context!!, it)
-            this.startActivity(launchIntent)
-        }
-    }
-
     private fun setupGoogleMapsFragment() {
         this.mapFragment = SupportMapFragment.newInstance()
 
@@ -128,6 +122,64 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
             val officeLatLng = LatLng(4.2105, 101.9758)
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(officeLatLng, 6f)
             this.googleMap?.moveCamera(cameraUpdate)
+
+            this.clusterManager = ClusterManager(this.context, googleMap)
+            this.petrolStationList = PetrolStationLoader.petrolStationList
+            this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
+            if (this.filteredListByPreferredPetrol.isEmpty()) {
+                this.filteredListByPreferredPetrol = this.petrolStationList
+            }
+            this@MapDisplayFragment.setUpClusterManager(this.filteredListByPreferredPetrol)
+
+            with(googleMap) {
+                setOnMapLoadedCallback {
+                    if (this@MapDisplayFragment.userLatLng == null) {
+                        val malaysiaLatLng = LatLng(4.2105, 101.9758)
+                        animateCamera(CameraUpdateFactory.newLatLngZoom(malaysiaLatLng, 6f))
+                    } else {
+                        this@MapDisplayFragment.setStationsDistanceFromUser(this@MapDisplayFragment.userLatLng, this@MapDisplayFragment.petrolStationList)
+                        this@MapDisplayFragment.filteredListByPreferredPetrol.sortBy { petrolStation ->
+                            petrolStation.distanceFromUser
+                        }
+                        var boundsBuilder = LatLngBounds.Builder()
+                        val nearestStationList = this@MapDisplayFragment.filteredListByPreferredPetrol.take(this@MapDisplayFragment.NEAREST_STATION_COUNT)
+                        nearestStationList.forEach { nearestStation ->
+                            boundsBuilder.include(nearestStation.petrolStationLatLng)
+                        }
+                        boundsBuilder.include(this@MapDisplayFragment.userLatLng)
+                        var bounds = boundsBuilder.build()
+                        animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+                    }
+                }
+                setInfoWindowAdapter(this@MapDisplayFragment.clusterManager.markerManager)
+                setOnInfoWindowClickListener(this@MapDisplayFragment.clusterManager)
+                setOnCameraIdleListener(this@MapDisplayFragment.clusterManager)
+                setOnMarkerClickListener(this@MapDisplayFragment.clusterManager)
+
+                var typedValue = TypedValue()
+                this@MapDisplayFragment.context!!.theme?.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
+                var toolbarHeight = resources.getDimensionPixelSize(typedValue.resourceId)
+                setPadding(0, toolbarHeight, 0, 0)
+            }
+        }
+    }
+
+    private fun setUpClusterManager(petrolStationList: ArrayList<PetrolStation>) {
+        with(this.clusterManager) {
+            addItems(petrolStationList)
+            setOnClusterClickListener { cluster ->
+                val boundsBuilder = LatLngBounds.builder()
+                cluster.items.forEach { item ->
+                    boundsBuilder.include(item.position)
+                }
+                val bounds = boundsBuilder.build()
+                this@MapDisplayFragment.googleMap?.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+                true
+            }
+            setOnClusterItemInfoWindowClickListener { petrolStation ->
+                val launchIntent = PetrolStationDetailActivity.newLaunchIntent(this@MapDisplayFragment.context!!, petrolStation)
+                this@MapDisplayFragment.startActivity(launchIntent)
+            }
         }
     }
 
@@ -249,6 +301,10 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
         var bitmapImage: Bitmap
         var resizedBitmapImage: Bitmap
         var petrolStationLocationMarker: Marker?
+    override fun onStop() {
+        this.fusedLocationClient?.removeLocationUpdates(locationCallBack)
+        super.onStop()
+    }
 
         for (nearestStation in petrolStationList) {
             var nearestStationLatLng = nearestStation.petrolStationLatLng
