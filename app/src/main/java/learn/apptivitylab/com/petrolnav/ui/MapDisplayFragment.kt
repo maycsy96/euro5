@@ -293,6 +293,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
             view?.let {
                 Snackbar.make(it, getString(R.string.message_retrieval_data_fail), Snackbar.LENGTH_INDEFINITE)
                         .setAction(getString(R.string.button_retry), {
+                            this.progressBarDialog?.show()
                             PetrolStationLoader.loadJSONStations(this.context!!, this)
                         })
                         .show()
