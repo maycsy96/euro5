@@ -2,6 +2,8 @@ package learn.apptivitylab.com.petrolnav.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -17,13 +19,16 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.android.volley.VolleyError
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import kotlinx.android.synthetic.main.progress_bar_dialog.*
 import learn.apptivitylab.com.petrolnav.R
+import learn.apptivitylab.com.petrolnav.api.RestAPIClient
 import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
 import learn.apptivitylab.com.petrolnav.model.PetrolStation
 import learn.apptivitylab.com.petrolnav.model.User
@@ -33,7 +38,7 @@ import java.util.*
  * Created by apptivitylab on 09/01/2018.
  */
 
-class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
+class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.ReceiveCompleteDataListener {
 
     companion object {
         const val LOCATION_REQUEST_CODE = 100
@@ -60,6 +65,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
     private var petrolStationList = ArrayList<PetrolStation>()
     private var filteredListByPreferredPetrol = ArrayList<PetrolStation>()
     private var user = User()
+    private var progressBarDialog: Dialog? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var rootView = inflater.inflate(R.layout.fragment_map_display, container, false)
@@ -77,6 +83,19 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
 
         arguments?.let {
             this.user = it.getParcelable(ARG_USER_DETAIL)
+        }
+
+        this.setupProgressBarDialog()
+        if (PetrolStationLoader.petrolStationList.isEmpty()) {
+            this.progressBarDialog?.show()
+            PetrolStationLoader.loadJSONStations(this.context!!, this)
+        } else {
+            this.petrolStationList = PetrolStationLoader.petrolStationList
+            this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
+            if (this.filteredListByPreferredPetrol.isEmpty()) {
+                this.filteredListByPreferredPetrol = this.petrolStationList
+            }
+            this.createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
         }
         this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
         this.startLocationUpdates()
@@ -110,13 +129,6 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
             val officeLatLng = LatLng(4.2105, 101.9758)
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(officeLatLng, 6f)
             this.googleMap?.moveCamera(cameraUpdate)
-
-            this.petrolStationList = PetrolStationLoader.petrolStationList
-            this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
-            if (this.filteredListByPreferredPetrol.isEmpty()) {
-                this.filteredListByPreferredPetrol = this.petrolStationList
-            }
-            this.createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
         }
     }
 
@@ -265,5 +277,34 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener {
     override fun onStop() {
         this.fusedLocationClient?.removeLocationUpdates(locationCallBack)
         super.onStop()
+    }
+
+    private fun setupProgressBarDialog() {
+        this.progressBarDialog = Dialog(this.activity)
+        this.progressBarDialog?.let {
+            it.setContentView(R.layout.progress_bar_dialog)
+            it.window.setBackgroundDrawableResource(android.R.color.transparent)
+            it.progressBarTextView.text = getString(R.string.message_loading_petrol_station_data)
+        }
+    }
+
+    override fun onCompleteDataReceived(dataReceived: Boolean, error: VolleyError?) {
+        this.progressBarDialog?.dismiss()
+        if (!dataReceived || error != null) {
+            AlertDialog.Builder(this.context!!)
+                    .setTitle(getString(R.string.title_retrieval_data_fail))
+                    .setMessage(getString(R.string.message_retrieval_data_fail))
+                    .setPositiveButton(getString(R.string.button_ok), { dialog, which ->
+                        PetrolStationLoader.loadJSONStations(this.context!!, this)
+                    })
+                    .show()
+        } else {
+            this.petrolStationList = PetrolStationLoader.petrolStationList
+            this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
+            if (this.filteredListByPreferredPetrol.isEmpty()) {
+                this.filteredListByPreferredPetrol = this.petrolStationList
+            }
+            this.createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
+        }
     }
 }

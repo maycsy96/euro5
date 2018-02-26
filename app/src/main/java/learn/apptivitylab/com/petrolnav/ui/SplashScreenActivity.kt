@@ -15,7 +15,7 @@ import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
  */
 class SplashScreenActivity : AppCompatActivity(), RestAPIClient.ReceiveCompleteDataListener {
     companion object {
-        private const val RESOURCE_TOTAL_COUNT = 3
+        private const val RESOURCE_TOTAL_COUNT = 2
     }
 
     private var resourcesCount = 0
@@ -29,7 +29,6 @@ class SplashScreenActivity : AppCompatActivity(), RestAPIClient.ReceiveCompleteD
     private fun loadAllData() {
         PetrolLoader.loadJSONPetrols(this, this)
         PetrolStationBrandLoader.loadJSONPetrolStationBrands(this, this)
-        PetrolStationLoader.loadJSONStations(this, this)
     }
 
     override fun onCompleteDataReceived(dataReceived: Boolean, error: VolleyError?) {
