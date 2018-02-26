@@ -85,4 +85,5 @@
     <string name="message_invalid_phone_number">Please enter the phone number</string>
     <string name="message_loading_required_data">Loading required data now …</string>
     <string name="message_loading_petrol_station_data">Loading Petrol Station Data</string>
+    <string name="button_retry">Retry</string>
 </resources>

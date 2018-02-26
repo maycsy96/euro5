@@ -2,7 +2,6 @@ package learn.apptivitylab.com.petrolnav.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -291,13 +290,13 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
     override fun onCompleteDataReceived(dataReceived: Boolean, error: VolleyError?) {
         this.progressBarDialog?.dismiss()
         if (!dataReceived || error != null) {
-            AlertDialog.Builder(this.context!!)
-                    .setTitle(getString(R.string.title_retrieval_data_fail))
-                    .setMessage(getString(R.string.message_retrieval_data_fail))
-                    .setPositiveButton(getString(R.string.button_ok), { dialog, which ->
-                        PetrolStationLoader.loadJSONStations(this.context!!, this)
-                    })
-                    .show()
+            view?.let {
+                Snackbar.make(it, getString(R.string.message_retrieval_data_fail), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(getString(R.string.button_retry), {
+                            PetrolStationLoader.loadJSONStations(this.context!!, this)
+                        })
+                        .show()
+            }
         } else {
             this.petrolStationList = PetrolStationLoader.petrolStationList
             this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
