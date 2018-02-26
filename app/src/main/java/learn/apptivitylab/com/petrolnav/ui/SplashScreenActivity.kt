@@ -1,6 +1,5 @@
 package learn.apptivitylab.com.petrolnav.ui
 
-import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
