@@ -3,6 +3,7 @@ package learn.apptivitylab.com.petrolnav.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.clustering.ClusterManager
+import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import kotlinx.android.synthetic.main.progress_bar_dialog.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.api.RestAPIClient
@@ -95,7 +97,6 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
             if (this.filteredListByPreferredPetrol.isEmpty()) {
                 this.filteredListByPreferredPetrol = this.petrolStationList
             }
-            this.createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
         }
         this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
         this.startLocationUpdates()
@@ -111,24 +112,9 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
 
         this.mapFragment?.getMapAsync { googleMap ->
             this.googleMap = googleMap
-            this.googleMap?.setOnInfoWindowClickListener(this)
-
-            var typedValue = TypedValue()
-            this.context!!.theme?.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
-            var toolbarHeight = resources.getDimensionPixelSize(typedValue.resourceId)
-            this.googleMap?.setPadding(0, toolbarHeight, 0, 0)
-
-            val officeLatLng = LatLng(4.2105, 101.9758)
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(officeLatLng, 6f)
-            this.googleMap?.moveCamera(cameraUpdate)
 
             this.clusterManager = ClusterManager(this.context, googleMap)
             this.clusterRenderer = PetrolStationMarkerRenderer(this.context, googleMap, this.clusterManager)
-            this.petrolStationList = PetrolStationLoader.petrolStationList
-            this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
-            if (this.filteredListByPreferredPetrol.isEmpty()) {
-                this.filteredListByPreferredPetrol = this.petrolStationList
-            }
             this@MapDisplayFragment.setUpClusterManager(this.filteredListByPreferredPetrol)
 
             with(googleMap) {
@@ -323,11 +309,6 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
         }
     }
 
-    override fun onStop() {
-        this.fusedLocationClient?.removeLocationUpdates(locationCallBack)
-        super.onStop()
-    }
-
     private fun setupProgressBarDialog() {
         this.progressBarDialog = Dialog(this.activity)
         this.progressBarDialog?.let {
@@ -345,7 +326,7 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
             if (this.filteredListByPreferredPetrol.isEmpty()) {
                 this.filteredListByPreferredPetrol = this.petrolStationList
             }
-            this.createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
+            this.setUpClusterManager(this.filteredListByPreferredPetrol)
         } else {
             view?.let {
                 Snackbar.make(it, getString(R.string.message_retrieval_data_fail), Snackbar.LENGTH_INDEFINITE)
