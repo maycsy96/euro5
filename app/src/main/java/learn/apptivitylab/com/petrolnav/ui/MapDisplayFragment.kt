@@ -289,7 +289,14 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
 
     override fun onCompleteDataReceived(dataReceived: Boolean, error: VolleyError?) {
         this.progressBarDialog?.dismiss()
-        if (!dataReceived || error != null) {
+        if (dataReceived || error == null) {
+            this.petrolStationList = PetrolStationLoader.petrolStationList
+            this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
+            if (this.filteredListByPreferredPetrol.isEmpty()) {
+                this.filteredListByPreferredPetrol = this.petrolStationList
+            }
+            this.createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
+        } else {
             view?.let {
                 Snackbar.make(it, getString(R.string.message_retrieval_data_fail), Snackbar.LENGTH_INDEFINITE)
                         .setAction(getString(R.string.button_retry), {
@@ -298,13 +305,6 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
                         })
                         .show()
             }
-        } else {
-            this.petrolStationList = PetrolStationLoader.petrolStationList
-            this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
-            if (this.filteredListByPreferredPetrol.isEmpty()) {
-                this.filteredListByPreferredPetrol = this.petrolStationList
-            }
-            this.createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
         }
     }
 }

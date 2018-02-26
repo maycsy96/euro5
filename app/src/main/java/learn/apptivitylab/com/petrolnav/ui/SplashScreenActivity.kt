@@ -32,7 +32,14 @@ class SplashScreenActivity : AppCompatActivity(), RestAPIClient.ReceiveCompleteD
     }
 
     override fun onCompleteDataReceived(dataReceived: Boolean, error: VolleyError?) {
-        if (!dataReceived || error != null) {
+        if (dataReceived || error == null) {
+            resourcesCount++
+            if (resourcesCount == RESOURCE_TOTAL_COUNT) {
+                val launchIntent = LoginActivity.newLaunchIntent(this)
+                this.startActivity(launchIntent)
+                this.finish()
+            }
+        } else {
             AlertDialog.Builder(this)
                     .setTitle(getString(R.string.title_retrieval_data_fail))
                     .setMessage(getString(R.string.message_retrieval_data_fail))
@@ -40,13 +47,6 @@ class SplashScreenActivity : AppCompatActivity(), RestAPIClient.ReceiveCompleteD
                         this.loadAllData()
                     })
                     .show()
-        } else {
-            resourcesCount++
-            if (resourcesCount == RESOURCE_TOTAL_COUNT) {
-                val launchIntent = LoginActivity.newLaunchIntent(this)
-                this.startActivity(launchIntent)
-                this.finish()
-            }
         }
     }
 }
