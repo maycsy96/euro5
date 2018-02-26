@@ -14,7 +14,6 @@ import java.util.*
 data class User(var userId: String? = null,
                 var userName: String? = null,
                 var userEmail: String? = null,
-                var userPassword: String? = null,
                 var userPhoneNumber: String? = null,
                 var userCreatedAt: Date? = null,
                 var userPreferredPetrol: Petrol? = null,
@@ -34,7 +33,6 @@ data class User(var userId: String? = null,
         this.userId = parcel.readString()
         this.userName = parcel.readString()
         this.userEmail = parcel.readString()
-        this.userPassword = parcel.readString()
         this.userPhoneNumber = parcel.readString()
         this.userCreatedAt = parcel.readDate()
         this.userPreferredPetrol = parcel.readParcelable(Petrol::class.java.classLoader)
@@ -44,8 +42,8 @@ data class User(var userId: String? = null,
     constructor(jsonObject: JSONObject) : this() {
         this.userId = jsonObject.optString("uuid")
         this.userName = jsonObject.optString("name")
-        this.userEmail = jsonObject.optString("password")
-        this.userPassword = jsonObject.optString("email")
+        this.userEmail = jsonObject.optString("email")
+        this.userPhoneNumber = jsonObject.optString("phone")
         val dateFormatter = SimpleDateFormat("yyyy-MM-dd kk:mm:ss")
         this.userCreatedAt = dateFormatter.parse(jsonObject.optString("created_at"))
         if (jsonObject?.optJSONObject("petrol") != null) {
@@ -69,10 +67,11 @@ data class User(var userId: String? = null,
 
     fun toJsonObject(): JSONObject {
         var jsonObjectUser = JSONObject()
-        jsonObjectUser.put("user_id", this.userId)
-        jsonObjectUser.put("user_name", this.userName)
-        jsonObjectUser.put("user_email", this.userEmail)
-        jsonObjectUser.put("user_password", this.userPassword)
+        jsonObjectUser.put("uuid", this.userId)
+        jsonObjectUser.put("name", this.userName)
+        jsonObjectUser.put("email", this.userEmail)
+        jsonObjectUser.put("phone", this.userPhoneNumber)
+        jsonObjectUser.put("created_at", this.userCreatedAt)
 
         var jsonObjectPetrol = JSONObject()
         with(jsonObjectPetrol) {
@@ -108,7 +107,6 @@ data class User(var userId: String? = null,
         parcel?.writeString(this.userId)
         parcel?.writeString(this.userName)
         parcel?.writeString(this.userEmail)
-        parcel?.writeString(this.userPassword)
         parcel?.writeString(this.userPhoneNumber)
         parcel?.writeDate(this.userCreatedAt)
         parcel?.writeParcelable(this.userPreferredPetrol, flags)
