@@ -16,7 +16,7 @@ class PetrolStationBrandLoader {
         private const val PETROL_STATION_BRAND_URL = "data/companies"
         var petrolStationBrandList = ArrayList<PetrolStationBrand>()
 
-        fun loadJSONPetrolStationBrands(context: Context, fullDataReceivedListener: RestAPIClient.ReceiveCompleteDataListener) {
+        fun loadJSONPetrolStationBrands(context: Context, brandDataListener: RestAPIClient.ReceiveCompleteDataListener) {
             var path = PETROL_STATION_BRAND_URL
             val petrolStationBrandList: ArrayList<PetrolStationBrand> = ArrayList()
             RestAPIClient.shared(context).loadResource(path, null,
@@ -30,9 +30,9 @@ class PetrolStationBrandLoader {
                                     petrolStationBrandList.add(petrolStationBrand)
                                 }
                                 this@Companion.petrolStationBrandList = petrolStationBrandList
-                                fullDataReceivedListener.onCompleteDataReceived(true, null)
+                                brandDataListener.onCompleteDataReceived(true, null)
                             } else {
-                                fullDataReceivedListener.onCompleteDataReceived(false, error)
+                                brandDataListener.onCompleteDataReceived(false, error)
                             }
                         }
                     })

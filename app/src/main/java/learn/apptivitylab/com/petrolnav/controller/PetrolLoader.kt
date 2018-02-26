@@ -16,7 +16,7 @@ class PetrolLoader {
         const val PETROL_URL = "data/petrols?related=*"
         var petrolList = ArrayList<Petrol>()
 
-        fun loadJSONPetrols(context: Context, fullDataReceivedListener: RestAPIClient.ReceiveCompleteDataListener) {
+        fun loadJSONPetrols(context: Context, petrolDataListener: RestAPIClient.ReceiveCompleteDataListener) {
             var path = PETROL_URL
             val petrolList: ArrayList<Petrol> = ArrayList()
             RestAPIClient.shared(context).loadResource(path, null,
@@ -30,9 +30,9 @@ class PetrolLoader {
                                     petrolList.add(petrol)
                                 }
                                 this@Companion.petrolList = petrolList
-                                fullDataReceivedListener.onCompleteDataReceived(true, null)
+                                petrolDataListener.onCompleteDataReceived(true, null)
                             } else {
-                                fullDataReceivedListener.onCompleteDataReceived(false, error)
+                                petrolDataListener.onCompleteDataReceived(false, error)
                             }
                         }
                     })
