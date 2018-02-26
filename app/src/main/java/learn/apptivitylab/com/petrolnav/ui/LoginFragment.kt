@@ -122,7 +122,6 @@ class LoginFragment : Fragment() {
     private fun onLoginSuccess() {
         this.loginButton.isEnabled = true
         Toast.makeText(this.context, getString(R.string.message_login_success), Toast.LENGTH_LONG).show()
-
         this.user.userPreferredPetrolStationBrandList?.let {
             if (this.user.userPreferredPetrol == null && it.isEmpty()) {
                 this.showWelcomeDialog()

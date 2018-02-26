@@ -38,7 +38,6 @@ class PreferencesFragment : Fragment() {
     private var petrolStationBrandList = ArrayList<PetrolStationBrand>()
     private var petrolList = ArrayList<Petrol>()
     private var user = User()
-    private var userList = ArrayList<User>()
 
     private var checkBoxByPetrolStationBrand: LinkedHashMap<PetrolStationBrand, CheckBox> = LinkedHashMap()
     private var radioButtonByPetrol: LinkedHashMap<Petrol, RadioButton> = LinkedHashMap()
@@ -151,14 +150,6 @@ class PreferencesFragment : Fragment() {
     private fun savePreference(user: User, preferredPetrolStationBrandList: ArrayList<PetrolStationBrand>, preferredPetrol: Petrol) {
         user.userPreferredPetrol = preferredPetrol
         user.userPreferredPetrolStationBrandList = preferredPetrolStationBrandList
-
-        this.userList.forEach {
-            if (it.userEmail == user.userEmail) {
-                it.userPreferredPetrol = preferredPetrol
-                it.userPreferredPetrolStationBrandList?.clear()
-                it.userPreferredPetrolStationBrandList?.addAll(preferredPetrolStationBrandList)
-            }
-        }
 
         if (this.activity is LoginActivity) {
             val launchIntent = MainActivity.newLaunchIntent(this.context!!, user)

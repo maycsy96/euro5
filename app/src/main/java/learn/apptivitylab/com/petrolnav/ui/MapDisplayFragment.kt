@@ -2,6 +2,7 @@ package learn.apptivitylab.com.petrolnav.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Dialog
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -17,7 +18,6 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.android.volley.VolleyError
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -25,6 +25,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import kotlinx.android.synthetic.main.progress_bar_dialog.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.api.RestAPIClient
 import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
@@ -39,8 +40,9 @@ import java.util.*
 class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.ReceiveCompleteDataListener {
 
     companion object {
-        val LOCATION_REQUEST_CODE = 100
+        const val LOCATION_REQUEST_CODE = 100
         private const val ARG_USER_DETAIL = "user_detail"
+
         fun newInstance(user: User): MapDisplayFragment {
             val fragment = MapDisplayFragment()
             val args: Bundle = Bundle()
@@ -62,6 +64,7 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
     private var petrolStationList = ArrayList<PetrolStation>()
     private var filteredListByPreferredPetrol = ArrayList<PetrolStation>()
     private var user = User()
+    private var progressBarDialog: Dialog? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var rootView = inflater.inflate(R.layout.fragment_map_display, container, false)
@@ -80,8 +83,19 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
         arguments?.let {
             this.user = it.getParcelable(ARG_USER_DETAIL)
         }
-        PetrolStationLoader.loadJSONStations(this.context!!, this)
-        Toast.makeText(this.context, getString(R.string.message_loading_data), Toast.LENGTH_LONG)
+
+        this.setupProgressBarDialog()
+        if (PetrolStationLoader.petrolStationList.isEmpty()) {
+            this.progressBarDialog?.show()
+            PetrolStationLoader.loadJSONStations(this.context!!, this)
+        } else {
+            this.petrolStationList = PetrolStationLoader.petrolStationList
+            this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
+            if (this.filteredListByPreferredPetrol.isEmpty()) {
+                this.filteredListByPreferredPetrol = this.petrolStationList
+            }
+            this.createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
+        }
         this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
         this.startLocationUpdates()
     }
@@ -264,17 +278,33 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
         super.onStop()
     }
 
+    private fun setupProgressBarDialog() {
+        this.progressBarDialog = Dialog(this.activity)
+        this.progressBarDialog?.let {
+            it.setContentView(R.layout.progress_bar_dialog)
+            it.window.setBackgroundDrawableResource(android.R.color.transparent)
+            it.progressBarTextView.text = getString(R.string.message_loading_petrol_station_data)
+        }
+    }
+
     override fun onCompleteDataReceived(dataReceived: Boolean, error: VolleyError?) {
-        if (!dataReceived || error != null) {
-            Toast.makeText(this.context, getString(R.string.message_retrieval_data_fail), Toast.LENGTH_LONG).show()
-        } else {
-            Toast.makeText(this.context, "SUCCESS", Toast.LENGTH_LONG).show()
+        this.progressBarDialog?.dismiss()
+        if (dataReceived || error == null) {
             this.petrolStationList = PetrolStationLoader.petrolStationList
             this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
             if (this.filteredListByPreferredPetrol.isEmpty()) {
                 this.filteredListByPreferredPetrol = this.petrolStationList
             }
             this.createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
+        } else {
+            view?.let {
+                Snackbar.make(it, getString(R.string.message_retrieval_data_fail), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(getString(R.string.button_retry), {
+                            this.progressBarDialog?.show()
+                            PetrolStationLoader.loadJSONStations(this.context!!, this)
+                        })
+                        .show()
+            }
         }
     }
 }

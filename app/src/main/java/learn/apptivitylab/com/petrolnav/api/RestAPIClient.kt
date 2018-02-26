@@ -101,7 +101,7 @@ class RestAPIClient(val context: Context) {
     }
 
     fun postResources(path: String, jsonRequest: JSONObject?, responseReceivedListener: PostResponseReceivedListener) {
-        val url = String.format("%s%s", BASE_URL,path)
+        val url = String.format("%s%s", BASE_URL, path)
         val request = BackendlessJsonObjectRequest(Request.Method.POST, url, jsonRequest,
                 Response.Listener<JSONObject> { response ->
                     responseReceivedListener.onPostResponseReceived(response, null)

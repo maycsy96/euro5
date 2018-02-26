@@ -13,11 +13,11 @@ import org.json.JSONObject
 class PetrolStationLoader {
 
     companion object {
-        private val TAG = "PetrolStationLoader"
+        val TAG = "PetrolStationLoader"
         const val PETROL_STATION_URL = "data/stations?related=*"
         var petrolStationList = ArrayList<PetrolStation>()
 
-        fun loadJSONStations(context: Context, fullDataReceivedListener: RestAPIClient.ReceiveCompleteDataListener) {
+        fun loadJSONStations(context: Context, stationDataListener: RestAPIClient.ReceiveCompleteDataListener) {
             var path = PETROL_STATION_URL
             val petrolStationList = ArrayList<PetrolStation>()
             RestAPIClient.shared(context).loadResource(path, 100,
@@ -31,9 +31,9 @@ class PetrolStationLoader {
                                     petrolStationList.add(petrolStation)
                                 }
                                 this@Companion.petrolStationList = petrolStationList
-                                fullDataReceivedListener.onCompleteDataReceived(true, null)
+                                stationDataListener.onCompleteDataReceived(true, null)
                             } else {
-                                fullDataReceivedListener.onCompleteDataReceived(false, error)
+                                stationDataListener.onCompleteDataReceived(false, error)
                             }
                         }
                     })
