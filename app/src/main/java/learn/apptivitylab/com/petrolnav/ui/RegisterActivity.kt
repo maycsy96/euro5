@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_register.*
 import learn.apptivitylab.com.petrolnav.R
-import learn.apptivitylab.com.petrolnav.controller.UserController
 import learn.apptivitylab.com.petrolnav.model.User
 
 /**
@@ -20,21 +19,17 @@ class RegisterActivity : AppCompatActivity() {
     companion object {
         val EXTRA_USER_LIST = "user_list"
 
-        fun newLaunchIntent(context: Context, userList: ArrayList<User>): Intent {
+        fun newLaunchIntent(context: Context): Intent {
             val intent = Intent(context, RegisterActivity::class.java)
-            intent.putExtra(EXTRA_USER_LIST, userList)
             return intent
         }
     }
 
-    private var userList = ArrayList<User>()
     private var user = User()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_register)
-
-        this.userList = intent.getParcelableArrayListExtra(EXTRA_USER_LIST)
 
         this.registerButton.setOnClickListener {
             val isValid = this.validateTextInput()
@@ -62,23 +57,12 @@ class RegisterActivity : AppCompatActivity() {
         this.user.userName = this.nameEditText.text.toString()
         this.user.userEmail = this.emailEditText.text.toString()
         this.user.userPassword = this.passwordEditText.text.toString()
-
-        this.userList.add(this.user)
-
-        this.userList.forEachIndexed { id, user ->
-            if (user.userId == null) {
-                user.userId = id.toString()
-            }
-        }
-
-        UserController.writeToJSONUserList(this, this.userList)
         this.onRegisterSuccess()
     }
 
     fun onRegisterSuccess() {
         Toast.makeText(baseContext, getString(R.string.message_register_success), Toast.LENGTH_LONG).show()
         this.registerButton.isEnabled = true
-        this.setResult(Activity.RESULT_OK, intent.putExtra(EXTRA_USER_LIST, this.userList))
         this.finish()
     }
 
@@ -102,7 +86,7 @@ class RegisterActivity : AppCompatActivity() {
             this.nameEditText.error = null
         }
 
-        val userEmail = this.userList.firstOrNull { it.userEmail == emailText }
+        val userEmail = emailText
         if (emailText.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(emailText).matches()) {
             this.emailEditText.error = getString(R.string.message_invalid_email_address)
             isValid = false

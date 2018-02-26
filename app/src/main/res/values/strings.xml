@@ -78,4 +78,6 @@
     <string name="price_change_text">Change</string>
     <string name="distance_value">%1$.2f KM away</string>
     <string name="title_petrol_station_detail_page">Petrol Station Detail Page</string>
+    <string name="message_connection_error">Sorry, no Internet connection is detected. Please reconnect and try again</string>
+    <string name="message_authenticating">Authenticating…</string>
 </resources>

@@ -1,35 +1,41 @@
 package learn.apptivitylab.com.petrolnav.ui
 
-import android.app.Activity
-import android.content.Intent
+import android.app.Dialog
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.android.volley.NoConnectionError
+import com.android.volley.VolleyError
 import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.progress_bar_dialog.*
 import learn.apptivitylab.com.petrolnav.R
+import learn.apptivitylab.com.petrolnav.api.RestAPIClient
 import learn.apptivitylab.com.petrolnav.model.User
+import org.json.JSONObject
+import java.net.SocketException
 
 /**
  * Created by apptivitylab on 08/02/2018.
  */
 class LoginFragment : Fragment() {
     companion object {
-        const val ARG_USER_LIST = "user_list"
-        fun newInstance(userList: ArrayList<User>): LoginFragment {
+        const val VERIFY_PATH = "/identity/session"
+        fun newInstance(): LoginFragment {
             val fragment = LoginFragment()
             val args: Bundle = Bundle()
-            args.putParcelableArrayList(ARG_USER_LIST, userList)
             fragment.arguments = args
             return fragment
         }
     }
 
-    private var userList = ArrayList<User>()
     private var user = User()
+    private var progressBarDialog: Dialog? = null
+    private var errorSnackBar: Snackbar? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_login, container, false)
@@ -38,10 +44,7 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        arguments?.let {
-            this.userList = it.getParcelableArrayList(ARG_USER_LIST)
-        }
-
+        this.setupProgressBarDialog()
         this.loginButton.setOnClickListener {
             val isValid = this.validateTextInput()
             if (isValid) {
@@ -51,7 +54,7 @@ class LoginFragment : Fragment() {
             }
         }
         this.registerTextView.setOnClickListener {
-            val launchIntent = RegisterActivity.newLaunchIntent(this.context!!, this.userList)
+            val launchIntent = RegisterActivity.newLaunchIntent(this.context!!)
             this.startActivityForResult(launchIntent, LoginActivity.REQUEST_SIGNUP)
         }
 
@@ -59,30 +62,61 @@ class LoginFragment : Fragment() {
             this.activity!!.supportFragmentManager
                     .beginTransaction()
                     .setCustomAnimations(R.anim.fragment_slide_right_enter, R.anim.fragment_slide_right_exit, R.anim.fragment_slide_left_enter, R.anim.fragment_slide_left_exit)
-                    .replace(R.id.loginViewgroupContainer, ForgotPasswordFragment.newInstance(this.userList))
+                    .replace(R.id.loginViewgroupContainer, ForgotPasswordFragment.newInstance())
                     .addToBackStack(null)
                     .commit()
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == LoginActivity.REQUEST_SIGNUP) {
-            if (resultCode == Activity.RESULT_OK) {
-                data?.let {
-                    this.userList = it.getParcelableArrayListExtra(RegisterActivity.EXTRA_USER_LIST)
-                }
-            }
-        }
-    }
-
     private fun loginAccount() {
         this.loginButton.isEnabled = false
-
+        this.progressBarDialog?.let {
+            it.show()
+        }
         val emailText = emailEditText.text.toString()
-        this.user = this.userList.first { user -> user.userEmail == emailText }
+        val passwordText = passwordEditText.text.toString()
+        this.verifyUserAccount(emailText, passwordText)
+    }
 
-        this.onLoginSuccess()
+    private fun verifyUserAccount(emailText: String, passwordText: String) {
+        var jsonRequest = JSONObject()
+        jsonRequest.put("identifier", emailText)
+        jsonRequest.put("challenge", passwordText)
+        jsonRequest.put("type", "userpass")
+
+        RestAPIClient.shared(this.context!!).postResources(VERIFY_PATH, jsonRequest,
+                object : RestAPIClient.PostResponseReceivedListener {
+                    override fun onPostResponseReceived(jsonObject: JSONObject?, error: VolleyError?) {
+                        this@LoginFragment.progressBarDialog?.let {
+                            it.dismiss()
+                        }
+                        if (jsonObject != null) {
+                            if (jsonObject.has("success") && jsonObject.optString("success") == "true") {
+                                this@LoginFragment.user = User(jsonObject.optJSONObject("profile"))
+                                this@LoginFragment.onLoginSuccess()
+                            }
+                        } else {
+                            error?.let {
+                                when (it) {
+                                    is NoConnectionError, is SocketException -> {
+                                        view?.let {
+                                            this@LoginFragment.errorSnackBar = Snackbar.make(it, getString(R.string.message_connection_error), Snackbar.LENGTH_INDEFINITE)
+                                            this@LoginFragment.errorSnackBar?.let {
+                                                it.show()
+                                            }
+                                        }
+                                    }
+                                    else -> {
+                                        this@LoginFragment.errorSnackBar?.let {
+                                            it.dismiss()
+                                        }
+                                    }
+                                }
+                                this@LoginFragment.onLoginFailed()
+                            }
+                        }
+                    }
+                })
     }
 
     private fun onLoginSuccess() {
@@ -128,11 +162,6 @@ class LoginFragment : Fragment() {
         } else {
             this.passwordEditText.error = null
         }
-
-        if (isValid) {
-            isValid = (this.userList.firstOrNull { it.userEmail == emailText && it.userPassword == passwordText }) != null
-        }
-
         return isValid
     }
 
@@ -142,5 +171,14 @@ class LoginFragment : Fragment() {
                 .setMessage(getString(R.string.message_welcome_to_petrolnav))
                 .setNeutralButton(getString(R.string.button_ok), null)
                 .show()
+    }
+
+    private fun setupProgressBarDialog() {
+        this.progressBarDialog = Dialog(this.activity)
+        this.progressBarDialog?.let {
+            it.setContentView(R.layout.progress_bar_dialog)
+            it.window.setBackgroundDrawableResource(android.R.color.transparent)
+            it.progressBarTextView.text = getString(R.string.message_authenticating)
+        }
     }
 }

@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.fragment_preferences.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.controller.PetrolLoader
 import learn.apptivitylab.com.petrolnav.controller.PetrolStationBrandLoader
-import learn.apptivitylab.com.petrolnav.controller.UserController
 import learn.apptivitylab.com.petrolnav.model.Petrol
 import learn.apptivitylab.com.petrolnav.model.PetrolStationBrand
 import learn.apptivitylab.com.petrolnav.model.User
@@ -70,7 +69,6 @@ class PreferencesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         this.petrolStationBrandList = PetrolStationBrandLoader.petrolStationBrandList
         this.petrolList = PetrolLoader.petrolList
-        this.userList = UserController.loadJSONUserList(this.context!!)
 
         arguments?.let {
             this.user = it.getParcelable(ARG_USER_DETAIL)
@@ -161,7 +159,6 @@ class PreferencesFragment : Fragment() {
                 it.userPreferredPetrolStationBrandList?.addAll(preferredPetrolStationBrandList)
             }
         }
-        UserController.writeToJSONUserList(this.context!!, this.userList)
 
         if (this.activity is LoginActivity) {
             val launchIntent = MainActivity.newLaunchIntent(this.context!!, user)

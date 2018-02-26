@@ -20,7 +20,7 @@ class PetrolStationBrandLoader {
             var path = PETROL_STATION_BRAND_URL
             val petrolStationBrandList: ArrayList<PetrolStationBrand> = ArrayList()
             RestAPIClient.shared(context).loadResource(path, null,
-                    object : RestAPIClient.getResourceCompleteListener {
+                    object : RestAPIClient.GetResourceCompleteListener {
                         override fun onComplete(jsonObject: JSONObject?, error: VolleyError?) {
                             if (jsonObject != null) {
                                 var petrolStationBrand: PetrolStationBrand

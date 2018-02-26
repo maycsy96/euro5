@@ -36,7 +36,7 @@ import java.util.*
  * Created by apptivitylab on 09/01/2018.
  */
 
-class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.receiveCompleteDataListener {
+class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.ReceiveCompleteDataListener {
 
     companion object {
         val LOCATION_REQUEST_CODE = 100
