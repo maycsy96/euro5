@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -67,6 +65,7 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
     private var progressBarDialog: Dialog? = null
 
     private lateinit var clusterManager: ClusterManager<PetrolStation>
+    private lateinit var clusterRenderer: PetrolStationMarkerRenderer
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var rootView = inflater.inflate(R.layout.fragment_map_display, container, false)
@@ -124,6 +123,7 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
             this.googleMap?.moveCamera(cameraUpdate)
 
             this.clusterManager = ClusterManager(this.context, googleMap)
+            this.clusterRenderer = PetrolStationMarkerRenderer(this.context, googleMap, this.clusterManager)
             this.petrolStationList = PetrolStationLoader.petrolStationList
             this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
             if (this.filteredListByPreferredPetrol.isEmpty()) {
@@ -167,6 +167,7 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
     private fun setUpClusterManager(petrolStationList: ArrayList<PetrolStation>) {
         with(this.clusterManager) {
             addItems(petrolStationList)
+            renderer = this@MapDisplayFragment.clusterRenderer
             setOnClusterClickListener { cluster ->
                 val boundsBuilder = LatLngBounds.builder()
                 cluster.items.forEach { item ->
@@ -297,35 +298,28 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
         return preferredPetrolStationList
     }
 
-    private fun createPetrolStationMarker(petrolStationList: List<PetrolStation>, user: User) {
-        var bitmapImage: Bitmap
-        var resizedBitmapImage: Bitmap
-        var petrolStationLocationMarker: Marker?
     override fun onStop() {
         this.fusedLocationClient?.removeLocationUpdates(locationCallBack)
         super.onStop()
     }
 
-        for (nearestStation in petrolStationList) {
-            var nearestStationLatLng = nearestStation.petrolStationLatLng
-            user.userPreferredPetrolStationBrandList?.let {
+    inner class PetrolStationMarkerRenderer(context: Context?, googleMap: GoogleMap?, clusterManager: ClusterManager<PetrolStation>?) : DefaultClusterRenderer<PetrolStation>(context, googleMap, clusterManager) {
+        override public fun onBeforeClusterItemRendered(item: PetrolStation, markerOptions: MarkerOptions) {
+            this@MapDisplayFragment.user.userPreferredPetrolStationBrandList?.let {
                 if (it.any { brand ->
-                    brand.petrolStationBrandName == nearestStation.petrolStationBrand
+                    brand.petrolStationBrandName == item.petrolStationBrand
                 }) {
-                    bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.ic_petrol_station_marker)
-                    resizedBitmapImage = Bitmap.createScaledBitmap(bitmapImage, 100, 100, false)
+                    markerOptions
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.preferred_petrol_station_marker))
                 } else {
-                    bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.circle_marker)
-                    resizedBitmapImage = Bitmap.createScaledBitmap(bitmapImage, 50, 50, false)
+                    markerOptions
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.non_preferred_petrol_station_marker))
                 }
-                nearestStationLatLng?.let {
-                    var preferredStationMarkerOptions = MarkerOptions().position(it)
-                            .title(nearestStation.petrolStationName)
-                            .snippet(nearestStation.petrolStationId)
-                            .icon(BitmapDescriptorFactory.fromBitmap(resizedBitmapImage))
-                    petrolStationLocationMarker = this.googleMap?.addMarker(preferredStationMarkerOptions)
-                }
+                markerOptions
+                        .title(item.title)
+                        .position(item.position)
             }
+            super.onBeforeClusterItemRendered(item, markerOptions)
         }
     }
 
