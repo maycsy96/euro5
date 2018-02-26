@@ -72,7 +72,6 @@ class ResetPasswordFragment : Fragment() {
     }
 
     private fun resetPassword() {
-        this.user.userPassword = this.passwordEditText.text.toString()
         this.resetPasswordSuccess()
     }
 
