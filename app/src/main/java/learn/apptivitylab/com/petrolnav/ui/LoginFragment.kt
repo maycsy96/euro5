@@ -44,6 +44,7 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        this.setupProgressBarDialog()
         this.loginButton.setOnClickListener {
             val isValid = this.validateTextInput()
             if (isValid) {
@@ -69,7 +70,9 @@ class LoginFragment : Fragment() {
 
     private fun loginAccount() {
         this.loginButton.isEnabled = false
-        this.showProgressBarDialog()
+        this.progressBarDialog?.let {
+            it.show()
+        }
         val emailText = emailEditText.text.toString()
         val passwordText = passwordEditText.text.toString()
         this.verifyUserAccount(emailText, passwordText)
@@ -84,7 +87,9 @@ class LoginFragment : Fragment() {
         RestAPIClient.shared(this.context!!).postResources(VERIFY_PATH, jsonRequest,
                 object : RestAPIClient.PostResponseReceivedListener {
                     override fun onPostResponseReceived(jsonObject: JSONObject?, error: VolleyError?) {
-                        this@LoginFragment.hideProgressBarDialog()
+                        this@LoginFragment.progressBarDialog?.let {
+                            it.dismiss()
+                        }
                         if (jsonObject != null) {
                             if (jsonObject.has("success") && jsonObject.optString("success") == "true") {
                                 this@LoginFragment.user = User(jsonObject.optJSONObject("profile"))
@@ -168,27 +173,12 @@ class LoginFragment : Fragment() {
                 .show()
     }
 
-    private fun showProgressBarDialog() {
-        if (this.progressBarDialog == null) {
-            this.progressBarDialog = Dialog(this.activity)
-            this.progressBarDialog?.let {
-                it.setContentView(R.layout.progress_bar_dialog)
-                it.window.setBackgroundDrawableResource(android.R.color.transparent)
-                it.progressBarTextView.text = getString(R.string.message_authenticating)
-                it.show()
-            }
-        } else {
-            this.progressBarDialog?.let {
-                it.show()
-            }
-        }
-    }
-
-    private fun hideProgressBarDialog() {
+    private fun setupProgressBarDialog() {
+        this.progressBarDialog = Dialog(this.activity)
         this.progressBarDialog?.let {
-            if (it.isShowing) {
-                it.dismiss()
-            }
+            it.setContentView(R.layout.progress_bar_dialog)
+            it.window.setBackgroundDrawableResource(android.R.color.transparent)
+            it.progressBarTextView.text = getString(R.string.message_authenticating)
         }
     }
 }
