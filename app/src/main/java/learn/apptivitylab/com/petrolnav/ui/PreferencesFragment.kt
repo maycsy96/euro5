@@ -18,6 +18,10 @@ import learn.apptivitylab.com.petrolnav.controller.PetrolStationBrandLoader
 import learn.apptivitylab.com.petrolnav.model.Petrol
 import learn.apptivitylab.com.petrolnav.model.PetrolStationBrand
 import learn.apptivitylab.com.petrolnav.model.User
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.FileNotFoundException
+import java.io.IOException
 
 
 /**
@@ -56,7 +60,7 @@ class PreferencesFragment : Fragment() {
         }
     }
 
-    fun updateUser(user: User) {
+    private fun updateUser(user: User) {
         this.userListener.onUpdateUser(user)
     }
 
@@ -150,6 +154,7 @@ class PreferencesFragment : Fragment() {
     private fun savePreference(user: User, preferredPetrolStationBrandList: ArrayList<PetrolStationBrand>, preferredPetrol: Petrol) {
         user.userPreferredPetrol = preferredPetrol
         user.userPreferredPetrolStationBrandList = preferredPetrolStationBrandList
+        this.writeJSONPreference(user)
 
         if (this.activity is LoginActivity) {
             val launchIntent = MainActivity.newLaunchIntent(this.context!!, user)
@@ -165,6 +170,40 @@ class PreferencesFragment : Fragment() {
                 visibility = View.VISIBLE
             }
             this.activity!!.toolbar.title = ""
+        }
+    }
+
+    private fun writeJSONPreference(user: User) {
+        val fileName = String.format("%s.json", user.userName)
+        var jsonObjectPreference = JSONObject()
+
+        var jsonObjectPetrol = JSONObject()
+        with(jsonObjectPetrol) {
+            put("uuid", user.userPreferredPetrol?.petrolId)
+            put("name", user.userPreferredPetrol?.petrolName)
+        }
+        jsonObjectPreference.put("petrol", jsonObjectPetrol)
+
+        var jsonObjectPetrolStationBrands = JSONArray()
+        user.userPreferredPetrolStationBrandList?.forEach {
+            var jsonObjectBrand = JSONObject()
+            with(jsonObjectBrand) {
+                put("uuid", it.petrolStationBrandId)
+                put("name", it.petrolStationBrandName)
+            }
+            jsonObjectPetrolStationBrands.put(jsonObjectBrand)
+        }
+        jsonObjectPreference.putOpt("petrol_station_brands", jsonObjectPetrolStationBrands)
+
+        try {
+            val outputStream = context?.openFileOutput(fileName, Context.MODE_PRIVATE)
+            outputStream?.write(jsonObjectPreference.toString().toByteArray())
+            outputStream?.close()
+        } catch (e: Exception) {
+            when(e){
+                is FileNotFoundException, is IOException -> e.printStackTrace()
+                else -> throw e
+            }
         }
     }
 }
