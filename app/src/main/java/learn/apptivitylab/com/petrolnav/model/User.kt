@@ -65,35 +65,6 @@ data class User(var userId: String? = null,
         }
     }
 
-    fun toJsonObject(): JSONObject {
-        var jsonObjectUser = JSONObject()
-        jsonObjectUser.put("uuid", this.userId)
-        jsonObjectUser.put("name", this.userName)
-        jsonObjectUser.put("email", this.userEmail)
-        jsonObjectUser.put("phone", this.userPhoneNumber)
-        jsonObjectUser.put("created_at", this.userCreatedAt)
-
-        var jsonObjectPetrol = JSONObject()
-        with(jsonObjectPetrol) {
-            put("uuid", this@User.userPreferredPetrol?.petrolId)
-            put("name", this@User.userPreferredPetrol?.petrolName)
-        }
-        jsonObjectUser.put("petrol", jsonObjectPetrol)
-
-        var jsonObjectPetrolStationBrands = JSONArray()
-        this.userPreferredPetrolStationBrandList?.forEach {
-            var jsonObjectBrand = JSONObject()
-            with(jsonObjectBrand) {
-                put("uuid", it.petrolStationBrandId)
-                put("name", it.petrolStationBrandName)
-            }
-            jsonObjectPetrolStationBrands.put(jsonObjectBrand)
-        }
-        jsonObjectUser.putOpt("petrol_station_brands", jsonObjectPetrolStationBrands)
-
-        return jsonObjectUser
-    }
-
     private fun Parcel.writeDate(date: Date?) {
         writeLong(date?.time ?: -1)
     }
