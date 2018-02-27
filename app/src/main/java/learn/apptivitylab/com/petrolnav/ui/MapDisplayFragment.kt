@@ -19,12 +19,14 @@ import android.view.View
 import android.view.ViewGroup
 import com.android.volley.VolleyError
 import com.google.android.gms.location.*
+import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.progress_bar_dialog.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.api.RestAPIClient
@@ -36,7 +38,7 @@ import learn.apptivitylab.com.petrolnav.model.User
  * Created by apptivitylab on 09/01/2018.
  */
 
-class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener {
+class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener, MainActivity.SearchLocationListener {
 
     companion object {
         const val LOCATION_REQUEST_CODE = 100
@@ -225,34 +227,36 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
 
     @SuppressLint("MissingPermission")
     private fun onLocationChanged(location: Location?) {
-        location?.let {
-            if (this.userLatLng == null || it.latitude != this.userLatLng?.latitude || it.longitude != this.userLatLng?.longitude) {
-                this.userLatLng = LatLng(it.latitude, it.longitude)
-                if (this.locationMarker != null) {
-                    this.locationMarker?.remove()
-                }
-                this.userLatLng?.let {
-                    val markerOptions = MarkerOptions().position(it)
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-                    this.locationMarker = googleMap?.addMarker(markerOptions)
-                }
+        if(this.activity!!.locationSearchTextView.text == null){
+            location?.let {
+                if (this.userLatLng == null || it.latitude != this.userLatLng?.latitude || it.longitude != this.userLatLng?.longitude) {
+                    this.userLatLng = LatLng(it.latitude, it.longitude)
+                    if (this.locationMarker != null) {
+                        this.locationMarker?.remove()
+                    }
+                    this.userLatLng?.let {
+                        val markerOptions = MarkerOptions().position(it)
+                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                        this.locationMarker = googleMap?.addMarker(markerOptions)
+                    }
 
-                this.setStationsDistanceFromUser(this.userLatLng, this.petrolStationList)
-                this.filteredListByPreferredPetrol.sortBy { petrolStation ->
-                    petrolStation.distanceFromUser
-                }
+                    this.setStationsDistanceFromUser(this.userLatLng, this.petrolStationList)
+                    this.filteredListByPreferredPetrol.sortBy { petrolStation ->
+                        petrolStation.distanceFromUser
+                    }
 
-                var boundsBuilder = LatLngBounds.Builder()
-                val nearestStationList = this.filteredListByPreferredPetrol.take(this.NEAREST_STATION_COUNT)
-                nearestStationList.forEach { nearestStation ->
-                    boundsBuilder.include(nearestStation.petrolStationLatLng)
-                }
-                boundsBuilder.include(this.userLatLng)
-                var bounds = boundsBuilder.build()
+                    var boundsBuilder = LatLngBounds.Builder()
+                    val nearestStationList = this.filteredListByPreferredPetrol.take(this.NEAREST_STATION_COUNT)
+                    nearestStationList.forEach { nearestStation ->
+                        boundsBuilder.include(nearestStation.petrolStationLatLng)
+                    }
+                    boundsBuilder.include(this.userLatLng)
+                    var bounds = boundsBuilder.build()
 
-                val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100)
-                this.googleMap?.animateCamera(cameraUpdate)
-                this.googleMap?.isMyLocationEnabled = true
+                    val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100)
+                    this.googleMap?.animateCamera(cameraUpdate)
+                    this.googleMap?.isMyLocationEnabled = true
+                }
             }
         }
     }
@@ -339,5 +343,30 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
                         .show()
             }
         }
+    }
+
+    override fun onLocationSelected(place: Place) {
+        this.activity!!.locationSearchTextView.text = place.name
+        this.userLatLng = place.latLng
+        if (this.locationMarker != null) {
+            this.locationMarker?.remove()
+        }
+        this.userLatLng?.let {
+            val markerOptions = MarkerOptions().position(it)
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+            this.locationMarker = googleMap?.addMarker(markerOptions)
+        }
+        this.setStationsDistanceFromUser(this@MapDisplayFragment.userLatLng, this@MapDisplayFragment.petrolStationList)
+        this.filteredListByPreferredPetrol.sortBy { petrolStation ->
+            petrolStation.distanceFromUser
+        }
+        var boundsBuilder = LatLngBounds.Builder()
+        val nearestStationList = this@MapDisplayFragment.filteredListByPreferredPetrol.take(this@MapDisplayFragment.NEAREST_STATION_COUNT)
+        nearestStationList.forEach { nearestStation ->
+            boundsBuilder.include(nearestStation.petrolStationLatLng)
+        }
+        boundsBuilder.include(this@MapDisplayFragment.userLatLng)
+        var bounds = boundsBuilder.build()
+        this.googleMap?.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
     }
 }

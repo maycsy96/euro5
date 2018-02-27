@@ -165,10 +165,7 @@ class PreferencesFragment : Fragment() {
             this.activity!!.supportFragmentManager
                     .popBackStack(null, POP_BACK_STACK_INCLUSIVE)
             (this.activity!!.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = null
-            with(this.activity!!.locationSearchView) {
-                setIconifiedByDefault(false)
-                visibility = View.VISIBLE
-            }
+            this.activity!!.locationSearchTextView.visibility = View.VISIBLE
             this.activity!!.toolbar.title = ""
         }
     }
