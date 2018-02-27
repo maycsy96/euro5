@@ -31,7 +31,6 @@ import learn.apptivitylab.com.petrolnav.api.RestAPIClient
 import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
 import learn.apptivitylab.com.petrolnav.model.PetrolStation
 import learn.apptivitylab.com.petrolnav.model.User
-import java.util.*
 
 /**
  * Created by apptivitylab on 09/01/2018.
@@ -92,14 +91,18 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
             this.progressBarDialog?.show()
             PetrolStationLoader.loadJSONStations(this.context!!, this)
         } else {
-            this.petrolStationList = PetrolStationLoader.petrolStationList
-            this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
-            if (this.filteredListByPreferredPetrol.isEmpty()) {
-                this.filteredListByPreferredPetrol = this.petrolStationList
-            }
+            this.setupPetrolStationList(PetrolStationLoader.petrolStationList)
         }
         this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
         this.startLocationUpdates()
+    }
+
+    private fun setupPetrolStationList(petrolStationList: ArrayList<PetrolStation>) {
+        this.petrolStationList = petrolStationList
+        this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
+        if (this.filteredListByPreferredPetrol.isEmpty()) {
+            this.filteredListByPreferredPetrol = this.petrolStationList
+        }
     }
 
     private fun setupGoogleMapsFragment() {
@@ -115,7 +118,7 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
 
             this.clusterManager = ClusterManager(this.context, googleMap)
             this.clusterRenderer = PetrolStationMarkerRenderer(this.context, googleMap, this.clusterManager)
-            this@MapDisplayFragment.setUpClusterManager(this.filteredListByPreferredPetrol)
+            this@MapDisplayFragment.setupClusterManager(this.filteredListByPreferredPetrol)
 
             with(googleMap) {
                 setOnMapLoadedCallback {
@@ -150,7 +153,7 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
         }
     }
 
-    private fun setUpClusterManager(petrolStationList: ArrayList<PetrolStation>) {
+    private fun setupClusterManager(petrolStationList: ArrayList<PetrolStation>) {
         with(this.clusterManager) {
             addItems(petrolStationList)
             renderer = this@MapDisplayFragment.clusterRenderer
@@ -223,33 +226,34 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
     @SuppressLint("MissingPermission")
     private fun onLocationChanged(location: Location?) {
         location?.let {
-            this.userLatLng = LatLng(it.latitude, it.longitude)
-            if (this.locationMarker != null) {
-                this.locationMarker?.remove()
-            }
-            this.userLatLng?.let {
-                val markerOptions = MarkerOptions().position(it)
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-                this.locationMarker = googleMap?.addMarker(markerOptions)
-            }
+            if (this.userLatLng == null || it.latitude != this.userLatLng?.latitude || it.longitude != this.userLatLng?.longitude) {
+                this.userLatLng = LatLng(it.latitude, it.longitude)
+                if (this.locationMarker != null) {
+                    this.locationMarker?.remove()
+                }
+                this.userLatLng?.let {
+                    val markerOptions = MarkerOptions().position(it)
+                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                    this.locationMarker = googleMap?.addMarker(markerOptions)
+                }
 
-            this.setStationsDistanceFromUser(this.userLatLng, this.petrolStationList)
+                this.setStationsDistanceFromUser(this.userLatLng, this.petrolStationList)
+                this.filteredListByPreferredPetrol.sortBy { petrolStation ->
+                    petrolStation.distanceFromUser
+                }
 
-            this.filteredListByPreferredPetrol.sortBy { petrolStation ->
-                petrolStation.distanceFromUser
+                var boundsBuilder = LatLngBounds.Builder()
+                val nearestStationList = this.filteredListByPreferredPetrol.take(this.NEAREST_STATION_COUNT)
+                nearestStationList.forEach { nearestStation ->
+                    boundsBuilder.include(nearestStation.petrolStationLatLng)
+                }
+                boundsBuilder.include(this.userLatLng)
+                var bounds = boundsBuilder.build()
+
+                val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100)
+                this.googleMap?.animateCamera(cameraUpdate)
+                this.googleMap?.isMyLocationEnabled = true
             }
-
-            var boundsBuilder = LatLngBounds.Builder()
-            val nearestStationList = this.filteredListByPreferredPetrol.take(this.NEAREST_STATION_COUNT)
-            nearestStationList.forEach { nearestStation ->
-                boundsBuilder.include(nearestStation.petrolStationLatLng)
-            }
-            boundsBuilder.include(this.userLatLng)
-            var bounds = boundsBuilder.build()
-
-            val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100)
-            this.googleMap?.animateCamera(cameraUpdate)
-            this.googleMap?.isMyLocationEnabled = true
         }
     }
 
@@ -321,12 +325,8 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
     override fun onCompleteDataReceived(dataReceived: Boolean, error: VolleyError?) {
         this.progressBarDialog?.dismiss()
         if (dataReceived || error == null) {
-            this.petrolStationList = PetrolStationLoader.petrolStationList
-            this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
-            if (this.filteredListByPreferredPetrol.isEmpty()) {
-                this.filteredListByPreferredPetrol = this.petrolStationList
-            }
-            this.setUpClusterManager(this.filteredListByPreferredPetrol)
+            this.setupPetrolStationList(PetrolStationLoader.petrolStationList)
+            this.setupClusterManager(this.filteredListByPreferredPetrol)
         } else {
             view?.let {
                 Snackbar.make(it, getString(R.string.message_retrieval_data_fail), Snackbar.LENGTH_INDEFINITE)
