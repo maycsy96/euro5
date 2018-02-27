@@ -199,11 +199,11 @@ class PreferencesFragment : Fragment() {
             val outputStream = context?.openFileOutput(fileName, Context.MODE_PRIVATE)
             outputStream?.write(jsonObjectPreference.toString().toByteArray())
             outputStream?.close()
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
+        } catch (e: Exception) {
+            when(e){
+                is FileNotFoundException, is IOException -> e.printStackTrace()
+                else -> throw e
+            }
         }
     }
-
 }

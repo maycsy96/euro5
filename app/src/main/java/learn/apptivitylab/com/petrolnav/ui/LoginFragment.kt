@@ -207,12 +207,11 @@ class LoginFragment : Fragment() {
 
             return user
 
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } catch (e: JSONException) {
-            e.printStackTrace()
+        } catch (e: Exception) {
+            when (e) {
+                is FileNotFoundException, is IOException, is JSONException -> e.printStackTrace()
+                else -> throw e
+            }
         }
         return null
     }
