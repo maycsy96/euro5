@@ -60,7 +60,7 @@ class PreferencesFragment : Fragment() {
         }
     }
 
-    fun updateUser(user: User) {
+    private fun updateUser(user: User) {
         this.userListener.onUpdateUser(user)
     }
 
@@ -95,8 +95,6 @@ class PreferencesFragment : Fragment() {
                 "EURO5" -> this.radioButtonByPetrol.put(petrol, this.euro5RadioButton)
             }
         }
-
-
 
         this.presetPreference(this.user, this.checkBoxByPetrolStationBrand, this.radioButtonByPetrol)
 
