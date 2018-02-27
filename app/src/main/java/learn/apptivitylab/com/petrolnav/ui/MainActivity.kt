@@ -123,7 +123,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     setIconifiedByDefault(false)
                     visibility = View.VISIBLE
                 }
-
                 (this.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = null
                 this.mainViewgroupContainer.requestLayout()
 
@@ -137,6 +136,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 displayFragment = SearchFragment.newInstance(this.user)
             }
             R.id.nav_petrol_price -> {
+                if (currentFragment is MapDisplayFragment) {
+                    with(locationSearchView) {
+                        setIconifiedByDefault(false)
+                        visibility = View.VISIBLE
+                    }
+                    (this.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = null
+                    this.mainViewgroupContainer.requestLayout()
+                }
                 val launchIntent = PetrolPriceActivity.newLaunchIntent(this)
                 this.startActivity(launchIntent)
             }
