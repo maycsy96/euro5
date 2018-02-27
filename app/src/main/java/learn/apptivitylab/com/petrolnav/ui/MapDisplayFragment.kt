@@ -289,7 +289,9 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
     }
 
     override fun onStop() {
-        this.fusedLocationClient?.removeLocationUpdates(locationCallBack)
+        if(locationCallBack!= null){
+            this.fusedLocationClient?.removeLocationUpdates(locationCallBack)
+        }
         super.onStop()
     }
 

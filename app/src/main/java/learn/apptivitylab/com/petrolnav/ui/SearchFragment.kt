@@ -156,7 +156,9 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
     }
 
     override fun onStop() {
-        this.fusedLocationClient?.removeLocationUpdates(locationCallBack)
+        if(locationCallBack!= null){
+            this.fusedLocationClient?.removeLocationUpdates(locationCallBack)
+        }
         super.onStop()
     }
 
