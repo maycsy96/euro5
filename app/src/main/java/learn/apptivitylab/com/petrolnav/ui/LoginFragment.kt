@@ -15,8 +15,14 @@ import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.progress_bar_dialog.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.api.RestAPIClient
+import learn.apptivitylab.com.petrolnav.model.Petrol
+import learn.apptivitylab.com.petrolnav.model.PetrolStationBrand
 import learn.apptivitylab.com.petrolnav.model.User
+import org.json.JSONException
 import org.json.JSONObject
+import java.io.BufferedInputStream
+import java.io.FileNotFoundException
+import java.io.IOException
 import java.net.SocketException
 
 /**
@@ -122,7 +128,13 @@ class LoginFragment : Fragment() {
     private fun onLoginSuccess() {
         this.loginButton.isEnabled = true
         Toast.makeText(this.context, getString(R.string.message_login_success), Toast.LENGTH_LONG).show()
+
         this.user.userPreferredPetrolStationBrandList?.let {
+            val userPreference = this.loadJSONPreference(this.user)
+            if (userPreference != null) {
+                this.user.userPreferredPetrol = userPreference.userPreferredPetrol
+                this.user.userPreferredPetrolStationBrandList = userPreference.userPreferredPetrolStationBrandList
+            }
             if (this.user.userPreferredPetrol == null && it.isEmpty()) {
                 this.showWelcomeDialog()
                 this.activity!!.supportFragmentManager
@@ -162,6 +174,47 @@ class LoginFragment : Fragment() {
             this.passwordEditText.error = null
         }
         return isValid
+    }
+
+    private fun loadJSONPreference(user: User): User? {
+        val fileName = String.format("%s.json", user.userName)
+        try {
+            val inputStream = BufferedInputStream(context!!.openFileInput(fileName))
+            val data = ByteArray(inputStream.available())
+            inputStream.read(data)
+            inputStream.close()
+
+
+            val user = User()
+            val jsonObjectString = String(data)
+            val jsonObject = JSONObject(jsonObjectString)
+
+            user.userPreferredPetrol = Petrol(jsonObject.optJSONObject("petrol"))
+
+            var petrolStationBrand: PetrolStationBrand
+            val petrolStationBrandListJsonArray = jsonObject.optJSONArray("petrol_station_brands")
+            user.userPreferredPetrolStationBrandList = ArrayList()
+            if (petrolStationBrandListJsonArray != null) {
+                for (i in 0 until petrolStationBrandListJsonArray.length()) {
+                    try {
+                        petrolStationBrand = PetrolStationBrand(petrolStationBrandListJsonArray.getJSONObject(i))
+                        user.userPreferredPetrolStationBrandList?.add(petrolStationBrand)
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+
+            return user
+
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+        return null
     }
 
     private fun showWelcomeDialog() {
