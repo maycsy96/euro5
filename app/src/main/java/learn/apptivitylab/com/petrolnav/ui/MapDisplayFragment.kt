@@ -3,9 +3,8 @@ package learn.apptivitylab.com.petrolnav.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -22,22 +21,22 @@ import com.android.volley.VolleyError
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.maps.android.clustering.ClusterManager
+import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import kotlinx.android.synthetic.main.progress_bar_dialog.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.api.RestAPIClient
 import learn.apptivitylab.com.petrolnav.controller.PetrolStationLoader
 import learn.apptivitylab.com.petrolnav.model.PetrolStation
 import learn.apptivitylab.com.petrolnav.model.User
-import java.util.*
 
 /**
  * Created by apptivitylab on 09/01/2018.
  */
 
-class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.ReceiveCompleteDataListener {
+class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener {
 
     companion object {
         const val LOCATION_REQUEST_CODE = 100
@@ -66,6 +65,9 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
     private var user = User()
     private var progressBarDialog: Dialog? = null
 
+    private lateinit var clusterManager: ClusterManager<PetrolStation>
+    private lateinit var clusterRenderer: PetrolStationMarkerRenderer
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var rootView = inflater.inflate(R.layout.fragment_map_display, container, false)
 
@@ -89,22 +91,17 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
             this.progressBarDialog?.show()
             PetrolStationLoader.loadJSONStations(this.context!!, this)
         } else {
-            this.petrolStationList = PetrolStationLoader.petrolStationList
-            this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
-            if (this.filteredListByPreferredPetrol.isEmpty()) {
-                this.filteredListByPreferredPetrol = this.petrolStationList
-            }
-            this.createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
+            this.setupPetrolStationList(PetrolStationLoader.petrolStationList)
         }
         this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
         this.startLocationUpdates()
     }
 
-    override fun onInfoWindowClick(marker: Marker?) {
-        val petrolStation = this.petrolStationList.firstOrNull { it.petrolStationId.equals(marker?.snippet) }
-        petrolStation?.let {
-            val launchIntent = PetrolStationDetailActivity.newLaunchIntent(this.context!!, it)
-            this.startActivity(launchIntent)
+    private fun setupPetrolStationList(petrolStationList: ArrayList<PetrolStation>) {
+        this.petrolStationList = petrolStationList
+        this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
+        if (this.filteredListByPreferredPetrol.isEmpty()) {
+            this.filteredListByPreferredPetrol = this.petrolStationList
         }
     }
 
@@ -118,16 +115,61 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
 
         this.mapFragment?.getMapAsync { googleMap ->
             this.googleMap = googleMap
-            this.googleMap?.setOnInfoWindowClickListener(this)
 
-            var typedValue = TypedValue()
-            this.context!!.theme?.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
-            var toolbarHeight = resources.getDimensionPixelSize(typedValue.resourceId)
-            this.googleMap?.setPadding(0, toolbarHeight, 0, 0)
+            this.clusterManager = ClusterManager(this.context, googleMap)
+            this.clusterRenderer = PetrolStationMarkerRenderer(this.context, googleMap, this.clusterManager)
+            this@MapDisplayFragment.setupClusterManager(this.filteredListByPreferredPetrol)
 
-            val officeLatLng = LatLng(4.2105, 101.9758)
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(officeLatLng, 6f)
-            this.googleMap?.moveCamera(cameraUpdate)
+            with(googleMap) {
+                setOnMapLoadedCallback {
+                    if (this@MapDisplayFragment.userLatLng == null) {
+                        val malaysiaLatLng = LatLng(4.2105, 101.9758)
+                        animateCamera(CameraUpdateFactory.newLatLngZoom(malaysiaLatLng, 6f))
+                    } else {
+                        this@MapDisplayFragment.setStationsDistanceFromUser(this@MapDisplayFragment.userLatLng, this@MapDisplayFragment.petrolStationList)
+                        this@MapDisplayFragment.filteredListByPreferredPetrol.sortBy { petrolStation ->
+                            petrolStation.distanceFromUser
+                        }
+                        var boundsBuilder = LatLngBounds.Builder()
+                        val nearestStationList = this@MapDisplayFragment.filteredListByPreferredPetrol.take(this@MapDisplayFragment.NEAREST_STATION_COUNT)
+                        nearestStationList.forEach { nearestStation ->
+                            boundsBuilder.include(nearestStation.petrolStationLatLng)
+                        }
+                        boundsBuilder.include(this@MapDisplayFragment.userLatLng)
+                        var bounds = boundsBuilder.build()
+                        animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+                    }
+                }
+                setInfoWindowAdapter(this@MapDisplayFragment.clusterManager.markerManager)
+                setOnInfoWindowClickListener(this@MapDisplayFragment.clusterManager)
+                setOnCameraIdleListener(this@MapDisplayFragment.clusterManager)
+                setOnMarkerClickListener(this@MapDisplayFragment.clusterManager)
+
+                var typedValue = TypedValue()
+                this@MapDisplayFragment.context!!.theme?.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
+                var toolbarHeight = resources.getDimensionPixelSize(typedValue.resourceId)
+                setPadding(0, toolbarHeight, 0, 0)
+            }
+        }
+    }
+
+    private fun setupClusterManager(petrolStationList: ArrayList<PetrolStation>) {
+        with(this.clusterManager) {
+            addItems(petrolStationList)
+            renderer = this@MapDisplayFragment.clusterRenderer
+            setOnClusterClickListener { cluster ->
+                val boundsBuilder = LatLngBounds.builder()
+                cluster.items.forEach { item ->
+                    boundsBuilder.include(item.position)
+                }
+                val bounds = boundsBuilder.build()
+                this@MapDisplayFragment.googleMap?.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+                true
+            }
+            setOnClusterItemInfoWindowClickListener { petrolStation ->
+                val launchIntent = PetrolStationDetailActivity.newLaunchIntent(this@MapDisplayFragment.context!!, petrolStation)
+                this@MapDisplayFragment.startActivity(launchIntent)
+            }
         }
     }
 
@@ -184,33 +226,34 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
     @SuppressLint("MissingPermission")
     private fun onLocationChanged(location: Location?) {
         location?.let {
-            this.userLatLng = LatLng(it.latitude, it.longitude)
-            if (this.locationMarker != null) {
-                this.locationMarker?.remove()
-            }
-            this.userLatLng?.let {
-                val markerOptions = MarkerOptions().position(it)
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-                this.locationMarker = googleMap?.addMarker(markerOptions)
-            }
+            if (this.userLatLng == null || it.latitude != this.userLatLng?.latitude || it.longitude != this.userLatLng?.longitude) {
+                this.userLatLng = LatLng(it.latitude, it.longitude)
+                if (this.locationMarker != null) {
+                    this.locationMarker?.remove()
+                }
+                this.userLatLng?.let {
+                    val markerOptions = MarkerOptions().position(it)
+                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                    this.locationMarker = googleMap?.addMarker(markerOptions)
+                }
 
-            this.setStationsDistanceFromUser(this.userLatLng, this.petrolStationList)
+                this.setStationsDistanceFromUser(this.userLatLng, this.petrolStationList)
+                this.filteredListByPreferredPetrol.sortBy { petrolStation ->
+                    petrolStation.distanceFromUser
+                }
 
-            this.filteredListByPreferredPetrol.sortBy { petrolStation ->
-                petrolStation.distanceFromUser
+                var boundsBuilder = LatLngBounds.Builder()
+                val nearestStationList = this.filteredListByPreferredPetrol.take(this.NEAREST_STATION_COUNT)
+                nearestStationList.forEach { nearestStation ->
+                    boundsBuilder.include(nearestStation.petrolStationLatLng)
+                }
+                boundsBuilder.include(this.userLatLng)
+                var bounds = boundsBuilder.build()
+
+                val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100)
+                this.googleMap?.animateCamera(cameraUpdate)
+                this.googleMap?.isMyLocationEnabled = true
             }
-
-            var boundsBuilder = LatLngBounds.Builder()
-            val nearestStationList = this.filteredListByPreferredPetrol.take(this.NEAREST_STATION_COUNT)
-            nearestStationList.forEach { nearestStation ->
-                boundsBuilder.include(nearestStation.petrolStationLatLng)
-            }
-            boundsBuilder.include(this.userLatLng)
-            var bounds = boundsBuilder.build()
-
-            val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100)
-            this.googleMap?.animateCamera(cameraUpdate)
-            this.googleMap?.isMyLocationEnabled = true
         }
     }
 
@@ -245,37 +288,29 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
         return preferredPetrolStationList
     }
 
-    private fun createPetrolStationMarker(petrolStationList: List<PetrolStation>, user: User) {
-        var bitmapImage: Bitmap
-        var resizedBitmapImage: Bitmap
-        var petrolStationLocationMarker: Marker?
-
-        for (nearestStation in petrolStationList) {
-            var nearestStationLatLng = nearestStation.petrolStationLatLng
-            user.userPreferredPetrolStationBrandList?.let {
-                if (it.any { brand ->
-                    brand.petrolStationBrandName == nearestStation.petrolStationBrand
-                }) {
-                    bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.ic_petrol_station_marker)
-                    resizedBitmapImage = Bitmap.createScaledBitmap(bitmapImage, 100, 100, false)
-                } else {
-                    bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.circle_marker)
-                    resizedBitmapImage = Bitmap.createScaledBitmap(bitmapImage, 50, 50, false)
-                }
-                nearestStationLatLng?.let {
-                    var preferredStationMarkerOptions = MarkerOptions().position(it)
-                            .title(nearestStation.petrolStationName)
-                            .snippet(nearestStation.petrolStationId)
-                            .icon(BitmapDescriptorFactory.fromBitmap(resizedBitmapImage))
-                    petrolStationLocationMarker = this.googleMap?.addMarker(preferredStationMarkerOptions)
-                }
-            }
-        }
-    }
-
     override fun onStop() {
         this.fusedLocationClient?.removeLocationUpdates(locationCallBack)
         super.onStop()
+    }
+
+    inner class PetrolStationMarkerRenderer(context: Context?, googleMap: GoogleMap?, clusterManager: ClusterManager<PetrolStation>?) : DefaultClusterRenderer<PetrolStation>(context, googleMap, clusterManager) {
+        override public fun onBeforeClusterItemRendered(item: PetrolStation, markerOptions: MarkerOptions) {
+            this@MapDisplayFragment.user.userPreferredPetrolStationBrandList?.let {
+                if (it.any { brand ->
+                    brand.petrolStationBrandName == item.petrolStationBrand
+                }) {
+                    markerOptions
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.preferred_petrol_station_marker))
+                } else {
+                    markerOptions
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.non_preferred_petrol_station_marker))
+                }
+                markerOptions
+                        .title(item.title)
+                        .position(item.position)
+            }
+            super.onBeforeClusterItemRendered(item, markerOptions)
+        }
     }
 
     private fun setupProgressBarDialog() {
@@ -290,12 +325,8 @@ class MapDisplayFragment : Fragment(), OnInfoWindowClickListener, RestAPIClient.
     override fun onCompleteDataReceived(dataReceived: Boolean, error: VolleyError?) {
         this.progressBarDialog?.dismiss()
         if (dataReceived || error == null) {
-            this.petrolStationList = PetrolStationLoader.petrolStationList
-            this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
-            if (this.filteredListByPreferredPetrol.isEmpty()) {
-                this.filteredListByPreferredPetrol = this.petrolStationList
-            }
-            this.createPetrolStationMarker(this.filteredListByPreferredPetrol, this.user)
+            this.setupPetrolStationList(PetrolStationLoader.petrolStationList)
+            this.setupClusterManager(this.filteredListByPreferredPetrol)
         } else {
             view?.let {
                 Snackbar.make(it, getString(R.string.message_retrieval_data_fail), Snackbar.LENGTH_INDEFINITE)

@@ -3,6 +3,7 @@ package learn.apptivitylab.com.petrolnav.model
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.clustering.ClusterItem
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -15,7 +16,7 @@ data class PetrolStation(var petrolStationId: String? = null,
                          var petrolStationAddress: String? = null,
                          var petrolStationLatLng: LatLng? = null,
                          var distanceFromUser: Double? = null,
-                         var petrolList: ArrayList<Petrol>? = null) : Parcelable {
+                         var petrolList: ArrayList<Petrol>? = null) : Parcelable, ClusterItem {
 
     companion object CREATOR : Parcelable.Creator<PetrolStation> {
         override fun createFromParcel(parcel: Parcel): PetrolStation {
@@ -25,6 +26,18 @@ data class PetrolStation(var petrolStationId: String? = null,
         override fun newArray(size: Int): Array<PetrolStation?> {
             return arrayOfNulls(size)
         }
+    }
+
+    override fun getSnippet(): String {
+        return this.petrolStationBrand!!
+    }
+
+    override fun getTitle(): String {
+        return this.petrolStationName!!
+    }
+
+    override fun getPosition(): LatLng {
+        return this.petrolStationLatLng!!
     }
 
     constructor(parcel: Parcel) : this() {
