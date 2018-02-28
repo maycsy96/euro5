@@ -197,7 +197,7 @@ class PreferencesFragment : Fragment() {
             outputStream?.write(jsonObjectPreference.toString().toByteArray())
             outputStream?.close()
         } catch (e: Exception) {
-            when(e){
+            when (e) {
                 is FileNotFoundException, is IOException -> e.printStackTrace()
                 else -> throw e
             }
