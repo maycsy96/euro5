@@ -33,6 +33,8 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
 
     companion object {
         private const val ARG_USER_DETAIL = "user_detail"
+        const val PREFERRED_PETROL_STATION = 1
+        const val NON_PREFERRED_PETROL_STATION = 0
         fun newInstance(user: User): SearchFragment {
             val fragment = SearchFragment()
             val args: Bundle = Bundle()
@@ -47,8 +49,10 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
     private var locationCallBack: LocationCallback? = null
 
     private var petrolStationList = ArrayList<PetrolStation>()
+    private var filteredListByPreferredPetrol = ArrayList<PetrolStation>()
     private val petrolStationListAdapter = SearchAdapter()
     private var user = User()
+    private var currentMode = PREFERRED_PETROL_STATION
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_search, container, false)
@@ -62,14 +66,59 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
         }
 
         this.petrolStationList = PetrolStationLoader.petrolStationList
+        this.filteredListByPreferredPetrol = this.filterByPreferredPetrol(this.petrolStationList, this.user)
         this.petrolStationListSwipeRefresh.setOnRefreshListener(this)
         val layoutManager = LinearLayoutManager(this.activity, LinearLayoutManager.VERTICAL, false)
         petrolStationListRecyclerView.layoutManager = layoutManager
         this.petrolStationListAdapter.setStationListener(this)
         petrolStationListRecyclerView.adapter = this.petrolStationListAdapter
 
+        this.preferredStationButton.setOnClickListener {
+            if (currentMode == PREFERRED_PETROL_STATION) {
+                this.petrolStationListRecyclerView.smoothScrollToPosition(0)
+            } else {
+                val preferredPetrolStationList = this.filterByPreferredBrand(this.filteredListByPreferredPetrol, this.user, PREFERRED_PETROL_STATION)
+                this.currentMode = PREFERRED_PETROL_STATION
+                this.setButtonUI(this.currentMode)
+                this.updateStationsAdapterDataSet(this.userLatLng, preferredPetrolStationList, this.petrolStationListAdapter, this.currentMode)
+            }
+        }
+
+        this.nonPreferredStationButton.setOnClickListener {
+            if (currentMode == NON_PREFERRED_PETROL_STATION) {
+                this.petrolStationListRecyclerView.smoothScrollToPosition(0)
+            } else {
+                this.currentMode = NON_PREFERRED_PETROL_STATION
+                this.setButtonUI(this.currentMode)
+                this.updateStationsAdapterDataSet(this.userLatLng, this.filteredListByPreferredPetrol, this.petrolStationListAdapter, this.currentMode)
+            }
+        }
         this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
-        this.startLocationUpdates()
+        this.currentMode = PREFERRED_PETROL_STATION
+        this.setButtonUI(this.currentMode)
+        this.updateStationsAdapterDataSet(this.userLatLng, this.filteredListByPreferredPetrol, this.petrolStationListAdapter, this.currentMode)
+    }
+
+    private fun setButtonUI(currentMode: Int = PREFERRED_PETROL_STATION) {
+        if (currentMode == PREFERRED_PETROL_STATION) {
+            with(this.preferredStationButton) {
+                setTextColor(ContextCompat.getColor(this.context!!, R.color.lightGreen))
+                setBackgroundResource(R.drawable.button_rounded)
+            }
+            with(this.nonPreferredStationButton) {
+                setTextColor(ContextCompat.getColor(this.context!!, android.R.color.white))
+                setBackgroundColor(ContextCompat.getColor(this.context!!, android.R.color.transparent))
+            }
+        } else {
+            with(this.nonPreferredStationButton) {
+                setTextColor(ContextCompat.getColor(this.context!!, R.color.lightGreen))
+                setBackgroundResource(R.drawable.button_rounded)
+            }
+            with(this.preferredStationButton) {
+                setTextColor(ContextCompat.getColor(this.context!!, android.R.color.white))
+                setBackgroundColor(ContextCompat.getColor(this.context!!, android.R.color.transparent))
+            }
+        }
     }
 
     private fun startLocationUpdates() {
@@ -139,20 +188,27 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
                 this.userLatLng = LatLng(location.latitude, location.longitude)
             }
         }
-        this.updateStationsAdapterDataSet(this.userLatLng, this.petrolStationList, this.petrolStationListAdapter)
+        this.updateStationsAdapterDataSet(this.userLatLng, this.petrolStationList, this.petrolStationListAdapter, this.currentMode)
     }
 
-    private fun updateStationsAdapterDataSet(userLatLng: LatLng?, petrolStationList: ArrayList<PetrolStation>, petrolStationListAdapter: SearchAdapter) {
+    private fun updateStationsAdapterDataSet(userLatLng: LatLng?, petrolStationList: ArrayList<PetrolStation>, petrolStationListAdapter: SearchAdapter, isPreferred: Int) {
         if (userLatLng != null) {
             this.setStationsDistanceFromUser(userLatLng, petrolStationList)
         }
         petrolStationList.sortBy { petrolStation ->
             petrolStation.distanceFromUser
         }
-
-        val filteredListByPreferredPetrol = filterByPreferredPetrol(petrolStationList, this.user)
-        val filteredListByPreferredBrand = filterByPreferredBrand(filteredListByPreferredPetrol, this.user)
-        this.petrolStationListAdapter.updateDataSet(filteredListByPreferredBrand)
+        this.emptyListTextView.visibility = View.GONE
+        val filteredPetrolStationList = this.filterByPreferredBrand(petrolStationList, this.user, isPreferred)
+        if (filteredPetrolStationList.isEmpty()) {
+            this.emptyListTextView.visibility = View.VISIBLE
+            if (isPreferred == PREFERRED_PETROL_STATION) {
+                this.emptyListTextView.text = getString(R.string.message_empty_list_preferred_station)
+            } else {
+                this.emptyListTextView.text = getString(R.string.message_empty_list_non_preferred_station)
+            }
+        }
+        this.petrolStationListAdapter.updateDataSet(filteredPetrolStationList)
     }
 
     override fun onStop() {
@@ -162,9 +218,9 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
         super.onStop()
     }
 
-    private fun setStationsDistanceFromUser(userLatlng: LatLng?, petrolStationList: ArrayList<PetrolStation>) {
+    private fun setStationsDistanceFromUser(userLatLng: LatLng?, petrolStationList: ArrayList<PetrolStation>) {
         val userLocation = Location(getString(R.string.user_location))
-        userLatlng?.let {
+        userLatLng?.let {
             userLocation.latitude = it.latitude
             userLocation.longitude = it.longitude
         }
@@ -198,7 +254,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
         return preferredPetrolStationList
     }
 
-    private fun filterByPreferredBrand(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<Any> {
+    private fun filterByPreferredBrand(petrolStationList: ArrayList<PetrolStation>, user: User, isPreferred: Int): ArrayList<PetrolStation> {
         var preferredStationList = ArrayList<PetrolStation>()
         for (petrolStation in petrolStationList) {
             user.userPreferredPetrolStationBrandList?.let {
@@ -209,17 +265,15 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
                 }
             }
         }
-        var nonPreferredStationList = ArrayList<PetrolStation>()
-        nonPreferredStationList.addAll(petrolStationList)
-        nonPreferredStationList.removeAll(preferredStationList)
 
-        var filteredListByBrand = ArrayList<Any>()
-        filteredListByBrand.add(getString(R.string.preferred_petrol_station))
-        filteredListByBrand.addAll(preferredStationList)
-        filteredListByBrand.add(getString(R.string.non_preferred_petrol_station))
-        filteredListByBrand.addAll(nonPreferredStationList)
-
-        return filteredListByBrand
+        return if (isPreferred == PREFERRED_PETROL_STATION) {
+            preferredStationList
+        } else {
+            var nonPreferredStationList = ArrayList<PetrolStation>()
+            nonPreferredStationList.addAll(petrolStationList)
+            nonPreferredStationList.removeAll(preferredStationList)
+            nonPreferredStationList
+        }
     }
 
     override fun onRefresh() {
