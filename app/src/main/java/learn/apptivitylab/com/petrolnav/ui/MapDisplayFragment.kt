@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
-import android.os.Looper
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
@@ -18,7 +17,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.android.volley.VolleyError
-import com.google.android.gms.location.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -57,10 +57,10 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
     private var mapFragment: SupportMapFragment? = null
     private var googleMap: GoogleMap? = null
     private var fusedLocationClient: FusedLocationProviderClient? = null
-    private var locationCallBack: LocationCallback? = null
 
     private var locationMarker: Marker? = null
     private var userLatLng: LatLng? = null
+    private var placeLatLng: LatLng? = null
 
     private var petrolStationList = ArrayList<PetrolStation>()
     private var filteredListByPreferredPetrol = ArrayList<PetrolStation>()
@@ -152,21 +152,26 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
                     if (this@MapDisplayFragment.userLatLng == null) {
                         val malaysiaLatLng = LatLng(4.2105, 101.9758)
                         animateCamera(CameraUpdateFactory.newLatLngZoom(malaysiaLatLng, 6f))
+                        return@setOnMapLoadedCallback
                     } else {
-                        this@MapDisplayFragment.setStationsDistanceFromUser(this@MapDisplayFragment.userLatLng, this@MapDisplayFragment.petrolStationList)
-                        this@MapDisplayFragment.filteredListByPreferredPetrol.sortBy { petrolStation ->
-                            petrolStation.distanceFromUser
+                        this@MapDisplayFragment.context?.let {
+                            if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                this@MapDisplayFragment.updateUserLocation()
+                            }
                         }
-                        var boundsBuilder = LatLngBounds.Builder()
-                        val nearestStationList = this@MapDisplayFragment.filteredListByPreferredPetrol.take(this@MapDisplayFragment.NEAREST_STATION_COUNT)
-                        nearestStationList.forEach { nearestStation ->
-                            boundsBuilder.include(nearestStation.petrolStationLatLng)
-                        }
-                        boundsBuilder.include(this@MapDisplayFragment.userLatLng)
-                        var bounds = boundsBuilder.build()
-                        animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
                     }
                 }
+
+                this@MapDisplayFragment.context?.let {
+                    if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        isMyLocationEnabled = true
+                        setOnMyLocationButtonClickListener {
+                            this@MapDisplayFragment.updateUserLocation()
+                            true
+                        }
+                    }
+                }
+
                 setInfoWindowAdapter(this@MapDisplayFragment.clusterManager.markerManager)
                 setOnInfoWindowClickListener(this@MapDisplayFragment.clusterManager)
                 setOnCameraIdleListener(this@MapDisplayFragment.clusterManager)
@@ -314,6 +319,11 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
         if (dataReceived || error == null) {
             this.setupPetrolStationList(PetrolStationLoader.petrolStationList)
             this.setupClusterManager(this.filteredListByPreferredPetrol)
+            this.context?.let {
+                if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    this.updateUserLocation()
+                }
+            }
         } else {
             view?.let {
                 Snackbar.make(it, getString(R.string.message_retrieval_data_fail), Snackbar.LENGTH_INDEFINITE)
@@ -327,27 +337,8 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
     }
 
     override fun onLocationSelected(place: Place) {
-        this.activity!!.locationSearchTextView.text = place.name
-        this.userLatLng = place.latLng
-        if (this.locationMarker != null) {
-            this.locationMarker?.remove()
-        }
-        this.userLatLng?.let {
-            val markerOptions = MarkerOptions().position(it)
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-            this.locationMarker = googleMap?.addMarker(markerOptions)
-        }
-        this.setStationsDistanceFromUser(this@MapDisplayFragment.userLatLng, this@MapDisplayFragment.petrolStationList)
-        this.filteredListByPreferredPetrol.sortBy { petrolStation ->
-            petrolStation.distanceFromUser
-        }
-        var boundsBuilder = LatLngBounds.Builder()
-        val nearestStationList = this@MapDisplayFragment.filteredListByPreferredPetrol.take(this@MapDisplayFragment.NEAREST_STATION_COUNT)
-        nearestStationList.forEach { nearestStation ->
-            boundsBuilder.include(nearestStation.petrolStationLatLng)
-        }
-        boundsBuilder.include(this@MapDisplayFragment.userLatLng)
-        var bounds = boundsBuilder.build()
-        this.googleMap?.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+        this.activity!!.locationSearchAutoComplete.setText(place.name)
+        this.placeLatLng = place.latLng
+        this.moveCamera(this.placeLatLng, this.filteredListByPreferredPetrol)
     }
 }
