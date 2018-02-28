@@ -68,11 +68,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_main)
 
+        this.toolbar.title = ""
         this.setSupportActionBar(this.toolbar)
         val drawerToggle = ActionBarDrawerToggle(this, this.drawer_layout, this.toolbar, R.string.openDrawer, R.string.closeDrawer)
         this.drawer_layout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
-        this.toolbar.title = null
 
         with(this.navigationView) {
             inflateMenu(R.menu.navigation_drawer_menu)
@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (currentFragment is MapDisplayFragment) {
             this.showLogOutDialog()
         } else {
-            this.locationSearchTextView.visibility = View.VISIBLE
+            this.locationSearchAutoComplete.visibility = View.VISIBLE
             this.supportFragmentManager.popBackStack(null, POP_BACK_STACK_INCLUSIVE)
         }
     }
@@ -171,13 +171,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var displayFragment: Fragment? = null
         val currentFragment: Fragment? = this.supportFragmentManager.findFragmentById(R.id.mainViewgroupContainer)
 
-        this.locationSearchTextView.visibility = View.INVISIBLE
+        this.locationSearchAutoComplete.visibility = View.GONE
         (this.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = AppBarLayout.ScrollingViewBehavior()
         this.mainViewgroupContainer.requestLayout()
         when (id) {
             R.id.nav_map -> {
                 this.toolbar.title = ""
-                this.locationSearchTextView.visibility = View.VISIBLE
+                this.locationSearchAutoComplete.visibility = View.VISIBLE
                 (this.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = null
                 this.mainViewgroupContainer.requestLayout()
 
@@ -188,11 +188,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_search -> {
                 this.toolbar.title = getString(R.string.title_station_list)
+                this.locationSearchAutoComplete.text = null
                 displayFragment = SearchFragment.newInstance(this.user)
             }
             R.id.nav_petrol_price -> {
                 if (currentFragment is MapDisplayFragment) {
-                    this.locationSearchTextView.visibility = View.VISIBLE
+                    this.locationSearchAutoComplete.visibility = View.VISIBLE
+                    this.locationSearchAutoComplete.text = null
                     (this.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = null
                     this.mainViewgroupContainer.requestLayout()
                 }
@@ -201,6 +203,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_preference -> {
                 this.toolbar.title = getString(R.string.title_preference)
+                this.locationSearchAutoComplete.text = null
                 displayFragment = PreferencesFragment.newInstance(this.user)
             }
             R.id.nav_log_out -> {
