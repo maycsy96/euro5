@@ -94,7 +94,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .setCountry("MY")
                 .build()
 
-        this.locationSearchTextView.setOnClickListener {
+        this.locationSearchAutoComplete.onFocusChangeListener = View.OnFocusChangeListener { view, b ->
+            if (b) {
+                this.locationSearchAutoComplete.callOnClick()
+            }
+        }
+
+        this.locationSearchAutoComplete.setOnClickListener {
             try {
                 val intent = PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
                         .setFilter(autoCompleteFilter)
