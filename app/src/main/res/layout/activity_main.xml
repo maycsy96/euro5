@@ -38,8 +38,8 @@
                 app:layout_scrollFlags="scroll|enterAlways|snap"
                 app:titleTextColor="@android:color/white">
 
-                <android.support.v7.widget.AppCompatTextView
-                    android:id="@+id/locationSearchTextView"
+                <android.support.v7.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/locationSearchAutoComplete"
                     style="@style/RoundedSearchView"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
@@ -48,6 +48,7 @@
                     android:maxLines="1"
                     android:padding="12dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:inputType="text"
                     tools:text = "HELLOO00000000000000000"/>
 
             </android.support.v7.widget.Toolbar>
