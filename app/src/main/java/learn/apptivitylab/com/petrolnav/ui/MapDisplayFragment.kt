@@ -107,6 +107,31 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
         }
     }
 
+    private fun moveCamera(selectedLatLng: LatLng?, petrolStationList: ArrayList<PetrolStation>) {
+        this.locationMarker?.let {
+            it.remove()
+        }
+        selectedLatLng?.let {
+            val markerOptions = MarkerOptions().position(it)
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+            this.locationMarker = googleMap?.addMarker(markerOptions)
+        }
+
+        this.setStationsDistanceFromUser(selectedLatLng, petrolStationList)
+        petrolStationList.sortBy { petrolStation ->
+            petrolStation.distanceFromUser
+        }
+
+        var boundsBuilder = LatLngBounds.Builder()
+        val nearestStationList = petrolStationList.take(this.NEAREST_STATION_COUNT)
+        nearestStationList.forEach { nearestStation ->
+            boundsBuilder.include(nearestStation.petrolStationLatLng)
+        }
+        boundsBuilder.include(selectedLatLng)
+        var bounds = boundsBuilder.build()
+        this.googleMap?.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+    }
+
     private fun setupGoogleMapsFragment() {
         this.mapFragment = SupportMapFragment.newInstance()
 
