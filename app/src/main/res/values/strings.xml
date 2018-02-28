@@ -86,4 +86,6 @@
     <string name="message_loading_required_data">Loading required data now …</string>
     <string name="message_loading_petrol_station_data">Loading Petrol Station Data</string>
     <string name="button_retry">Retry</string>
+    <string name="message_empty_list_preferred_station">Sorry, you do not have any preferred stations!</string>
+    <string name="message_empty_list_non_preferred_station">Sorry, you do not have any non-preferred stations!</string>
 </resources>
