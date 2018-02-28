@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
-import android.os.Looper
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
@@ -18,13 +17,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.android.volley.VolleyError
-import com.google.android.gms.location.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.progress_bar_dialog.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.api.RestAPIClient
@@ -36,7 +38,7 @@ import learn.apptivitylab.com.petrolnav.model.User
  * Created by apptivitylab on 09/01/2018.
  */
 
-class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener {
+class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener, MainActivity.SearchLocationListener {
 
     companion object {
         const val LOCATION_REQUEST_CODE = 100
@@ -55,10 +57,10 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
     private var mapFragment: SupportMapFragment? = null
     private var googleMap: GoogleMap? = null
     private var fusedLocationClient: FusedLocationProviderClient? = null
-    private var locationCallBack: LocationCallback? = null
 
     private var locationMarker: Marker? = null
     private var userLatLng: LatLng? = null
+    private var placeLatLng: LatLng? = null
 
     private var petrolStationList = ArrayList<PetrolStation>()
     private var filteredListByPreferredPetrol = ArrayList<PetrolStation>()
@@ -105,6 +107,31 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
         }
     }
 
+    private fun moveCamera(selectedLatLng: LatLng?, petrolStationList: ArrayList<PetrolStation>) {
+        this.locationMarker?.let {
+            it.remove()
+        }
+        selectedLatLng?.let {
+            val markerOptions = MarkerOptions().position(it)
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+            this.locationMarker = googleMap?.addMarker(markerOptions)
+        }
+
+        this.setStationsDistanceFromUser(selectedLatLng, petrolStationList)
+        petrolStationList.sortBy { petrolStation ->
+            petrolStation.distanceFromUser
+        }
+
+        var boundsBuilder = LatLngBounds.Builder()
+        val nearestStationList = petrolStationList.take(this.NEAREST_STATION_COUNT)
+        nearestStationList.forEach { nearestStation ->
+            boundsBuilder.include(nearestStation.petrolStationLatLng)
+        }
+        boundsBuilder.include(selectedLatLng)
+        var bounds = boundsBuilder.build()
+        this.googleMap?.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+    }
+
     private fun setupGoogleMapsFragment() {
         this.mapFragment = SupportMapFragment.newInstance()
 
@@ -125,21 +152,26 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
                     if (this@MapDisplayFragment.userLatLng == null) {
                         val malaysiaLatLng = LatLng(4.2105, 101.9758)
                         animateCamera(CameraUpdateFactory.newLatLngZoom(malaysiaLatLng, 6f))
+                        return@setOnMapLoadedCallback
                     } else {
-                        this@MapDisplayFragment.setStationsDistanceFromUser(this@MapDisplayFragment.userLatLng, this@MapDisplayFragment.petrolStationList)
-                        this@MapDisplayFragment.filteredListByPreferredPetrol.sortBy { petrolStation ->
-                            petrolStation.distanceFromUser
+                        this@MapDisplayFragment.context?.let {
+                            if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                this@MapDisplayFragment.updateUserLocation()
+                            }
                         }
-                        var boundsBuilder = LatLngBounds.Builder()
-                        val nearestStationList = this@MapDisplayFragment.filteredListByPreferredPetrol.take(this@MapDisplayFragment.NEAREST_STATION_COUNT)
-                        nearestStationList.forEach { nearestStation ->
-                            boundsBuilder.include(nearestStation.petrolStationLatLng)
-                        }
-                        boundsBuilder.include(this@MapDisplayFragment.userLatLng)
-                        var bounds = boundsBuilder.build()
-                        animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
                     }
                 }
+
+                this@MapDisplayFragment.context?.let {
+                    if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        isMyLocationEnabled = true
+                        setOnMyLocationButtonClickListener {
+                            this@MapDisplayFragment.updateUserLocation()
+                            true
+                        }
+                    }
+                }
+
                 setInfoWindowAdapter(this@MapDisplayFragment.clusterManager.markerManager)
                 setOnInfoWindowClickListener(this@MapDisplayFragment.clusterManager)
                 setOnCameraIdleListener(this@MapDisplayFragment.clusterManager)
@@ -183,23 +215,7 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
                 }
             }
         }
-
-        val locationRequest = LocationRequest()
-        with(locationRequest) {
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            interval = 5000
-            fastestInterval = 3000
-        }
-
-        this.locationCallBack = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                super.onLocationResult(locationResult)
-                locationResult?.let {
-                    onLocationChanged(it.lastLocation)
-                }
-            }
-        }
-        this.fusedLocationClient?.requestLocationUpdates(locationRequest, this.locationCallBack, Looper.myLooper())
+        this.updateUserLocation()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -224,34 +240,14 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
     }
 
     @SuppressLint("MissingPermission")
-    private fun onLocationChanged(location: Location?) {
-        location?.let {
-            if (this.userLatLng == null || it.latitude != this.userLatLng?.latitude || it.longitude != this.userLatLng?.longitude) {
-                this.userLatLng = LatLng(it.latitude, it.longitude)
-                if (this.locationMarker != null) {
-                    this.locationMarker?.remove()
+    private fun updateUserLocation() {
+        this.fusedLocationClient?.lastLocation?.addOnSuccessListener { location ->
+            location?.let {
+                if (this.userLatLng == null) {
+                    this.userLatLng = LatLng(it.latitude, it.longitude)
                 }
-                this.userLatLng?.let {
-                    val markerOptions = MarkerOptions().position(it)
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-                    this.locationMarker = googleMap?.addMarker(markerOptions)
-                }
-
-                this.setStationsDistanceFromUser(this.userLatLng, this.petrolStationList)
-                this.filteredListByPreferredPetrol.sortBy { petrolStation ->
-                    petrolStation.distanceFromUser
-                }
-
-                var boundsBuilder = LatLngBounds.Builder()
-                val nearestStationList = this.filteredListByPreferredPetrol.take(this.NEAREST_STATION_COUNT)
-                nearestStationList.forEach { nearestStation ->
-                    boundsBuilder.include(nearestStation.petrolStationLatLng)
-                }
-                boundsBuilder.include(this.userLatLng)
-                var bounds = boundsBuilder.build()
-
-                val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100)
-                this.googleMap?.animateCamera(cameraUpdate)
+                this.activity!!.locationSearchAutoComplete.text = null
+                this.moveCamera(this.userLatLng, this.filteredListByPreferredPetrol)
                 this.googleMap?.isMyLocationEnabled = true
             }
         }
@@ -288,12 +284,6 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
         return preferredPetrolStationList
     }
 
-    override fun onStop() {
-        this.locationCallBack?.let {
-            this.fusedLocationClient?.removeLocationUpdates(it)
-        }
-        super.onStop()
-    }
 
     inner class PetrolStationMarkerRenderer(context: Context?, googleMap: GoogleMap?, clusterManager: ClusterManager<PetrolStation>?) : DefaultClusterRenderer<PetrolStation>(context, googleMap, clusterManager) {
         override public fun onBeforeClusterItemRendered(item: PetrolStation, markerOptions: MarkerOptions) {
@@ -329,6 +319,11 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
         if (dataReceived || error == null) {
             this.setupPetrolStationList(PetrolStationLoader.petrolStationList)
             this.setupClusterManager(this.filteredListByPreferredPetrol)
+            this.context?.let {
+                if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    this.updateUserLocation()
+                }
+            }
         } else {
             view?.let {
                 Snackbar.make(it, getString(R.string.message_retrieval_data_fail), Snackbar.LENGTH_INDEFINITE)
@@ -339,5 +334,11 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
                         .show()
             }
         }
+    }
+
+    override fun onLocationSelected(place: Place) {
+        this.activity!!.locationSearchAutoComplete.setText(place.name)
+        this.placeLatLng = place.latLng
+        this.moveCamera(this.placeLatLng, this.filteredListByPreferredPetrol)
     }
 }

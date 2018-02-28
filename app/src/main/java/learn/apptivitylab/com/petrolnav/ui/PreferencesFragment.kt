@@ -165,10 +165,7 @@ class PreferencesFragment : Fragment() {
             this.activity!!.supportFragmentManager
                     .popBackStack(null, POP_BACK_STACK_INCLUSIVE)
             (this.activity!!.mainViewgroupContainer.layoutParams as CoordinatorLayout.LayoutParams).behavior = null
-            with(this.activity!!.locationSearchView) {
-                setIconifiedByDefault(false)
-                visibility = View.VISIBLE
-            }
+            this.activity!!.locationSearchAutoComplete.visibility = View.VISIBLE
             this.activity!!.toolbar.title = ""
         }
     }
@@ -200,7 +197,7 @@ class PreferencesFragment : Fragment() {
             outputStream?.write(jsonObjectPreference.toString().toByteArray())
             outputStream?.close()
         } catch (e: Exception) {
-            when(e){
+            when (e) {
                 is FileNotFoundException, is IOException -> e.printStackTrace()
                 else -> throw e
             }
