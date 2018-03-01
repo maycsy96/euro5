@@ -77,10 +77,10 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
             if (currentMode == PREFERRED_PETROL_STATION) {
                 this.petrolStationListRecyclerView.smoothScrollToPosition(0)
             } else {
-                val preferredPetrolStationList = this.filterByPreferredBrand(this.filteredListByPreferredPetrol, this.user, PREFERRED_PETROL_STATION)
                 this.currentMode = PREFERRED_PETROL_STATION
-                this.setButtonUI(this.currentMode)
-                this.updateStationsAdapterDataSet(this.userLatLng, preferredPetrolStationList, this.petrolStationListAdapter, this.currentMode)
+                this.updateButtonAppearance(this.currentMode)
+
+                this.updateStationsAdapterDataSet(this.userLatLng, filteredListByPreferredPetrol, this.petrolStationListAdapter, this.currentMode)
             }
         }
 
@@ -89,17 +89,18 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
                 this.petrolStationListRecyclerView.smoothScrollToPosition(0)
             } else {
                 this.currentMode = NON_PREFERRED_PETROL_STATION
-                this.setButtonUI(this.currentMode)
+                this.updateButtonAppearance(this.currentMode)
+
                 this.updateStationsAdapterDataSet(this.userLatLng, this.filteredListByPreferredPetrol, this.petrolStationListAdapter, this.currentMode)
             }
         }
         this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
         this.currentMode = PREFERRED_PETROL_STATION
-        this.setButtonUI(this.currentMode)
+        this.updateButtonAppearance(this.currentMode)
         this.updateStationsAdapterDataSet(this.userLatLng, this.filteredListByPreferredPetrol, this.petrolStationListAdapter, this.currentMode)
     }
 
-    private fun setButtonUI(currentMode: Int = PREFERRED_PETROL_STATION) {
+    private fun updateButtonAppearance(currentMode: Int = PREFERRED_PETROL_STATION) {
         if (currentMode == PREFERRED_PETROL_STATION) {
             with(this.preferredStationButton) {
                 setTextColor(ContextCompat.getColor(this.context!!, R.color.lightGreen))
