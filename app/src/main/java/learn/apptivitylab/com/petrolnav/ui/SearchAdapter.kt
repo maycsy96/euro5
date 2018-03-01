@@ -61,7 +61,7 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun setStation(station: PetrolStation) {
             this.petrolStation = station
-            itemView.petrolStationNameTextView.text = this.petrolStation?.petrolStationName
+            itemView.petrolStationNameTextView.text = this.petrolStation?.petrolStationName?.toUpperCase()
             itemView.petrolStationLogoImageView.setImageDrawable(ResourcesCompat.getDrawable(itemView.resources, when (this.petrolStation?.petrolStationBrand) {
                 "Shell" -> R.drawable.shell_logo
                 "Petronas" -> R.drawable.petronas_logo
