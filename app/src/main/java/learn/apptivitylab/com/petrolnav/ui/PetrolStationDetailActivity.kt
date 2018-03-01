@@ -32,7 +32,7 @@ class PetrolStationDetailActivity : AppCompatActivity() {
         val item = intent.getParcelableExtra<PetrolStation>(EXTRA_PETROL_STATION)
 
         this.setSupportActionBar(this.toolbar)
-        this.supportActionBar?.title = getString(R.string.petrol_price_history)
+        this.supportActionBar?.title = getString(R.string.title_petrol_station_detail_page)
         this.toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp)
         this.toolbar.setNavigationOnClickListener(View.OnClickListener {
             this.finish()
