@@ -23,9 +23,12 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
+import com.google.maps.android.ui.IconGenerator
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.cell_cluster_marker_map.view.*
 import kotlinx.android.synthetic.main.progress_bar_dialog.*
 import learn.apptivitylab.com.petrolnav.R
 import learn.apptivitylab.com.petrolnav.api.RestAPIClient
@@ -302,6 +305,18 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
                         .position(item.position)
             }
             super.onBeforeClusterItemRendered(item, markerOptions)
+        }
+
+        override public fun onBeforeClusterRendered(cluster: Cluster<PetrolStation>, markerOptions: MarkerOptions) {
+            val clusterBubble = this@MapDisplayFragment.activity!!.layoutInflater.inflate(R.layout.cell_cluster_marker_map, null, false)
+            clusterBubble.clusterSizeTextView.text = cluster.size.toString()
+
+            val iconGenerator = IconGenerator(this@MapDisplayFragment.context)
+            iconGenerator.setContentView(clusterBubble)
+            iconGenerator.setBackground(null)
+
+            val icon = iconGenerator.makeIcon()
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon))
         }
     }
 
