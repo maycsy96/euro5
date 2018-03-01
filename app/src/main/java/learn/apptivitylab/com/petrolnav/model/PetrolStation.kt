@@ -13,7 +13,6 @@ import org.json.JSONObject
 data class PetrolStation(var petrolStationId: String? = null,
                          var petrolStationName: String? = null,
                          var petrolStationBrand: String? = null,
-                         var petrolStationAddress: String? = null,
                          var petrolStationLatLng: LatLng? = null,
                          var distanceFromUser: Double? = null,
                          var petrolList: ArrayList<Petrol>? = null) : Parcelable, ClusterItem {
@@ -41,13 +40,15 @@ data class PetrolStation(var petrolStationId: String? = null,
     }
 
     constructor(parcel: Parcel) : this() {
-        petrolStationId = parcel.readString()
-        petrolStationName = parcel.readString()
-        petrolStationBrand = parcel.readString()
-        petrolStationAddress = parcel.readString()
-        petrolStationLatLng = parcel.readParcelable(LatLng::class.java.classLoader)
-        distanceFromUser = parcel.readDouble()
-        petrolList = parcel.readArrayList(Petrol::class.java.classLoader) as ArrayList<Petrol>
+        with(parcel) {
+            this@PetrolStation.petrolStationId = readString()
+            this@PetrolStation.petrolStationName = readString()
+            this@PetrolStation.petrolStationBrand = readString()
+            this@PetrolStation.petrolStationLatLng = readParcelable(LatLng::class.java.classLoader)
+            val distanceFromUser = readDouble()
+            this@PetrolStation.distanceFromUser = if (distanceFromUser == -1.0) null else distanceFromUser
+            this@PetrolStation.petrolList = readArrayList(Petrol::class.java.classLoader) as ArrayList<Petrol>
+        }
     }
 
     constructor(jsonObject: JSONObject) : this() {
@@ -73,15 +74,18 @@ data class PetrolStation(var petrolStationId: String? = null,
         return 0
     }
 
-    override fun writeToParcel(parcel: Parcel?, flags: Int) {
-        parcel?.writeString(petrolStationId)
-        parcel?.writeString(petrolStationName)
-        parcel?.writeString(petrolStationBrand)
-        parcel?.writeString(petrolStationAddress)
-        parcel?.writeParcelable(petrolStationLatLng, flags)
-        distanceFromUser?.let {
-            parcel?.writeDouble(it)
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        with(parcel) {
+            writeString(this@PetrolStation.petrolStationId)
+            writeString(this@PetrolStation.petrolStationName)
+            writeString(this@PetrolStation.petrolStationBrand)
+            writeParcelable(this@PetrolStation.petrolStationLatLng, flags)
+            if (this@PetrolStation.distanceFromUser == null) {
+                writeDouble(-1.0)
+            } else {
+                this@PetrolStation.distanceFromUser?.let { writeDouble(it) }
+            }
+            writeList(this@PetrolStation.petrolList)
         }
-        parcel?.writeList(petrolList)
     }
 }
