@@ -28,15 +28,15 @@ data class PetrolStation(var petrolStationId: String? = null,
     }
 
     override fun getSnippet(): String {
-        return this.petrolStationBrand!!
+        return this.petrolStationBrand ?: ""
     }
 
     override fun getTitle(): String {
-        return this.petrolStationName!!
+        return this.petrolStationName ?: ""
     }
 
     override fun getPosition(): LatLng {
-        return this.petrolStationLatLng!!
+        return this.petrolStationLatLng ?: LatLng(0.0, 0.0)
     }
 
     constructor(parcel: Parcel) : this() {
