@@ -189,7 +189,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
                 this.userLatLng = LatLng(location.latitude, location.longitude)
             }
         }
-        this.updateStationsAdapterDataSet(this.userLatLng, this.petrolStationList, this.petrolStationListAdapter, this.currentMode)
+        this.updateStationsAdapterDataSet(this.userLatLng, this.filteredListByPreferredPetrol, this.petrolStationListAdapter, this.currentMode)
     }
 
     private fun updateStationsAdapterDataSet(userLatLng: LatLng?, petrolStationList: ArrayList<PetrolStation>, petrolStationListAdapter: SearchAdapter, isPreferred: Int) {
@@ -242,7 +242,7 @@ class SearchFragment : Fragment(), SearchAdapter.StationViewHolder.SelectStation
         this.startActivity(launchIntent)
     }
 
-    private fun filterByPreferredPetrol(petrolStationList: java.util.ArrayList<PetrolStation>, user: User): java.util.ArrayList<PetrolStation> {
+    private fun filterByPreferredPetrol(petrolStationList: ArrayList<PetrolStation>, user: User): ArrayList<PetrolStation> {
         var preferredPetrolStationList = java.util.ArrayList<PetrolStation>()
 
         petrolStationList.forEach { petrolStation ->

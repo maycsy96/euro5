@@ -1,7 +1,6 @@
 package learn.apptivitylab.com.petrolnav.ui
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager
@@ -89,14 +88,16 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
         }
 
         this.setupProgressBarDialog()
+
+        this.startLocationUpdates()
+        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
+
         if (PetrolStationLoader.petrolStationList.isEmpty()) {
             this.progressBarDialog?.show()
             PetrolStationLoader.loadJSONStations(this.context!!, this)
         } else {
             this.setupPetrolStationList(PetrolStationLoader.petrolStationList)
         }
-        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
-        this.startLocationUpdates()
     }
 
     private fun setupPetrolStationList(petrolStationList: ArrayList<PetrolStation>) {
@@ -152,13 +153,6 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
                     if (this@MapDisplayFragment.userLatLng == null) {
                         val malaysiaLatLng = LatLng(4.2105, 101.9758)
                         animateCamera(CameraUpdateFactory.newLatLngZoom(malaysiaLatLng, 6f))
-                        return@setOnMapLoadedCallback
-                    } else {
-                        this@MapDisplayFragment.context?.let {
-                            if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                                this@MapDisplayFragment.updateUserLocation()
-                            }
-                        }
                     }
                 }
 
@@ -168,6 +162,9 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
                         setOnMyLocationButtonClickListener {
                             this@MapDisplayFragment.updateUserLocation()
                             true
+                        }
+                        if (this@MapDisplayFragment.petrolStationList.isNotEmpty()) {
+                            this@MapDisplayFragment.updateUserLocation()
                         }
                     }
                 }
@@ -206,27 +203,30 @@ class MapDisplayFragment : Fragment(), RestAPIClient.ReceiveCompleteDataListener
     }
 
     private fun startLocationUpdates() {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             this.context?.let {
                 if (ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(it as Activity, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 100)
-                    return
+                    requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_REQUEST_CODE)
+                } else {
+                    googleMap?.isMyLocationEnabled = true
+                    if (this.petrolStationList.isNotEmpty()) {
+                        this.updateUserLocation()
+                    }
                 }
             }
         }
-        this.updateUserLocation()
     }
 
+    @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             LOCATION_REQUEST_CODE -> {
-                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     this.context?.let {
-                        if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                            this.googleMap?.isMyLocationEnabled = true
-                            this.startLocationUpdates()
+                        this.googleMap?.isMyLocationEnabled = true
+                        if (this.petrolStationList.isNotEmpty()) {
+                            this.updateUserLocation()
                         }
                     }
                 } else {
