@@ -2,21 +2,25 @@ package learn.apptivitylab.com.petrolnav.ui
 
 import android.graphics.Color
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.android.volley.VolleyError
 import kotlinx.android.synthetic.main.fragment_petrol_price.*
 import learn.apptivitylab.com.petrolnav.R
+import learn.apptivitylab.com.petrolnav.api.RestAPIClient
+import learn.apptivitylab.com.petrolnav.controller.PetrolLoader
 import learn.apptivitylab.com.petrolnav.model.Petrol
 import java.text.SimpleDateFormat
 
 /**
  * Created by apptivitylab on 12/01/2018.
  */
-class PetrolPriceFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
+class PetrolPriceFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, RestAPIClient.ReceiveCompleteDataListener {
 
     companion object {
         private val ARG_PETROL_DETAIL = "petrol_detail"
@@ -83,6 +87,44 @@ class PetrolPriceFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     override fun onRefresh() {
+        PetrolLoader.loadJSONPetrols(this.context!!, this)
+    }
+
+    override fun onCompleteDataReceived(dataReceived: Boolean, error: VolleyError?) {
         this.priceHistorySwipeRefresh.isRefreshing = false
+        if (dataReceived || error == null) {
+            val petrol = PetrolLoader.petrolList.firstOrNull {
+                it.petrolName.equals(this.petrol.petrolName)
+            }
+            petrol?.let {
+                this.petrol = it
+                this.setPetrolPriceChange(this.petrol)
+                this.petrolPriceTextView.text = getString(R.string.petrol_price_value, this.petrol?.petrolPrice)
+                this.petrolPriceDateCreatedTextView.text = dateFormatter.format(this.petrol.petrolPriceHistoryList.first().dateCreated)
+
+                this.petrol.petrolPriceChange?.let {
+                    if (it != null) {
+                        if (it > 0.0f) {
+                            this.petrolPriceChangeTextView.text = getString(R.string.price_change_positive_value, it)
+                        } else {
+                            this.petrolPriceChangeTextView.text = String.format("%.2f", it)
+                        }
+                    } else {
+                        this.petrolPriceChangeTextView.text = getString(R.string.message_unavailable_price_change)
+                    }
+
+                    this.petrolPriceChangeTextView.setTextColor(when {
+                        it < 0.0f -> Color.RED
+                        it > 0.0f -> Color.GREEN
+                        else -> Color.BLACK
+                    })
+                }
+                this.petrolPriceAdapter.updateDataSet(this.petrol.petrolPriceHistoryList)
+            }
+        } else {
+            view?.let {
+                Snackbar.make(it, getString(R.string.message_retrieval_data_fail), Snackbar.LENGTH_LONG)
+            }
+        }
     }
 }
