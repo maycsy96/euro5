@@ -95,6 +95,27 @@ class PetrolPriceFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Re
         }
         petrol?.let {
             this.petrol = it
+            this.setPetrolPriceChange(this.petrol)
+            this.petrolPriceTextView.text = getString(R.string.petrol_price_value, this.petrol?.petrolPrice)
+            this.petrolPriceDateCreatedTextView.text = dateFormatter.format(this.petrol.petrolPriceHistoryList.first().dateCreated)
+
+            this.petrol.petrolPriceChange?.let {
+                if (it != null) {
+                    if (it > 0.0f) {
+                        this.petrolPriceChangeTextView.text = getString(R.string.price_change_positive_value, it)
+                    } else {
+                        this.petrolPriceChangeTextView.text = String.format("%.2f", it)
+                    }
+                } else {
+                    this.petrolPriceChangeTextView.text = getString(R.string.message_unavailable_price_change)
+                }
+
+                this.petrolPriceChangeTextView.setTextColor(when {
+                    it < 0.0f -> Color.RED
+                    it > 0.0f -> Color.GREEN
+                    else -> Color.BLACK
+                })
+            }
             this.petrolPriceAdapter.updateDataSet(this.petrol.petrolPriceHistoryList)
         }
         this.priceHistorySwipeRefresh.isRefreshing = false
