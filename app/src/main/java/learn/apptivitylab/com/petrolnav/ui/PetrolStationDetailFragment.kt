@@ -28,6 +28,7 @@ class PetrolStationDetailFragment : Fragment(), AsyncImageListener {
 
     companion object {
         private val PETROL_STATION_DETAIL = "petrol_station_detail"
+        private val STATIC_MAP_URL = "http://maps.googleapis.com/maps/api/staticmap?"
 
         fun newInstance(petrolStation: PetrolStation): PetrolStationDetailFragment {
             val fragment = PetrolStationDetailFragment()
@@ -50,13 +51,20 @@ class PetrolStationDetailFragment : Fragment(), AsyncImageListener {
         arguments?.let {
             this.petrolStationSelected = it.getParcelable(PETROL_STATION_DETAIL)
         }
+        this.customMarker.visibility = View.INVISIBLE
 
-        val url = "http://maps.google.com/maps/api/staticmap?center=" + this.petrolStationSelected.petrolStationLatLng?.latitude + "," + this.petrolStationSelected.petrolStationLatLng?.longitude + "&zoom=15&size=" + this.stationMapImageView.layoutParams.width + "x180&sensor=false"
+        val latLngParameter = String.format("center=%s,%s", this.petrolStationSelected.petrolStationLatLng?.latitude, this.petrolStationSelected.petrolStationLatLng?.longitude)
+        val zoomParameter = "zoom=15"
+        val imageSizeParameter = "size=380x180"
+        val sensorParameter = "sensor=false"
+
+        val url = String.format("%s%s&%s&%s&%s", STATIC_MAP_URL, latLngParameter, zoomParameter, imageSizeParameter, sensorParameter)
+        this.progressBar.visibility = View.VISIBLE
         DownloadStaticMapTask(this).execute(url)
 
         this.petrolStationNameTextView.text = this.petrolStationSelected.petrolStationName
         this.petrolStationBrandTextView.text = this.petrolStationSelected.petrolStationBrand
-        this.petrolStationBrandTextView.setCompoundDrawables(ResourcesCompat.getDrawable(resources,
+        this.petrolStationBrandTextView.setCompoundDrawablesWithIntrinsicBounds(
                 when (this.petrolStationSelected?.petrolStationBrand) {
                     "Shell" -> R.drawable.shell_logo
                     "Petronas" -> R.drawable.petronas_logo
@@ -64,7 +72,7 @@ class PetrolStationDetailFragment : Fragment(), AsyncImageListener {
                     "Caltex" -> R.drawable.caltex_logo
                     "BHPetrol" -> R.drawable.bhpetrol_logo
                     else -> R.drawable.app_logo_greyed
-                }, null), null, null, null)
+                }, 0, 0, 0)
 
         if (this.petrolStationSelected.distanceFromUser != null) {
             this.petrolStationDistanceTextView.text = getString(R.string.distance_value, this.petrolStationSelected.distanceFromUser)
@@ -100,7 +108,14 @@ class PetrolStationDetailFragment : Fragment(), AsyncImageListener {
     }
 
     override fun getBitmap(bitmap: Bitmap?) {
-        this.stationMapImageView.setImageBitmap(bitmap)
+        this.progressBar.visibility = View.INVISIBLE
+        if (bitmap != null) {
+            this.stationMapImageView.setImageBitmap(bitmap)
+            this.customMarker.visibility = View.VISIBLE
+        } else {
+            this.stationMapImageView.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.petrol_nav_logo, null))
+            this.customMarker.visibility = View.GONE
+        }
     }
 
     inner class DownloadStaticMapTask(private val listener: AsyncImageListener) : AsyncTask<String, Int, Bitmap?>() {
