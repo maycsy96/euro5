@@ -8,15 +8,18 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.android.volley.VolleyError
 import kotlinx.android.synthetic.main.fragment_petrol_price.*
 import learn.apptivitylab.com.petrolnav.R
+import learn.apptivitylab.com.petrolnav.api.RestAPIClient
+import learn.apptivitylab.com.petrolnav.controller.PetrolLoader
 import learn.apptivitylab.com.petrolnav.model.Petrol
 import java.text.SimpleDateFormat
 
 /**
  * Created by apptivitylab on 12/01/2018.
  */
-class PetrolPriceFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
+class PetrolPriceFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, RestAPIClient.ReceiveCompleteDataListener {
 
     companion object {
         private val ARG_PETROL_DETAIL = "petrol_detail"
@@ -83,6 +86,17 @@ class PetrolPriceFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     override fun onRefresh() {
+        PetrolLoader.loadJSONPetrols(this.context!!, this)
+    }
+
+    override fun onCompleteDataReceived(dataReceived: Boolean, error: VolleyError?) {
+        val petrol = PetrolLoader.petrolList.firstOrNull {
+            it.petrolName.equals(this.petrol.petrolName)
+        }
+        petrol?.let {
+            this.petrol = it
+            this.petrolPriceAdapter.updateDataSet(this.petrol.petrolPriceHistoryList)
+        }
         this.priceHistorySwipeRefresh.isRefreshing = false
     }
 }
